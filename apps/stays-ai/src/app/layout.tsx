@@ -45,9 +45,7 @@ export default function Layout(props: { children: React.ReactNode }) {
         <TRPCReactProvider>
           {props.children}
           <Analytics />
-          <div className="fixed bottom-1 right-1 z-50 flex flex-row items-center space-x-1">
-            <TailwindIndicator />
-          </div>
+          <TailwindIndicator />
         </TRPCReactProvider>
       </body>
     </html>
