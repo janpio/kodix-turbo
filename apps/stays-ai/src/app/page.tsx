@@ -1,7 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { CornerRightUp, Pencil, Plus, Trash2 } from "lucide-react";
+import type { KeyboardEventHandler } from "react";
+import { useEffect, useState } from "react";
+import {
+  CornerRightUp,
+  Pencil,
+  Plus,
+  PlusIcon,
+  SendIcon,
+  Trash2,
+} from "lucide-react";
 
 import {
   Badge,
@@ -23,9 +31,20 @@ import {
 import Chat from "~/components/Chat";
 
 export default function Page() {
-  const [tags, setTags] = useState<string[]>(["test", "test2"]);
+  const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
   const totalTagChars = 0;
+
+  function handleAddTag() {
+    if (tagInput.trim().length === 0) return;
+    setTags([...tags, tagInput]);
+    setTagInput("");
+  }
+  //Add tag when enter is pressed
+  function handleInputKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key === "Enter") handleAddTag();
+  }
+
   return (
     <main className="h-screen">
       <div className="bg-background shadow-foreground fixed bottom-0 z-40 flex h-56 w-full flex-col shadow-md transition-transform">
@@ -65,8 +84,8 @@ export default function Page() {
             })}
           </ScrollArea>
           <div className="flex flex-col justify-center">
-            <Button className="text-sm font-thin" disabled>
-              <CornerRightUp className="h-4 w-4" />
+            <Button className="text-sm font-thin" disabled={!(tags.length > 0)}>
+              <SendIcon className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -76,16 +95,14 @@ export default function Page() {
             className="text-md"
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)}
+            onKeyDown={(e) => handleInputKeyDown(e)}
           ></Input>
           <Button
             variant={"secondary"}
             disabled={tagInput.trim().length === 0}
-            onClick={() => {
-              setTags([...tags, tagInput]);
-              setTagInput("");
-            }}
+            onClick={handleAddTag}
           >
-            <Plus className="h-4 w-4" />
+            <PlusIcon className="h-4 w-4" />
           </Button>
         </div>
       </div>
