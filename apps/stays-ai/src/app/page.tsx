@@ -1,7 +1,8 @@
 "use client";
 
 import type { KeyboardEventHandler } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useChat } from "ai/react";
 import {
   CornerRightUp,
   Pencil,
@@ -9,6 +10,7 @@ import {
   PlusIcon,
   SendIcon,
   Trash2,
+  X,
 } from "lucide-react";
 
 import {
@@ -16,6 +18,10 @@ import {
   badgeVariants,
   Button,
   cn,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -28,66 +34,73 @@ import {
   ScrollBar,
 } from "@kdx/ui";
 
-import Chat from "~/components/Chat";
+// ... (import statements)
 
 export default function Page() {
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
-  const totalTagChars = 0;
-
+  const submitButtonRef = useRef<HTMLButtonElement>(null);
+  const [open, setOpen] = useState(false);
   function handleAddTag() {
     if (tagInput.trim().length === 0) return;
     setTags([...tags, tagInput]);
     setTagInput("");
   }
-  //Add tag when enter is pressed
+
+  function handleDeleteTag(tagToDelete: number) {
+    setTags(tags.filter((_, i) => i !== tagToDelete));
+  }
+
+  function handleTagChange(index: number, newTag: string) {
+    const newTags = [...tags];
+    newTags[index] = newTag;
+    setTags(newTags);
+  }
+
+  // Add tag when enter is pressed
   function handleInputKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Enter") handleAddTag();
   }
 
+  const { messages, setInput, handleSubmit } = useChat({
+    api: `${
+      process.env.NODE_ENV === "production"
+        ? "https://www.kodix.com.br"
+        : "http://localhost:3000"
+    }/api/ai`,
+  });
+
+  function handleSend(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const storage = JSON.parse(localStorage.getItem("_reg") ?? "{}") as _reg;
+    if (!storage.hasRegged) {
+      setOpen(true);
+      return;
+    }
+    //alert("Submit");
+    handleSubmit(e);
+    setInput("");
+  }
+
+  useEffect(() => {
+    setInput(tags.join(","));
+  }, [setInput, tags]);
+
   return (
     <main className="h-screen">
-      <div className="bg-background shadow-foreground fixed bottom-0 z-40 flex h-56 w-full flex-col shadow-md transition-transform">
-        <div className="flex h-36 flex-row p-3">
-          <ScrollArea
-            className="max-h-20 grow flex-row space-x-1 space-y-2 py-1 pr-2"
-            dir="ltr"
-          >
-            {tags.map((tag, i) => {
-              //totalTagChars += tag.length;
-              if (totalTagChars < 100)
-                return (
-                  <DropdownMenu key={i}>
-                    <DropdownMenuTrigger asChild>
-                      <div
-                        key={i}
-                        className={cn(
-                          badgeVariants({ variant: "outline" }),
-                          "h-6",
-                        )}
-                      >
-                        {tag}
-                      </div>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-[20px]" side="top">
-                      <DropdownMenuItem>
-                        <Pencil className="mr-2 h-4 w-4" />
-                        Editar
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Trash2 className="text-destructive mr-2 h-4 w-4" />
-                        Apagar
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                );
-            })}
+      <div className="bg-background shadow-foreground fixed bottom-0 z-40 flex h-56 w-full flex-col shadow-md transition-transform sm:h-full sm:w-[500px]">
+        <div className="flex h-36 p-2 px-4 pb-1">
+          <ScrollArea className="mr-4 max-h-fit grow space-x-1 space-y-4 pb-1">
+            {tags.map((tag, i) => (
+              <TagItem
+                key={i}
+                tag={tag}
+                onTagChange={(newTag) => handleTagChange(i, newTag)}
+                onDeleteTag={() => handleDeleteTag(i)}
+              />
+            ))}
           </ScrollArea>
-          <div className="flex flex-col justify-center">
-            <Button className="text-sm font-thin" disabled={!(tags.length > 0)}>
-              <SendIcon className="h-4 w-4" />
-            </Button>
-          </div>
+          <div className="flex flex-col justify-start"></div>
         </div>
         <div className="mb-6 flex flex-row space-x-3 p-4">
           <Input
@@ -97,16 +110,127 @@ export default function Page() {
             onChange={(e) => setTagInput(e.target.value)}
             onKeyDown={(e) => handleInputKeyDown(e)}
           ></Input>
-          <Button
-            variant={"secondary"}
-            disabled={tagInput.trim().length === 0}
-            onClick={handleAddTag}
-          >
-            <PlusIcon className="h-4 w-4" />
-          </Button>
+          {tagInput.trim().length > 0 ? (
+            <Button
+              variant={"outline"}
+              disabled={tagInput.trim().length === 0}
+              onClick={handleAddTag}
+            >
+              <PlusIcon className="h-4 w-4" />
+            </Button>
+          ) : (
+            <form onSubmit={handleSend}>
+              <Dialog open={open} onOpenChange={setOpen}>
+                <Button
+                  disabled={!(tags.length > 0)}
+                  type="submit"
+                  ref={submitButtonRef}
+                >
+                  <SendIcon className="h-4 w-4" />
+                </Button>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogDescription>
+                      <Form setOpen={setOpen} buttonRef={submitButtonRef} />
+                    </DialogDescription>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
+            </form>
+          )}
         </div>
       </div>
       <div className="bg-muted h-full w-full"></div>
     </main>
+  );
+}
+interface _reg {
+  hasRegged: boolean;
+}
+function Form({
+  setOpen,
+  buttonRef,
+}: {
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  buttonRef: React.RefObject<HTMLButtonElement>;
+}) {
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    new window.RDStationForms(
+      "ai-1f84733bbb7018305ac8",
+      "UA-78082533-1",
+    ).createForm();
+
+    function onElementLoaded() {
+      const element = document.getElementById("rd-button-lkigu0y4");
+      if (element) {
+        element.onclick = () => {
+          const storage = JSON.parse(
+            localStorage.getItem("_reg") ?? "{}",
+          ) as _reg;
+          storage.hasRegged = true;
+          localStorage.setItem("_reg", JSON.stringify(storage));
+          setOpen(false);
+          if (buttonRef.current) {
+            buttonRef.current.click();
+          }
+        };
+      }
+    }
+
+    function isElementLoaded() {
+      const element = document.getElementById("rd-button-lkigu0y4");
+      return !!element;
+    }
+    const intervalId = setInterval(function () {
+      if (isElementLoaded()) {
+        clearInterval(intervalId); // Stop the interval
+        onElementLoaded(); // Execute the action once the element is loaded
+      }
+    }, 100);
+  }, []);
+
+  return <div role="main" id="ai-1f84733bbb7018305ac8"></div>;
+}
+
+function TagItem({
+  tag,
+  onTagChange,
+  onDeleteTag,
+}: {
+  tag: string;
+  onTagChange: (newTag: string) => void;
+  onDeleteTag: () => void;
+}) {
+  const [editTagPopoverOpen, setEditTagPopoverOpen] = useState(false);
+  const inputRef = useRef(null);
+
+  return (
+    <Popover open={editTagPopoverOpen} onOpenChange={setEditTagPopoverOpen}>
+      <PopoverTrigger>
+        <div className={cn("h-fit", badgeVariants({ variant: "outline" }))}>
+          {tag}
+          <Button
+            onClick={() => onDeleteTag()}
+            className={cn("m-0 ml-2 h-2 rounded-full p-0")}
+            variant={"link"}
+          >
+            <X className="text-foreground/40 h-3 w-3" />
+          </Button>
+        </div>
+      </PopoverTrigger>
+      <PopoverContent side="top">
+        <Input
+          ref={inputRef}
+          type="text"
+          size={2}
+          value={tag}
+          onChange={(e) => onTagChange(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") setEditTagPopoverOpen(!editTagPopoverOpen);
+          }}
+        />
+      </PopoverContent>
+    </Popover>
   );
 }
