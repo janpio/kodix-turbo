@@ -10,10 +10,12 @@ import {
   PlusIcon,
   SendIcon,
   Trash2,
+  User,
   X,
 } from "lucide-react";
 
 import {
+  Avatar,
   Badge,
   badgeVariants,
   Button,
@@ -33,6 +35,8 @@ import {
   ScrollArea,
   ScrollBar,
 } from "@kdx/ui";
+
+import { StaysIcon } from "~/components/SVGs";
 
 // ... (import statements)
 
@@ -88,7 +92,7 @@ export default function Page() {
 
   return (
     <main className="h-screen">
-      <div className="bg-background shadow-foreground fixed bottom-0 z-40 flex h-56 w-full flex-col shadow-md transition-transform sm:h-full sm:w-[500px]">
+      <div className="bg-background shadow-foreground fixed bottom-0 z-40 flex h-56 w-full flex-col rounded-lg shadow-md transition-transform sm:h-full sm:w-[500px]">
         <div className="flex h-36 p-2 px-4 pb-1">
           <ScrollArea className="mr-4 max-h-fit grow space-x-1 space-y-4 pb-1">
             {tags.map((tag, i) => (
@@ -119,7 +123,7 @@ export default function Page() {
               <PlusIcon className="h-4 w-4" />
             </Button>
           ) : (
-            <form onSubmit={handleSend}>
+            <form onSubmit={handleSend} className="m-0 p-0">
               <Dialog open={open} onOpenChange={setOpen}>
                 <Button
                   disabled={!(tags.length > 0)}
@@ -140,7 +144,41 @@ export default function Page() {
           )}
         </div>
       </div>
-      <div className="bg-muted h-full w-full"></div>
+      <div className="bg-muted h-full w-full">
+        <ScrollArea className="h-[490px]">
+          {messages.map((message) => (
+            <div
+              key={message.id}
+              className={cn(message.role === "assistant" && "bg-muted")}
+            >
+              <div className="mx-6 flex flex-row py-4">
+                <Avatar className="h-10 w-10">
+                  {message.role === "assistant" ? (
+                    <StaysIcon className="h-auto w-auto p-1" />
+                  ) : (
+                    <User className="h-auto w-auto p-1" />
+                  )}
+                </Avatar>
+                <p className="ml-4 text-sm leading-relaxed">
+                  {message.role === "assistant"
+                    ? message.content
+                    : tags.map((tag) => (
+                        <Badge
+                          key={tag}
+                          className={cn(
+                            "text-xs",
+                            badgeVariants({ variant: "outline" }),
+                          )}
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
+                </p>
+              </div>
+            </div>
+          ))}
+        </ScrollArea>
+      </div>
     </main>
   );
 }
