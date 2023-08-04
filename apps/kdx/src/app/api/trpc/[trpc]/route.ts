@@ -6,10 +6,6 @@ import { CorsOptions, setCorsHeaders } from "../../_enableCors";
 
 export const runtime = "nodejs";
 
-export function OPTIONS() {
-  return CorsOptions();
-}
-
 async function handler(req: Request) {
   const response = await fetchRequestHandler({
     endpoint: "/api/trpc",
@@ -21,4 +17,4 @@ async function handler(req: Request) {
   return response;
 }
 
-export { handler as GET, handler as POST };
+export { handler as GET, handler as POST, CorsOptions as OPTIONS };

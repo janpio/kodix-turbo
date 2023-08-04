@@ -94,10 +94,10 @@ export default function Page() {
     <main className="h-screen">
       <div className="bg-background shadow-foreground fixed bottom-0 z-40 flex h-56 w-full flex-col rounded-lg shadow-md transition-transform sm:h-full sm:w-[500px]">
         <div className="flex h-36 p-2 px-4 pb-1">
-          <ScrollArea className="mr-4 max-h-fit grow space-x-1 space-y-4 pb-1">
+          <ScrollArea className="mr-4 h-[20px] max-h-fit grow space-x-1 space-y-4 pb-1">
             {tags.map((tag, i) => (
               <TagItem
-                key={i}
+                key={tag + i}
                 tag={tag}
                 onTagChange={(newTag) => handleTagChange(i, newTag)}
                 onDeleteTag={() => handleDeleteTag(i)}
