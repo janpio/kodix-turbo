@@ -29,6 +29,8 @@
     "@trpc/next": "^10.34.0",
     "@trpc/react-query": "^10.34.0",
     "@trpc/server": "^10.34.0",
+    "@upstash/ratelimit": "^0.4.3",
+    "@upstash/redis": "^1.22.0",
     "ai": "^2.1.25",
     "next": "^13.4.10",
     "next-themes": "^0.2.1",

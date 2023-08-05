@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import type { NextRequest } from "next/server";
+import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
+
+import { Redis } from "@upstash/redis";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import { Configuration, OpenAIApi } from "openai-edge";
 
@@ -14,8 +18,17 @@ const config = new Configuration({
 });
 const openai = new OpenAIApi(config);
 
-export async function POST(req: Request) {
+// Create a new ratelimiter, that allows 10 requests per 10 seconds
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(1, "1 m"),
+  analytics: true,
+});
+
+export async function POST(req: NextRequest) {
   //rate limit based on ip
+  const { success } = await ratelimit.limit(req.ip ?? "127.0.0.1");
+  if (!success) return new Response("Too many requests", { status: 429 });
 
   const { messages } = await req.json();
   messages.unshift({
