@@ -27,6 +27,7 @@ import { StaysIcon, StaysLogo } from "./SVGs/index";
 
 declare global {
   interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     RDStationForms: any;
   }
 }
@@ -76,7 +77,7 @@ function Form({
         onElementLoaded(); // Execute the action once the element is loaded
       }
     }, 100);
-  }, []);
+  }, [buttonRef, setOpen]);
 
   return <div role="main" id="ai-1f84733bbb7018305ac8"></div>;
 }
