@@ -1,18 +1,8 @@
 "use client";
 
-import type { KeyboardEventHandler } from "react";
 import { useEffect, useRef, useState } from "react";
 import { useChat } from "ai/react";
-import {
-  CornerRightUp,
-  Pencil,
-  Plus,
-  PlusIcon,
-  SendIcon,
-  Trash2,
-  User,
-  X,
-} from "lucide-react";
+import { PlusIcon, SendIcon, User, X } from "lucide-react";
 
 import {
   Avatar,
@@ -24,16 +14,11 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
   Input,
   Popover,
   PopoverContent,
   PopoverTrigger,
   ScrollArea,
-  ScrollBar,
 } from "@kdx/ui";
 
 import { StaysIcon } from "~/components/SVGs";
@@ -226,7 +211,7 @@ function Form({
         onElementLoaded(); // Execute the action once the element is loaded
       }
     }, 100);
-  }, []);
+  }, [buttonRef, setOpen]);
 
   return <div role="main" id="ai-1f84733bbb7018305ac8"></div>;
 }
