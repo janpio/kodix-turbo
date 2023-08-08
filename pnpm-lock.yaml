@@ -745,10 +745,10 @@ importers:
         specifier: ^0.1.0
         version: link:../config/tailwind
       '@types/react':
-        specifier: ^18.2.0
+        specifier: ^18.2.15
         version: 18.2.15
       '@types/react-dom':
-        specifier: ^18.2.0
+        specifier: ^18.2.7
         version: 18.2.7
       autoprefixer:
         specifier: ^10.4.14
@@ -757,13 +757,13 @@ importers:
         specifier: ^8.45.0
         version: 8.45.0
       postcss:
-        specifier: ^8.4.24
+        specifier: ^8.4.26
         version: 8.4.26
       react:
         specifier: 18.2.0
         version: 18.2.0
       tailwindcss:
-        specifier: ^3.3.2
+        specifier: ^3.3.3
         version: 3.3.3
       typescript:
         specifier: ^5.1.6
@@ -10443,6 +10443,7 @@ packages:
 
   /glob@6.0.4:
     resolution: {integrity: sha512-MKZeRNyYZAVVVG1oZeLaWie1uweH40m9AZwIwxyPbTSX4hHrVYSzLg0Ro5Z5R7XKkIX+Cc6oD1rqeDJnwsB8/A==}
+    requiresBuild: true
     dependencies:
       inflight: 1.0.6
       inherits: 2.0.4
@@ -12598,6 +12599,7 @@ packages:
   /ncp@2.0.0:
     resolution: {integrity: sha512-zIdGUrPRFTUELUvr3Gmc7KZ2Sw/h1PiVM0Af/oHB6zgnV1ikqSfRk+TOufi79aHYCW3NiOXmr1BP5nWbzojLaA==}
     hasBin: true
+    requiresBuild: true
     dev: false
     optional: true
 
@@ -14238,6 +14240,7 @@ packages:
   /rimraf@2.4.5:
     resolution: {integrity: sha512-J5xnxTyqaiw06JjMftq7L9ouA448dw/E7dKghkP9WpKNuwmARNNg+Gk8/u5ryb9N/Yo2+z3MCwuqFK/+qPOPfQ==}
     hasBin: true
+    requiresBuild: true
     dependencies:
       glob: 6.0.4
     dev: false
