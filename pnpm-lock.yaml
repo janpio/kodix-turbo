@@ -184,8 +184,8 @@ importers:
         specifier: ^10.34.0
         version: 10.34.0
       ai:
-        specifier: ^2.1.25
-        version: 2.1.25(react@18.2.0)(solid-js@1.7.8)(svelte@4.1.1)(vue@3.3.4)
+        specifier: ^2.1.32
+        version: 2.1.32(react@18.2.0)(solid-js@1.7.8)(svelte@4.1.1)(vue@3.3.4)
       next:
         specifier: ^13.4.10
         version: 13.4.10(@babel/core@7.22.1)(react-dom@18.2.0)(react@18.2.0)
@@ -454,8 +454,8 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1
       ai:
-        specifier: ^2.1.25
-        version: 2.1.25(react@18.2.0)(solid-js@1.7.8)(svelte@4.1.1)(vue@3.3.4)
+        specifier: ^2.1.32
+        version: 2.1.32(react@18.2.0)(solid-js@1.7.8)(svelte@4.1.1)(vue@3.3.4)
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
@@ -7732,8 +7732,8 @@ packages:
       indent-string: 4.0.0
     dev: false
 
-  /ai@2.1.25(react@18.2.0)(solid-js@1.7.8)(svelte@4.1.1)(vue@3.3.4):
-    resolution: {integrity: sha512-CPGD/auacetvHbwt9TsnktOtc32A4S/5LT9/W+f1nZz9N1W1V5/WDEcr2jTglLVmvh8mXXFwLbKT/t9erly+Bg==}
+  /ai@2.1.32(react@18.2.0)(solid-js@1.7.8)(svelte@4.1.1)(vue@3.3.4):
+    resolution: {integrity: sha512-G+mk7OfSxVR5s2cmpni89olZjXo5XbxPzzG8DAZThoJA2725hczfvO/gqLYGUToq92vzr0XgCHP6JJFK9so5fg==}
     engines: {node: '>=14.6'}
     peerDependencies:
       react: ^18.2.0
