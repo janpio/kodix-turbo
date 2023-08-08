@@ -6,7 +6,6 @@ import { RRule } from "rrule";
 
 import {
   Button,
-  Calendar,
   Command,
   CommandGroup,
   CommandInput,
@@ -17,7 +16,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   Input,
   Label,
   Popover,
@@ -27,15 +25,12 @@ import {
   RadioGroupItem,
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@kdx/ui";
 
 import DatePicker from "./DatePicker";
-import { DatePickerWithPresets } from "./DatePickerWithPresets";
 
 export function FrequencyPicker({
   frequency,

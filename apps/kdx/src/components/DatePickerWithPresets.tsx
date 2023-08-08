@@ -68,6 +68,7 @@ export function DatePickerWithPresets({
               ? format(new Date(date.toString() ?? ""), "PPP").split(",")[0]
               : "Pick a date"}
             {date && (
+              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
               <span
                 onClick={() => {
                   setDate(undefined);

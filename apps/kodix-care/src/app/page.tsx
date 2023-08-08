@@ -1,4 +1,3 @@
-import { api } from "~/utils/api";
 import { helpers } from "~/utils/proxy";
 
 async function getData() {

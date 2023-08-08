@@ -8,16 +8,9 @@ import type { DateValue } from "react-aria";
 import { useDatePickerState } from "react-stately";
 import type { DatePickerStateOptions } from "react-stately";
 
-import {
-  Button,
-  cn,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@kdx/ui";
+import { Button, cn, Popover, PopoverContent, PopoverTrigger } from "@kdx/ui";
 
 import { Calendar } from "./calendar";
-import { DateField } from "./date-field";
 import { TimeField } from "./time-field";
 
 export function useForwardedRef<T>(ref: React.ForwardedRef<T>) {
@@ -95,6 +88,7 @@ const DateTimePicker = React.forwardRef<
             {!!state.hasTime && (
               <TimeField
                 value={state.timeValue}
+                // eslint-disable-next-line @typescript-eslint/unbound-method
                 onChange={state.setTimeValue}
               />
             )}
