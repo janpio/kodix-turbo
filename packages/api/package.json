@@ -13,8 +13,8 @@
   "dependencies": {
     "@kdx/auth": "^0.1.0",
     "@kdx/db": "^0.1.0",
-    "@trpc/client": "^10.34.0",
-    "@trpc/server": "^10.34.0",
+    "@trpc/client": "^10.37.1",
+    "@trpc/server": "^10.37.1",
     "moment": "^2.29.4",
     "rrule": "^2.7.2",
     "superjson": "1.9.1",
