@@ -9,5 +9,6 @@
   ],
   "updateInternalDeps": true,
   "rangeStrategy": "bump",
-  "automerge": false
+  "automerge": false,
+  "dependencyDashboardApproval": true
 }
