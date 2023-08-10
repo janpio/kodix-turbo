@@ -139,8 +139,8 @@ importers:
         specifier: ^2.0.18
         version: 2.0.18(react@18.2.0)
       '@internationalized/date':
-        specifier: ^3.3.0
-        version: 3.3.0
+        specifier: ^3.4.0
+        version: 3.4.0
       '@kdx/api':
         specifier: ^0.1.0
         version: link:../../packages/api
@@ -3961,8 +3961,8 @@ packages:
       - supports-color
     dev: false
 
-  /@internationalized/date@3.3.0:
-    resolution: {integrity: sha512-qfRd7jCIgUjabI8RxeAsxhLDRS1u8eUPX96GB5uBp1Tpm6YY6dVveE7YwsTEV6L4QOp5LKFirFHHGsL/XQwJIA==}
+  /@internationalized/date@3.4.0:
+    resolution: {integrity: sha512-QUDSGCsvrEVITVf+kv9VSAraAmCgjQmU5CiXtesUBBhBe374NmnEIIaOFBZ72t29dfGMBP0zF+v6toVnbcc6jg==}
     dependencies:
       '@swc/helpers': 0.5.1
     dev: false
@@ -5441,7 +5441,7 @@ packages:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@internationalized/date': 3.3.0
+      '@internationalized/date': 3.4.0
       '@react-aria/i18n': 3.8.0(react@18.2.0)
       '@react-aria/interactions': 3.16.0(react@18.2.0)
       '@react-aria/live-announcer': 3.3.1
@@ -5503,7 +5503,7 @@ packages:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@internationalized/date': 3.3.0
+      '@internationalized/date': 3.4.0
       '@internationalized/number': 3.2.1
       '@internationalized/string': 3.1.1
       '@react-aria/focus': 3.13.0(react@18.2.0)
@@ -5623,7 +5623,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@internationalized/date': 3.3.0
+      '@internationalized/date': 3.4.0
       '@internationalized/message': 3.1.1
       '@internationalized/number': 3.2.1
       '@internationalized/string': 3.1.1
@@ -6349,7 +6349,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@internationalized/date': 3.3.0
+      '@internationalized/date': 3.4.0
       '@react-stately/utils': 3.7.0(react@18.2.0)
       '@react-types/calendar': 3.3.0(react@18.2.0)
       '@react-types/datepicker': 3.4.0(react@18.2.0)
@@ -6412,7 +6412,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@internationalized/date': 3.3.0
+      '@internationalized/date': 3.4.0
       '@internationalized/string': 3.1.1
       '@react-stately/overlays': 3.6.0(react@18.2.0)
       '@react-stately/utils': 3.7.0(react@18.2.0)
@@ -6686,7 +6686,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@internationalized/date': 3.3.0
+      '@internationalized/date': 3.4.0
       '@react-types/shared': 3.18.1(react@18.2.0)
       react: 18.2.0
     dev: false
@@ -6714,7 +6714,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@internationalized/date': 3.3.0
+      '@internationalized/date': 3.4.0
       '@react-types/calendar': 3.3.0(react@18.2.0)
       '@react-types/overlays': 3.8.0(react@18.2.0)
       '@react-types/shared': 3.18.1(react@18.2.0)
