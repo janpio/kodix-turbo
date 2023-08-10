@@ -24,7 +24,7 @@ import {
 
 import { api } from "~/utils/api";
 import { DataTablePagination } from "~/components/pagination";
-import { CreateTaskDialogButton } from "~/app/apps/todo/page";
+import { CreateTaskDialogButton } from "./CreateTaskDialogButton";
 
 interface DataTableProps<TData> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
