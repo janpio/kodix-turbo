@@ -79,7 +79,7 @@ export default function Page() {
     <main className="h-screen">
       <div className="bg-background shadow-foreground fixed bottom-0 z-40 flex h-56 w-full flex-col rounded-lg shadow-md transition-transform sm:h-full sm:w-[500px]">
         <div className="flex h-36 p-2 px-4 pb-1">
-          <ScrollArea className="mr-4 h-[20px] max-h-fit grow space-x-1 space-y-4 pb-1">
+          <ScrollArea className="mr-4 h-[100px] max-h-fit grow space-x-1 space-y-4 pb-1">
             {tags.map((tag, i) => (
               <TagItem
                 key={tag + i}
@@ -230,18 +230,16 @@ function TagItem({
 
   return (
     <Popover open={editTagPopoverOpen} onOpenChange={setEditTagPopoverOpen}>
-      <PopoverTrigger>
-        <div className={cn("h-fit", badgeVariants({ variant: "outline" }))}>
-          {tag}
-          <Button
-            onClick={() => onDeleteTag()}
-            className={cn("m-0 ml-2 h-2 rounded-full p-0")}
-            variant={"link"}
-          >
-            <X className="text-foreground/40 h-3 w-3" />
-          </Button>
-        </div>
-      </PopoverTrigger>
+      <div className={cn("h-fit", badgeVariants({ variant: "outline" }))}>
+        <PopoverTrigger>{tag}</PopoverTrigger>
+        <Button
+          onClick={() => onDeleteTag()}
+          className={cn("m-0 ml-2 h-2 rounded-full p-0")}
+          variant={"link"}
+        >
+          <X className="text-foreground/40 h-3 w-3" />
+        </Button>
+      </div>
       <PopoverContent side="top">
         <Input
           ref={inputRef}
