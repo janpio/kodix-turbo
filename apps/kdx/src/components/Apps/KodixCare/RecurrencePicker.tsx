@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 "use client";
 
 import { useState } from "react";
@@ -141,7 +143,7 @@ export default function RecurrencePicker({
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      until || interval > 1 ? "opacity-100" : "opacity-0",
+                      until ?? interval > 1 ? "opacity-100" : "opacity-0",
                     )}
                   />
                   Custom...

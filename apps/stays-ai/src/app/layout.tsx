@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/react";
 import "~/styles/globals.css";
 
 import { Inter as FontSans } from "next/font/google";
+import { headers } from "next/headers";
 import Script from "next/script";
 
 import { cn } from "@kdx/ui";
@@ -42,7 +43,7 @@ export default function Layout(props: { children: React.ReactNode }) {
           type="text/javascript"
           src="https://d335luupugsy2.cloudfront.net/js/rdstation-forms/stable/rdstation-forms.min.js"
         ></Script>
-        <TRPCReactProvider>
+        <TRPCReactProvider headers={headers()}>
           {props.children}
           <Analytics />
           <TailwindIndicator />

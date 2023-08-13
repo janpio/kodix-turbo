@@ -5,6 +5,6 @@ import { appRouter, createTRPCContext } from "@kdx/api";
 
 export const helpers = createServerSideHelpers({
   router: appRouter,
-  ctx: await createTRPCContext(),
+  ctx: await createTRPCContext({}),
   transformer: superjson, // optional - adds superjson serialization
 });

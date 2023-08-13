@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 
 import "~/styles/globals.css";
 
+import { headers } from "next/headers";
+
 import { TRPCReactProvider } from "./providers";
 
 export const metadata: Metadata = {
@@ -24,7 +26,9 @@ export default function Layout(props: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <TRPCReactProvider>{props.children}</TRPCReactProvider>
+        <TRPCReactProvider headers={headers()}>
+          {props.children}
+        </TRPCReactProvider>
       </body>
     </html>
   );

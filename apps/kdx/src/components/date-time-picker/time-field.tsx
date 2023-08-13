@@ -19,7 +19,6 @@ function TimeField(props: AriaTimeFieldProps<TimeValue>) {
   });
   const {
     fieldProps: { ...fieldProps },
-    labelProps,
   } = useTimeField(props, state, ref);
 
   return (

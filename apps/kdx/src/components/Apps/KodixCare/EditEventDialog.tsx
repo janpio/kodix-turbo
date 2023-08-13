@@ -42,7 +42,6 @@ import {
 } from "@kdx/ui";
 
 import { api } from "~/utils/api";
-import { tzOffsetText } from "~/utils/helpers";
 import RecurrencePicker from "./RecurrencePicker";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
@@ -151,6 +150,7 @@ export default function EditEventDialog({
     if (
       count !== defaultState.count ||
       interval !== defaultState.interval ||
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
       (until && !until?.isSame(defaultState.until)) ||
       frequency !== defaultState.frequency
     ) {

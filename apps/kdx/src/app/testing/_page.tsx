@@ -1,14 +1,8 @@
-import React, { Suspense } from "react";
-
-import { appRouter } from "@kdx/api";
-import { auth } from "@kdx/auth";
-import { prisma } from "@kdx/db";
-import { Skeleton } from "@kdx/ui";
+import React from "react";
 
 import { helpers } from "~/utils/serverHelper";
 import Client from "./Client";
 import { DialogProvider } from "./Contexts/DialogContexts";
-import { GithubUser } from "./GithubUser";
 
 export default async function Testing() {
   await helpers.app.getAll.prefetch();

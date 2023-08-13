@@ -9,5 +9,12 @@
     "strict": true
   },
   "exclude": [],
-  "include": ["next-env.d.ts", "src", "*.ts", "*.mjs", ".next/types/**/*.ts"]
+  "include": [
+    "next-env.d.ts",
+    "src",
+    "*.ts",
+    "*.mjs",
+    ".next/types/**/*.ts",
+    "custom.d.ts" // custom.d.ts is a file I created to add custom types
+  ]
 }

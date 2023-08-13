@@ -2,6 +2,13 @@ import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
 export const env = createEnv({
+  shared: {
+    VERCEL_URL: z
+      .string()
+      .optional()
+      .transform((v) => (v ? `https://${v}` : undefined)),
+    PORT: z.coerce.number().default(3000),
+  },
   /**
    * Specify your server-side environment variables schema here. This way you can ensure the app isn't
    * built with invalid env vars.
@@ -23,6 +30,8 @@ export const env = createEnv({
   runtimeEnv: {
     //DATABASE_URL: process.env.DATABASE_URL,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+    VERCEL_URL: process.env.VERCEL_URL,
+    PORT: process.env.PORT,
     STAYS_OPENAI_API_KEY: process.env.STAYS_OPENAI_API_KEY,
   },
   skipValidation: !!process.env.CI || !!process.env.SKIP_ENV_VALIDATION,

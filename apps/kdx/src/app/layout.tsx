@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "@kdx/ui/styles/globals.css";
 
 import { Inter as FontSans } from "next/font/google";
+import { headers } from "next/headers";
 
 import { cn, Toaster } from "@kdx/ui";
 
@@ -24,12 +25,12 @@ const fontSans = FontSans({
 export const metadata: Metadata = {
   title: "Kodix",
   description: "Software on demand",
-  openGraph: {
-    title: "Kodix",
-    description: "Software on demand",
-    url: "https://kodix.com.br",
-    siteName: "Kodix",
-  },
+  // openGraph: {
+  //   title: "Kodix",
+  //   description: "Software on demand",
+  //   url: "https://kodix.com.br",
+  //   siteName: "Kodix",
+  // },
 };
 
 export default function Layout(props: { children: React.ReactNode }) {
@@ -44,7 +45,7 @@ export default function Layout(props: { children: React.ReactNode }) {
           fontSans.variable,
         )}
       >
-        <TRPCReactProvider>
+        <TRPCReactProvider headers={headers()}>
           <NextAuthProvider>
             <NextThemeProvider>
               <Header />
