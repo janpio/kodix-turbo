@@ -28,7 +28,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^1.2.1",
     "cmdk": "^0.2.0",
-    "lucide-react": "^0.265.0",
+    "lucide-react": "^0.263.1",
     "react-day-picker": "^8.8.0",
     "react-hook-form": "^7.45.4",
     "tailwind-merge": "^1.13.2",

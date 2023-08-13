@@ -183,6 +183,9 @@ importers:
       ai:
         specifier: ^2.1.32
         version: 2.1.32(react@18.2.0)(solid-js@1.7.8)(svelte@4.1.1)(vue@3.3.4)
+      lucide-react:
+        specifier: ^0.263.1
+        version: 0.263.1(react@18.2.0)
       next:
         specifier: ^13.4.13
         version: 13.4.13(@babel/core@7.22.1)(react-dom@18.2.0)(react@18.2.0)
@@ -456,6 +459,9 @@ importers:
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
+      lucide-react:
+        specifier: 0.263.1
+        version: 0.263.1(react@18.2.0)
       next:
         specifier: ^13.4.13
         version: 13.4.13(@babel/core@7.22.1)(react-dom@18.2.0)(react@18.2.0)
@@ -720,8 +726,8 @@ importers:
         specifier: ^0.2.0
         version: 0.2.0(@types/react@18.2.20)(react-dom@18.2.0)(react@18.2.0)
       lucide-react:
-        specifier: ^0.265.0
-        version: 0.265.0(react@18.2.0)
+        specifier: ^0.263.1
+        version: 0.263.1(react@18.2.0)
       react-day-picker:
         specifier: ^8.8.0
         version: 8.8.0(date-fns@2.30.0)(react@18.2.0)
@@ -783,8 +789,8 @@ packages:
       '@jridgewell/gen-mapping': 0.3.3
       '@jridgewell/trace-mapping': 0.3.18
 
-  /@auth/core@0.0.0-manual.8fcd46b0:
-    resolution: {integrity: sha512-KuhvZ0hHz6NvMAgAi+su0dJOD0YAiOWGaLswyfGK5RsG/cdhqyyiII9HOTaZbWZAKir0UGYb8SlN+owhV30JXg==}
+  /@auth/core@0.0.0-manual.59d8da33:
+    resolution: {integrity: sha512-ZTaUedTobGEvQPhEeJLmnsdGbztG10T0rK8TA4wH87Eb8oBHInI//3zRngX6T9hEcZ+/OJnIANw0JrGDqUDREA==}
     peerDependencies:
       nodemailer: ^6.8.0
     peerDependenciesMeta:
@@ -837,7 +843,7 @@ packages:
       next: ^13.4.6
       react: ^18.2.0
     dependencies:
-      '@auth/core': 0.0.0-manual.8fcd46b0
+      '@auth/core': 0.0.0-manual.59d8da33
       next: 13.4.13(@babel/core@7.22.1)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
     transitivePeerDependencies:
@@ -11628,8 +11634,8 @@ packages:
     dependencies:
       yallist: 4.0.0
 
-  /lucide-react@0.265.0(react@18.2.0):
-    resolution: {integrity: sha512-znyvziBEUQ7CKR31GiU4viomQbJrpDLG5ac+FajwiZIavC3YbPFLkzQx3dCXT4JWJx/pB34EwmtiZ0ElGZX0PA==}
+  /lucide-react@0.263.1(react@18.2.0):
+    resolution: {integrity: sha512-keqxAx97PlaEN89PXZ6ki1N8nRjGWtDa4021GFYLNj0RgruM5odbpl8GHTExj0hhPq3sF6Up0gnxt6TSHu+ovw==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0
     dependencies:
@@ -12627,7 +12633,7 @@ packages:
       nodemailer:
         optional: true
     dependencies:
-      '@auth/core': 0.0.0-manual.8fcd46b0
+      '@auth/core': 0.0.0-manual.59d8da33
       '@auth/nextjs': 0.0.0-manual.179c08d4(next@13.4.13)(react@18.2.0)
       next: 13.4.13(@babel/core@7.22.1)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
