@@ -40,12 +40,6 @@ export default function Page() {
     setTags(tags.filter((_, i) => i !== tagToDelete));
   }
 
-  function handleTagChange(index: number, newTag: string) {
-    const newTags = [...tags];
-    newTags[index] = newTag;
-    setTags(newTags);
-  }
-
   // Add tag when enter is pressed
   function handleInputKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Enter") handleAddTag();
@@ -84,7 +78,11 @@ export default function Page() {
               <TagItem
                 key={tag + i}
                 tag={tag}
-                onTagChange={(newTag) => handleTagChange(i, newTag)}
+                onTagChange={(newTag) => {
+                  const newTags = [...tags];
+                  newTags[i] = newTag;
+                  setTags(newTags);
+                }}
                 onDeleteTag={() => handleDeleteTag(i)}
               />
             ))}
@@ -231,7 +229,9 @@ function TagItem({
   return (
     <Popover open={editTagPopoverOpen} onOpenChange={setEditTagPopoverOpen}>
       <div className={cn("h-fit", badgeVariants({ variant: "outline" }))}>
-        <PopoverTrigger>{tag}</PopoverTrigger>
+        <PopoverTrigger asChild>
+          <span>{tag}</span>
+        </PopoverTrigger>
         <Button
           onClick={() => onDeleteTag()}
           className={cn("m-0 ml-2 h-2 rounded-full p-0")}
