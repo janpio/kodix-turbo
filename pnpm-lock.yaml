@@ -180,6 +180,12 @@ importers:
       '@trpc/server':
         specifier: ^10.37.1
         version: 10.37.1
+      '@upstash/ratelimit':
+        specifier: ^0.4.3
+        version: 0.4.3
+      '@upstash/redis':
+        specifier: ^1.22.0
+        version: 1.22.0
       ai:
         specifier: ^2.1.32
         version: 2.1.32(react@18.2.0)(solid-js@1.7.8)(svelte@4.1.1)(vue@3.3.4)
@@ -471,6 +477,9 @@ importers:
       react-dom:
         specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
+      react-icons:
+        specifier: ^4.10.1
+        version: 4.10.1(react@18.2.0)
       react-svg-pan-zoom:
         specifier: ^3.12.1
         version: 3.12.1

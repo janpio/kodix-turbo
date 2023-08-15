@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useChat } from "ai/react";
-import { PlusIcon, SendIcon, User, X } from "lucide-react";
+import { AiOutlineClear } from "react-icons/ai";
+import { LuPlus, LuSend, LuUser, LuX } from "react-icons/lu";
 
 import {
   Avatar,
@@ -40,12 +41,18 @@ export default function Page() {
     setTags(tags.filter((_, i) => i !== tagToDelete));
   }
 
+  function handleTagChange(index: number, newTag: string) {
+    const newTags = [...tags];
+    newTags[index] = newTag;
+    setTags(newTags);
+  }
+
   // Add tag when enter is pressed
   function handleInputKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Enter") handleAddTag();
   }
 
-  const { messages, setInput, handleSubmit } = useChat({
+  const { messages, setInput, handleSubmit, setMessages } = useChat({
     api: `${
       process.env.NODE_ENV === "production"
         ? "https://www.kodix.com.br"
@@ -55,12 +62,11 @@ export default function Page() {
 
   function handleSend(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const storage = JSON.parse(localStorage.getItem("_reg") ?? "{}") as _reg;
-    if (!storage.hasRegged) {
+    const storage = localStorage.getItem("_reg");
+    if (!storage) {
       setOpen(true);
       return;
     }
-    //alert("Submit");
     handleSubmit(e);
     setInput("");
   }
@@ -70,25 +76,58 @@ export default function Page() {
   }, [setInput, tags]);
 
   return (
-    <main className="h-screen">
-      <div className="bg-background shadow-foreground fixed bottom-0 z-40 flex h-56 w-full flex-col rounded-lg shadow-md transition-transform sm:h-full sm:w-[500px]">
-        <div className="flex h-36 p-2 px-4 pb-1">
-          <ScrollArea className="mr-4 h-[100px] max-h-fit grow space-x-1 space-y-4 pb-1">
-            {tags.map((tag, i) => (
-              <TagItem
-                key={tag + i}
-                tag={tag}
-                onTagChange={(newTag) => {
-                  const newTags = [...tags];
-                  newTags[i] = newTag;
-                  setTags(newTags);
-                }}
-                onDeleteTag={() => handleDeleteTag(i)}
-              />
-            ))}
-          </ScrollArea>
-          <div className="flex flex-col justify-start"></div>
-        </div>
+    <main className="flex h-screen flex-col">
+      {messages.length ? (
+        <ClearChat
+          onClick={() => {
+            setMessages([]);
+          }}
+        />
+      ) : null}
+      <ScrollArea className="flex-grow">
+        {messages.map((message) => (
+          <div
+            key={message.id}
+            className={cn(message.role === "assistant" && "bg-muted")}
+          >
+            <div className="mx-6 flex flex-row py-4">
+              <Avatar className="h-10 w-10">
+                {message.role === "assistant" ? (
+                  <StaysIcon className="h-auto w-auto p-1" />
+                ) : (
+                  <LuUser className="h-auto w-auto p-1" />
+                )}
+              </Avatar>
+              <div className="ml-4 text-sm leading-relaxed">
+                {message.role === "assistant" ? (
+                  <p>{message.content}</p>
+                ) : (
+                  message.content.split(",").map((tag, i) => (
+                    <Badge
+                      key={message.id + i}
+                      className={cn("text-xs")}
+                      variant={"outline"}
+                    >
+                      {tag}
+                    </Badge>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </ScrollArea>
+      <div className="bg-background shadow-foreground bottom-0 h-56 w-full rounded-xl shadow-md transition-transform sm:w-[500px]">
+        <ScrollArea className="h-36 space-x-1 space-y-4 p-4 pt-0">
+          {tags.map((tag, i) => (
+            <TagItem
+              key={i}
+              tag={tag}
+              onTagChange={(newTag) => handleTagChange(i, newTag)}
+              onDeleteTag={() => handleDeleteTag(i)}
+            />
+          ))}
+        </ScrollArea>
         <div className="mb-6 flex flex-row space-x-3 p-4">
           <Input
             type="text"
@@ -103,7 +142,7 @@ export default function Page() {
               disabled={tagInput.trim().length === 0}
               onClick={handleAddTag}
             >
-              <PlusIcon className="h-4 w-4" />
+              <LuPlus className="h-4 w-4" />
             </Button>
           ) : (
             <form onSubmit={handleSend} className="m-0 p-0">
@@ -113,7 +152,7 @@ export default function Page() {
                   type="submit"
                   ref={submitButtonRef}
                 >
-                  <SendIcon className="h-4 w-4" />
+                  <LuSend className="h-4 w-4" />
                 </Button>
                 <DialogContent>
                   <DialogHeader>
@@ -127,47 +166,23 @@ export default function Page() {
           )}
         </div>
       </div>
-      <div className="bg-muted h-full w-full">
-        <ScrollArea className="h-[490px]">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={cn(message.role === "assistant" && "bg-muted")}
-            >
-              <div className="mx-6 flex flex-row py-4">
-                <Avatar className="h-10 w-10">
-                  {message.role === "assistant" ? (
-                    <StaysIcon className="h-auto w-auto p-1" />
-                  ) : (
-                    <User className="h-auto w-auto p-1" />
-                  )}
-                </Avatar>
-                <p className="ml-4 text-sm leading-relaxed">
-                  {message.role === "assistant"
-                    ? message.content
-                    : tags.map((tag) => (
-                        <Badge
-                          key={tag}
-                          className={cn(
-                            "text-xs",
-                            badgeVariants({ variant: "outline" }),
-                          )}
-                        >
-                          {tag}
-                        </Badge>
-                      ))}
-                </p>
-              </div>
-            </div>
-          ))}
-        </ScrollArea>
-      </div>
     </main>
   );
 }
-interface _reg {
-  hasRegged: boolean;
+
+function ClearChat({ onClick }: React.ComponentProps<typeof Button>) {
+  return (
+    <Button
+      className={
+        "bg-foreground/80 absolute right-0 top-0 z-50 m-4 rounded-full"
+      }
+      onClick={onClick}
+    >
+      <AiOutlineClear className="h-4 w-4 rotate-45" />
+    </Button>
+  );
 }
+
 function Form({
   setOpen,
   buttonRef,
@@ -185,12 +200,22 @@ function Form({
     function onElementLoaded() {
       const element = document.getElementById("rd-button-lkigu0y4");
       if (element) {
-        element.onclick = () => {
-          const storage = JSON.parse(
-            localStorage.getItem("_reg") ?? "{}",
-          ) as _reg;
-          storage.hasRegged = true;
-          localStorage.setItem("_reg", JSON.stringify(storage));
+        element.onclick = async () => {
+          await new Promise((resolve) => setTimeout(resolve, 200));
+          const nomeInput = document.getElementById(
+            "rd-text_field-lkigufzg",
+          ) as HTMLInputElement;
+          const emailInput = document.getElementById(
+            "rd-email_field-lkigufzh",
+          ) as HTMLInputElement;
+
+          if (
+            nomeInput.classList.contains("error") ||
+            emailInput.classList.contains("error")
+          )
+            return;
+
+          localStorage.setItem("_reg", "1");
           setOpen(false);
           if (buttonRef.current) {
             buttonRef.current.click();
@@ -237,7 +262,7 @@ function TagItem({
           className={cn("m-0 ml-2 h-2 rounded-full p-0")}
           variant={"link"}
         >
-          <X className="text-foreground/40 h-3 w-3" />
+          <LuX className="text-foreground/40 h-3 w-3" />
         </Button>
       </div>
       <PopoverContent side="top">

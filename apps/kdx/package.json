@@ -28,6 +28,8 @@
     "@trpc/next": "^10.37.1",
     "@trpc/react-query": "^10.37.1",
     "@trpc/server": "^10.37.1",
+    "@upstash/ratelimit": "^0.4.3",
+    "@upstash/redis": "^1.22.0",
     "ai": "^2.1.32",
     "lucide-react": "^0.263.1",
     "next": "^13.4.13",
