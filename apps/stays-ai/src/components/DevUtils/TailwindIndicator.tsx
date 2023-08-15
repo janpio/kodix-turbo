@@ -3,19 +3,13 @@ import Image from "next/image";
 
 import { Dialog, DialogContent, DialogTrigger } from "@kdx/ui";
 
-function getLocalDevURL() {
-  const interfaces = networkInterfaces();
-  return (
-    interfaces.Ethernet?.find((x) => x.family === "IPv4")?.address +
-    ":" +
-    "3001"
-  );
-}
+const url =
+  networkInterfaces().Ethernet?.find((x) => x.family === "IPv4")?.address +
+  ":" +
+  "3001";
 
 export default function TailwindIndicator() {
   if (process.env.NODE_ENV === "production") return null;
-
-  const url = getLocalDevURL();
 
   return (
     <Dialog>
