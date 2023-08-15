@@ -24,8 +24,6 @@ import {
 
 import { StaysIcon } from "~/components/SVGs";
 
-// ... (import statements)
-
 export default function Page() {
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
@@ -56,7 +54,7 @@ export default function Page() {
     api: `${
       process.env.NODE_ENV === "production"
         ? "https://www.kodix.com.br"
-        : "http://localhost:3000"
+        : window?.location?.origin?.replace("3001", "3000")
     }/api/ai`,
   });
 
@@ -76,7 +74,7 @@ export default function Page() {
   }, [setInput, tags]);
 
   return (
-    <main className="flex h-screen flex-col">
+    <main className="flex h-screen min-h-screen flex-col">
       {messages.length ? (
         <ClearChat
           onClick={() => {

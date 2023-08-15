@@ -9,6 +9,14 @@ const config = {
   /** We already do linting and typechecking as separate tasks in CI */
   eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "api.qrserver.com",
+      },
+    ],
+  },
   webpack(config) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     config.module.rules.push({
