@@ -297,9 +297,9 @@ export default function Page() {
         </div>
       </div>
       <ScrollArea className="h-screen w-full">
-        {messages.map((message) => (
+        {messages.map((message, i) => (
           <div
-            ref={lastMessageRef}
+            ref={messages.length - 1 === i ? lastMessageRef : null}
             key={message.id}
             className={cn(message.role === "assistant" && "bg-muted")}
           >
