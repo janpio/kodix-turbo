@@ -7,7 +7,7 @@ import { Inter as FontSans } from "next/font/google";
 import { headers } from "next/headers";
 import Script from "next/script";
 
-import { cn } from "@kdx/ui";
+import { cn, Toaster } from "@kdx/ui";
 
 import TailwindIndicator from "~/components/DevUtils/TailwindIndicator";
 import { TRPCReactProvider } from "./providers";
@@ -45,6 +45,7 @@ export default function Layout(props: { children: React.ReactNode }) {
         ></Script>
         <TRPCReactProvider headers={headers()}>
           {props.children}
+          <Toaster />
           <Analytics />
           <TailwindIndicator />
         </TRPCReactProvider>

@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useChat } from "ai/react";
-import { User } from "lucide-react";
+import { LuUser } from "react-icons/lu";
 
 import {
   Avatar,
@@ -23,7 +23,7 @@ import {
   Textarea,
 } from "@kdx/ui";
 
-import { StaysIcon, StaysLogo } from "./SVGs/index";
+import { Slash, StaysIcon, StaysLogo } from "./SVGs/index";
 
 declare global {
   interface Window {
@@ -157,7 +157,7 @@ export default function Chat() {
                         {message.role === "assistant" ? (
                           <StaysIcon className="h-auto w-auto p-1" />
                         ) : (
-                          <User className="h-auto w-auto p-1" />
+                          <LuUser className="h-auto w-auto p-1" />
                         )}
                       </Avatar>
                       <p className="ml-4 text-sm leading-relaxed">

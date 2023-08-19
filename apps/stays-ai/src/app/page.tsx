@@ -1,9 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useChat } from "ai/react";
 import { AiOutlineClear } from "react-icons/ai";
-import { LuPlus, LuSend, LuUser, LuX } from "react-icons/lu";
+import { BsSlashLg } from "react-icons/bs";
+import {
+  LuArrowDown,
+  LuLoader2,
+  LuPlus,
+  LuSend,
+  LuUser,
+  LuX,
+} from "react-icons/lu";
 
 import {
   Avatar,
@@ -20,15 +29,19 @@ import {
   PopoverContent,
   PopoverTrigger,
   ScrollArea,
+  toast,
 } from "@kdx/ui";
 
-import { StaysIcon } from "~/components/SVGs";
+import { Slash, StaysIcon, StaysLogo } from "~/components/SVGs";
 
 export default function Page() {
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
   const submitButtonRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const lastMessageRef = useRef<HTMLDivElement>(null);
+
   function handleAddTag() {
     if (tagInput.trim().length === 0) return;
     setTags([...tags, tagInput]);
@@ -54,11 +67,25 @@ export default function Page() {
     api: `${
       process.env.NODE_ENV === "production"
         ? "https://www.kodix.com.br"
-        : window?.location?.origin?.replace("3001", "3000")
+        : window.location.origin.replace("3001", "3000")
     }/api/ai`,
+    onError: (err) => {
+      setLoading(false);
+      toast({
+        variant: "destructive",
+        title: `Aconteceu um erro!`,
+        description: `Por favor, tente novamente mais tarde`,
+      });
+    },
+    onFinish: () => {
+      setLoading(false);
+      lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+    },
   });
 
   function handleSend(e: React.FormEvent<HTMLFormElement>) {
+    setLoading(true);
+
     e.preventDefault();
     const storage = localStorage.getItem("_reg");
     if (!storage) {
@@ -70,21 +97,209 @@ export default function Page() {
   }
 
   useEffect(() => {
+    setMessages([
+      {
+        id: "1",
+        content:
+          "Olá, eu sou o assistente virtual da Kodix, como posso te ajudar?",
+        role: "assistant",
+      },
+      {
+        id: "2",
+        content: "Como posso melhorar a divulgação do meu anúncio?",
+        role: "user",
+      },
+      {
+        id: "3",
+        content: "Voce pode comer banana muitlo legal?",
+        role: "assistant",
+      },
+      {
+        id: "4",
+        content: "Como posso melhorar a divulgação do meu anúncio?",
+        role: "user",
+      },
+      {
+        id: "5",
+        content:
+          "Olá, eu sou o assistente virtual da Kodix, como posso te ajudar?",
+        role: "assistant",
+      },
+      {
+        id: "6",
+        content: "Como posso melhorar a divulgação do meu anúncio?",
+        role: "user",
+      },
+      {
+        id: "7",
+        content: "Voce pode comer banana muitlo legal?",
+        role: "assistant",
+      },
+      {
+        id: "8",
+        content: "Como posso melhorar a divulgação do meu anúncio?",
+        role: "user",
+      },
+      {
+        id: "9",
+        content:
+          "Olá, eu sou o assistente virtual da Kodix, como posso te ajudar?",
+        role: "assistant",
+      },
+      {
+        id: "10",
+        content: "Como posso melhorar a divulgação do meu anúncio?",
+        role: "user",
+      },
+      {
+        id: "11",
+        content: "Voce pode comer banana muitlo legal?",
+        role: "assistant",
+      },
+      {
+        id: "12",
+        content: "Como posso melhorar a divulgação do meu anúncio?",
+        role: "user",
+      },
+      {
+        id: "13",
+        content: "Voce pode comer banana muitlo legal?",
+        role: "assistant",
+      },
+      {
+        id: "14",
+        content: "Como posso melhorar a divulgação do meu anúncio?",
+        role: "user",
+      },
+      {
+        id: "15",
+        content:
+          "Olá, eu sou o assistente virtual da Kodix, como posso te ajudar?",
+        role: "assistant",
+      },
+      {
+        id: "16",
+        content: "Como posso melhorar a divulgação do meu anúncio?",
+        role: "user",
+      },
+      {
+        id: "17",
+        content: "Voce pode comer banana muitlo legal?",
+        role: "assistant",
+      },
+      {
+        id: "18",
+        content: "Como posso melhorar a divulgação do meu anúncio?",
+        role: "user",
+      },
+      {
+        id: "19",
+        content:
+          "Olá, eu sou o assistente virtual da Kodix, como posso te ajudar?",
+        role: "assistant",
+      },
+      {
+        id: "20",
+        content: "Como posso melhorar a divulgação do meu anúncio?",
+        role: "user",
+      },
+      {
+        id: "30",
+        content: "Voce pode comer banana muitlo legal?",
+        role: "assistant",
+      },
+      {
+        id: "31",
+        content: "Como posso melhorar a divulgação do meu anúncio?",
+        role: "user",
+      },
+    ]);
+  }, [setMessages]);
+
+  useEffect(() => {
     setInput(tags.join(","));
   }, [setInput, tags]);
 
   return (
-    <main className="flex h-screen min-h-screen flex-col">
+    <main className="flex flex-col sm:flex-row">
       {messages.length ? (
-        <ClearChat
-          onClick={() => {
-            setMessages([]);
-          }}
-        />
+        <>
+          <ClearChat
+            onClick={() => {
+              setMessages([]);
+            }}
+          />
+          <ScrollDownButton
+            onClick={() => {
+              lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+            }}
+          />
+        </>
       ) : null}
-      <ScrollArea className="flex-grow">
+      <div className="bg-background fixed bottom-0 left-0 z-50 w-full rounded-md border shadow-md sm:relative sm:w-[700px] sm:p-8">
+        <div className="hidden sm:block">
+          <Link target="_blank" href="https://www.stays.net">
+            <StaysLogo className="h-10 w-40" />
+          </Link>
+        </div>
+        <div className="bg-red-200">
+          <ScrollArea className="h-36 space-x-1 space-y-4 p-4 pt-0">
+            {tags.map((tag, i) => (
+              <TagItem
+                key={i}
+                tag={tag}
+                onTagChange={(newTag) => handleTagChange(i, newTag)}
+                onDeleteTag={() => handleDeleteTag(i)}
+              />
+            ))}
+          </ScrollArea>
+          <div className="mb-6 flex flex-row space-x-3 p-4">
+            <Input
+              type="text"
+              className="text-md"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={(e) => handleInputKeyDown(e)}
+            ></Input>
+            {tagInput.trim().length > 0 ? (
+              <Button
+                variant={"outline"}
+                disabled={tagInput.trim().length === 0 || loading}
+                onClick={handleAddTag}
+              >
+                <LuPlus className="h-4 w-4" />
+              </Button>
+            ) : (
+              <form onSubmit={handleSend} className="m-0 p-0">
+                <Dialog open={open} onOpenChange={setOpen}>
+                  <Button
+                    disabled={!(tags.length > 0) || loading}
+                    type="submit"
+                    ref={submitButtonRef}
+                  >
+                    {loading ? (
+                      <LuLoader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <LuSend className="h-4 w-4" />
+                    )}
+                  </Button>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogDescription>
+                        <Form setOpen={setOpen} buttonRef={submitButtonRef} />
+                      </DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+              </form>
+            )}
+          </div>
+        </div>
+      </div>
+      <ScrollArea className="h-screen w-full">
         {messages.map((message) => (
           <div
+            ref={lastMessageRef}
             key={message.id}
             className={cn(message.role === "assistant" && "bg-muted")}
           >
@@ -114,57 +329,40 @@ export default function Page() {
             </div>
           </div>
         ))}
+        <div className="h-[250px] sm:hidden md:h-48"></div>
       </ScrollArea>
-      <div className="bg-background shadow-foreground bottom-0 h-56 w-full rounded-xl shadow-md transition-transform sm:w-[500px]">
-        <ScrollArea className="h-36 space-x-1 space-y-4 p-4 pt-0">
-          {tags.map((tag, i) => (
-            <TagItem
-              key={i}
-              tag={tag}
-              onTagChange={(newTag) => handleTagChange(i, newTag)}
-              onDeleteTag={() => handleDeleteTag(i)}
-            />
-          ))}
-        </ScrollArea>
-        <div className="mb-6 flex flex-row space-x-3 p-4">
-          <Input
-            type="text"
-            className="text-md"
-            value={tagInput}
-            onChange={(e) => setTagInput(e.target.value)}
-            onKeyDown={(e) => handleInputKeyDown(e)}
-          ></Input>
-          {tagInput.trim().length > 0 ? (
-            <Button
-              variant={"outline"}
-              disabled={tagInput.trim().length === 0}
-              onClick={handleAddTag}
-            >
-              <LuPlus className="h-4 w-4" />
-            </Button>
-          ) : (
-            <form onSubmit={handleSend} className="m-0 p-0">
-              <Dialog open={open} onOpenChange={setOpen}>
-                <Button
-                  disabled={!(tags.length > 0)}
-                  type="submit"
-                  ref={submitButtonRef}
-                >
-                  <LuSend className="h-4 w-4" />
-                </Button>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogDescription>
-                      <Form setOpen={setOpen} buttonRef={submitButtonRef} />
-                    </DialogDescription>
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
-            </form>
-          )}
-        </div>
-      </div>
     </main>
+  );
+}
+
+//function BreadCrumbs() {
+//  return (
+//    <ol className="flex">
+//      <li>
+//        <Link target="_blank" href="https://www.stays.net">
+//          <StaysLogo className="h-10 w-40" />
+//        </Link>
+//      </li>
+//      <li className="flex items-center">
+//        <BsSlashLg className="text-foreground/20 h-7 w-7 -rotate-12" />
+//      </li>
+//      <li className="flex items-center">
+//        <span className="text-2xl font-bold">IA</span>
+//      </li>
+//    </ol>
+//  );
+//}
+
+function ScrollDownButton({ onClick }: React.ComponentProps<typeof Button>) {
+  return (
+    <Button
+      className={cn(
+        "bg-foreground/80 absolute bottom-0 right-0 z-50 m-4 rounded-full",
+      )}
+      onClick={onClick}
+    >
+      <LuArrowDown className="h-4 w-4" />
+    </Button>
   );
 }
 

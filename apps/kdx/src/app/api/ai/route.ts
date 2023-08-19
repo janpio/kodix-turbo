@@ -26,6 +26,8 @@ const openai = new OpenAIApi(config);
 // });
 
 export async function POST(req: NextRequest) {
+  throw new Error("Not implemented");
+
   //rate limit based on ip
   //const { success } = await ratelimit.limit(req.ip ?? "127.0.0.1");
   //if (!success) return new Response("Too many requests", { status: 429 });
