@@ -24,6 +24,7 @@ export * from "./components/select";
 export * from "./components/separator";
 export * from "./components/skeleton";
 export * from "./components/table";
+export * from "./components/tabs";
 export * from "./components/textarea";
 export * from "./components/toast";
 export * from "./components/toaster";

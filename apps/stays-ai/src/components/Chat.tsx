@@ -32,10 +32,6 @@ declare global {
   }
 }
 
-interface _reg {
-  hasRegged: boolean;
-}
-
 function Form({
   setOpen,
   buttonRef,
@@ -54,11 +50,7 @@ function Form({
       const element = document.getElementById("rd-button-lkigu0y4");
       if (element) {
         element.onclick = () => {
-          const storage = JSON.parse(
-            localStorage.getItem("_reg") ?? "{}",
-          ) as _reg;
-          storage.hasRegged = true;
-          localStorage.setItem("_reg", JSON.stringify(storage));
+          localStorage.setItem("registered", "1");
           setOpen(false);
           if (buttonRef.current) {
             buttonRef.current.click();
@@ -102,12 +94,11 @@ export default function Chat() {
 
   function submitForm(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const storage = JSON.parse(localStorage.getItem("_reg") ?? "{}") as _reg;
-    if (!storage.hasRegged) {
+    const registered = Boolean(localStorage.getItem("registered") ?? "0");
+    if (!registered) {
       setOpen(true);
       return;
     }
-    //alert("Submit");
     handleSubmit(e);
     setInput("");
   }

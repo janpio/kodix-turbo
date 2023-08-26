@@ -1,18 +1,21 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { SetStateAction, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import type { Message } from "ai";
 import { useChat } from "ai/react";
 import { AiOutlineClear } from "react-icons/ai";
 import { BsSlashLg } from "react-icons/bs";
 import {
   LuArrowDown,
   LuLoader2,
+  LuPencil,
   LuPlus,
   LuSend,
   LuUser,
   LuX,
 } from "react-icons/lu";
+import ReactMarkdown from "react-markdown";
 
 import {
   Avatar,
@@ -20,6 +23,10 @@ import {
   badgeVariants,
   Button,
   cn,
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -29,10 +36,16 @@ import {
   PopoverContent,
   PopoverTrigger,
   ScrollArea,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
   toast,
 } from "@kdx/ui";
 
 import { Slash, StaysIcon, StaysLogo } from "~/components/SVGs";
+
+export const joiner = "<&&>";
 
 export default function Page() {
   const [tags, setTags] = useState<string[]>([]);
@@ -41,6 +54,34 @@ export default function Page() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const lastMessageRef = useRef<HTMLDivElement>(null);
+  const [mode, setMode] = useState<"title" | "description">("title");
+
+  const { messages, setInput, handleSubmit, setMessages } = useChat({
+    api: `${
+      process.env.NODE_ENV === "production"
+        ? "https://www.kodix.com.br"
+        : typeof window !== "undefined"
+        ? window.location.origin.replace("3001", "3000")
+        : ""
+    }/api/ai`,
+    onError: () => {
+      setLoading(false);
+      toast({
+        variant: "destructive",
+        title: `Aconteceu um erro!`,
+        description: `Por favor, tente novamente mais tarde`,
+      });
+      //remove the last message the user sent
+      setMessages(messages.slice(0, -1));
+    },
+    onFinish: () => {
+      setLoading(false);
+      lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+    },
+    body: {
+      mode,
+    },
+  });
 
   function handleAddTag() {
     if (tagInput.trim().length === 0) return;
@@ -63,172 +104,43 @@ export default function Page() {
     if (event.key === "Enter") handleAddTag();
   }
 
-  const { messages, setInput, handleSubmit, setMessages } = useChat({
-    api: `${
-      process.env.NODE_ENV === "production"
-        ? "https://www.kodix.com.br"
-        : window.location.origin.replace("3001", "3000")
-    }/api/ai`,
-    onError: (err) => {
-      setLoading(false);
-      toast({
-        variant: "destructive",
-        title: `Aconteceu um erro!`,
-        description: `Por favor, tente novamente mais tarde`,
-      });
-    },
-    onFinish: () => {
-      setLoading(false);
-      lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
-    },
-  });
-
   function handleSend(e: React.FormEvent<HTMLFormElement>) {
-    setLoading(true);
-
     e.preventDefault();
-    const storage = localStorage.getItem("_reg");
-    if (!storage) {
+    const registered = localStorage.getItem("registered");
+    if (!registered) {
       setOpen(true);
       return;
     }
+    setLoading(true);
     handleSubmit(e);
     setInput("");
   }
 
   useEffect(() => {
-    setMessages([
-      {
-        id: "1",
-        content:
-          "Olá, eu sou o assistente virtual da Kodix, como posso te ajudar?",
-        role: "assistant",
-      },
-      {
-        id: "2",
-        content: "Como posso melhorar a divulgação do meu anúncio?",
-        role: "user",
-      },
-      {
-        id: "3",
-        content: "Voce pode comer banana muitlo legal?",
-        role: "assistant",
-      },
-      {
-        id: "4",
-        content: "Como posso melhorar a divulgação do meu anúncio?",
-        role: "user",
-      },
-      {
-        id: "5",
-        content:
-          "Olá, eu sou o assistente virtual da Kodix, como posso te ajudar?",
-        role: "assistant",
-      },
-      {
-        id: "6",
-        content: "Como posso melhorar a divulgação do meu anúncio?",
-        role: "user",
-      },
-      {
-        id: "7",
-        content: "Voce pode comer banana muitlo legal?",
-        role: "assistant",
-      },
-      {
-        id: "8",
-        content: "Como posso melhorar a divulgação do meu anúncio?",
-        role: "user",
-      },
-      {
-        id: "9",
-        content:
-          "Olá, eu sou o assistente virtual da Kodix, como posso te ajudar?",
-        role: "assistant",
-      },
-      {
-        id: "10",
-        content: "Como posso melhorar a divulgação do meu anúncio?",
-        role: "user",
-      },
-      {
-        id: "11",
-        content: "Voce pode comer banana muitlo legal?",
-        role: "assistant",
-      },
-      {
-        id: "12",
-        content: "Como posso melhorar a divulgação do meu anúncio?",
-        role: "user",
-      },
-      {
-        id: "13",
-        content: "Voce pode comer banana muitlo legal?",
-        role: "assistant",
-      },
-      {
-        id: "14",
-        content: "Como posso melhorar a divulgação do meu anúncio?",
-        role: "user",
-      },
-      {
-        id: "15",
-        content:
-          "Olá, eu sou o assistente virtual da Kodix, como posso te ajudar?",
-        role: "assistant",
-      },
-      {
-        id: "16",
-        content: "Como posso melhorar a divulgação do meu anúncio?",
-        role: "user",
-      },
-      {
-        id: "17",
-        content: "Voce pode comer banana muitlo legal?",
-        role: "assistant",
-      },
-      {
-        id: "18",
-        content: "Como posso melhorar a divulgação do meu anúncio?",
-        role: "user",
-      },
-      {
-        id: "19",
-        content:
-          "Olá, eu sou o assistente virtual da Kodix, como posso te ajudar?",
-        role: "assistant",
-      },
-      {
-        id: "20",
-        content: "Como posso melhorar a divulgação do meu anúncio?",
-        role: "user",
-      },
-      {
-        id: "30",
-        content: "Voce pode comer banana muitlo legal?",
-        role: "assistant",
-      },
-      {
-        id: "31",
-        content: "Como posso melhorar a divulgação do meu anúncio?",
-        role: "user",
-      },
-    ]);
+    const localStorageMessages = JSON.parse(
+      window.localStorage.getItem("messages") ?? "[]",
+    ) as Message[];
+
+    setMessages(localStorageMessages);
   }, [setMessages]);
 
   useEffect(() => {
-    setInput(tags.join(","));
+    window.localStorage.setItem("messages", JSON.stringify(messages));
+  }, [messages]);
+
+  useEffect(() => {
+    setInput(tags.join(joiner));
   }, [setInput, tags]);
 
   return (
     <main className="flex flex-col sm:flex-row">
       {messages.length ? (
         <>
-          <ClearChat
+          {/* <ClearChat
             onClick={() => {
               setMessages([]);
             }}
-          />
+          /> */}
           <ScrollDownButton
             onClick={() => {
               lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -242,6 +154,7 @@ export default function Page() {
             <StaysLogo className="h-10 w-40" />
           </Link>
         </div>
+        <TitleOrDescription mode={mode} setMode={setMode} />
         <div className="bg-red-200">
           <ScrollArea className="h-36 space-x-1 space-y-4 p-4 pt-0">
             {tags.map((tag, i) => (
@@ -296,42 +209,89 @@ export default function Page() {
           </div>
         </div>
       </div>
+
       <ScrollArea className="h-screen w-full">
         {messages.map((message, i) => (
-          <div
-            ref={messages.length - 1 === i ? lastMessageRef : null}
-            key={message.id}
-            className={cn(message.role === "assistant" && "bg-muted")}
-          >
-            <div className="mx-6 flex flex-row py-4">
-              <Avatar className="h-10 w-10">
-                {message.role === "assistant" ? (
-                  <StaysIcon className="h-auto w-auto p-1" />
-                ) : (
-                  <LuUser className="h-auto w-auto p-1" />
-                )}
-              </Avatar>
-              <div className="ml-4 text-sm leading-relaxed">
-                {message.role === "assistant" ? (
-                  <p>{message.content}</p>
-                ) : (
-                  message.content.split(",").map((tag, i) => (
-                    <Badge
-                      key={message.id + i}
-                      className={cn("text-xs")}
-                      variant={"outline"}
+          <ContextMenu key={message.id}>
+            <ContextMenuTrigger disabled={message.role === "assistant"}>
+              <div
+                ref={messages.length - 1 === i ? lastMessageRef : null}
+                className={cn(message.role === "assistant" && "bg-muted")}
+              >
+                <div className="mx-6 flex flex-row py-4">
+                  <Avatar className="h-10 w-10">
+                    {message.role === "assistant" ? (
+                      <StaysIcon className="h-auto w-auto p-1" />
+                    ) : (
+                      <LuUser className="h-auto w-auto p-1" />
+                    )}
+                  </Avatar>
+                  <div className="ml-4 grow text-sm leading-relaxed">
+                    {message.role === "assistant" ? (
+                      <ReactMarkdown>{message.content}</ReactMarkdown>
+                    ) : (
+                      message.content.split(joiner).map((tag, i) => (
+                        <Badge
+                          key={message.id + i}
+                          className={cn("text-xs")}
+                          variant={"outline"}
+                        >
+                          {tag}
+                        </Badge>
+                      ))
+                    )}
+                  </div>
+                  {message.role === "user" && (
+                    <Button
+                      size={"sm"}
+                      variant={"ghost"}
+                      className={"sm:hidden sm:hover:block"}
                     >
-                      {tag}
-                    </Badge>
-                  ))
-                )}
+                      <div>
+                        <LuPencil className="h-4 w-4" />
+                      </div>
+                    </Button>
+                  )}
+                </div>
               </div>
-            </div>
-          </div>
+            </ContextMenuTrigger>
+            <ContextMenuContent>
+              <ContextMenuItem>
+                <LuPencil className="mr-2 h-4 w-4" />
+                Edit Event
+              </ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
         ))}
         <div className="h-[250px] sm:hidden md:h-48"></div>
       </ScrollArea>
     </main>
+  );
+}
+
+function TitleOrDescription({
+  mode,
+  setMode,
+}: {
+  mode: "title" | "description";
+  setMode: React.Dispatch<React.SetStateAction<"title" | "description">>;
+}) {
+  return (
+    <Tabs
+      value={mode}
+      className="w-[400px]"
+      onValueChange={(mode) => {
+        if (mode !== "title" && mode !== "description")
+          throw new Error("Invalid mode");
+
+        setMode(mode);
+      }}
+    >
+      <TabsList>
+        <TabsTrigger value="title">Título</TabsTrigger>
+        <TabsTrigger value="description">Descrição</TabsTrigger>
+      </TabsList>
+    </Tabs>
   );
 }
 
@@ -411,7 +371,7 @@ function Form({
           )
             return;
 
-          localStorage.setItem("_reg", "1");
+          localStorage.setItem("registered", "1");
           setOpen(false);
           if (buttonRef.current) {
             buttonRef.current.click();

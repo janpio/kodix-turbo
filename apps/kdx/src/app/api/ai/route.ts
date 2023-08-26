@@ -1,10 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import type { NextRequest } from "next/server";
-import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
-
-import { Redis } from "@upstash/redis";
+import type { Message } from "ai";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import { Configuration, OpenAIApi } from "openai-edge";
 
@@ -26,36 +21,60 @@ const openai = new OpenAIApi(config);
 // });
 
 export async function POST(req: NextRequest) {
-  throw new Error("Not implemented");
-
   //rate limit based on ip
   //const { success } = await ratelimit.limit(req.ip ?? "127.0.0.1");
   //if (!success) return new Response("Too many requests", { status: 429 });
 
-  const { messages } = await req.json();
+  const request = (await req.json()) as {
+    messages: {
+      role: "system" | "user" | "assistant";
+      content: string;
+    }[];
+    mode: "title" | "description";
+  };
 
-  messages.unshift({
+  request.messages = request.messages
+    .filter((x) => x.role === "user")
+    .slice(-1);
+  request.messages.unshift({
     role: "system",
-    content:
-      "Você é um assistente que foi feito para me auxiliar com anúncios de aluguéis de temporada. Você foi feito para me ajudar a gerar títulos de anúncios, descrições de anúncios, e assuntos relacionados a aluguéis de temporada. Em nenhuma hipótese você vai responder qualquer pergunta que não seja relacionada a aluguéis de temporada. NÂO RESPONDA A PERGUNTAS SOBRE OUTRO ASSUNTO!!!  APENAS RESPONDA PERGUNTAS SOBRE ALUGUÉIS DE TEMPORADA!!",
+    content: `Você é um assistente que foi feito para me auxiliar com anúncios de aluguéis de temporada. Você foi feito para me ajudar a gerar ${modeToText(
+      request.mode,
+    )} de anúncios. Em nenhuma hipótese você vai responder qualquer pergunta que não seja relacionada a aluguéis de temporada. APENAS RESPONDA PERGUNTAS SOBRE ALUGUÉIS DE TEMPORADA!! Responda em markdown.`,
   });
 
-  const unformattedMessage = messages[messages.length - 1];
-  const formattedTags = unformattedMessage.content
-    .split(",")
-    .map((tag: string) => `\n ${tag}`)
-    .join("");
-  messages[messages.length - 1].content =
-    "Gere um título curto atrativo para o meu aluguel de temporada utilizando estes pontos:" +
-    formattedTags;
+  const formattedMessages = request.messages.map((x) => {
+    if (x.role === "user") {
+      x.content =
+        `Gere ${
+          request.mode === "title"
+            ? "3 títulos atrativos"
+            : "uma descrição curta atrativa"
+        } em markdown para o meu aluguel de temporada utilizando estes pontos:` +
+        x.content
+          .split("<&&>")
+          .map((tag: string) => `\n ${tag}`)
+          .join("");
+    }
+    return x;
+  });
 
   const response = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
     stream: true,
-    messages,
+    messages: formattedMessages,
   });
   const stream = OpenAIStream(response);
   return new StreamingTextResponse(stream);
+
+  function modeToText(mode: "title" | "description") {
+    switch (mode) {
+      case "title":
+        return "título";
+      case "description":
+        return "descrição";
+    }
+  }
 }
 
 export function OPTIONS() {
