@@ -43,8 +43,8 @@ import {
 } from "@kdx/ui";
 
 import { DataTablePagination } from "../../pagination";
-import CancelationDialog from "./CancelationDialog";
-import EditEventDialog from "./EditEventDialog";
+import { CancelationDialog } from "./CancelationDialog";
+import { EditEventDialog } from "./EditEventDialog";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 type CalendarTask = RouterOutput["event"]["getAll"][number];

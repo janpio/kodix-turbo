@@ -1,11 +1,9 @@
 "use client";
 
-import { SetStateAction, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { Message } from "ai";
 import { useChat } from "ai/react";
-import { AiOutlineClear } from "react-icons/ai";
-import { BsSlashLg } from "react-icons/bs";
 import {
   LuArrowDown,
   LuLoader2,
@@ -37,15 +35,14 @@ import {
   PopoverTrigger,
   ScrollArea,
   Tabs,
-  TabsContent,
   TabsList,
   TabsTrigger,
   toast,
 } from "@kdx/ui";
 
-import { Slash, StaysIcon, StaysLogo } from "~/components/SVGs";
+import { StaysIcon, StaysLogo } from "~/components/svgs";
 
-export const joiner = "<&&>";
+const joiner = "<&&>";
 
 export default function Page() {
   const [tags, setTags] = useState<string[]>([]);
@@ -326,18 +323,18 @@ function ScrollDownButton({ onClick }: React.ComponentProps<typeof Button>) {
   );
 }
 
-function ClearChat({ onClick }: React.ComponentProps<typeof Button>) {
-  return (
-    <Button
-      className={
-        "bg-foreground/80 absolute right-0 top-0 z-50 m-4 rounded-full"
-      }
-      onClick={onClick}
-    >
-      <AiOutlineClear className="h-4 w-4 rotate-45" />
-    </Button>
-  );
-}
+// function ClearChat({ onClick }: React.ComponentProps<typeof Button>) {
+//   return (
+//     <Button
+//       className={
+//         "bg-foreground/80 absolute right-0 top-0 z-50 m-4 rounded-full"
+//       }
+//       onClick={onClick}
+//     >
+//       <AiOutlineClear className="h-4 w-4 rotate-45" />
+//     </Button>
+//   );
+// }
 
 function Form({
   setOpen,
@@ -347,8 +344,8 @@ function Form({
   buttonRef: React.RefObject<HTMLButtonElement>;
 }) {
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    new window.RDStationForms(
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
+    new (window as any).RDStationForms(
       "ai-1f84733bbb7018305ac8",
       "UA-78082533-1",
     ).createForm();

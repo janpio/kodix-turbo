@@ -28,21 +28,19 @@ import {
   useToast,
 } from "@kdx/ui";
 
-interface Props {
-  id: string;
-  appName: string;
-  appDescription: string;
-  appUrl: string;
-  installed: boolean;
-}
-
-const KodixApp: React.FC<Props> = ({
+export function KodixApp({
   id,
   appName,
   appDescription,
   appUrl,
   installed,
-}) => {
+}: {
+  id: string;
+  appName: string;
+  appDescription: string;
+  appUrl: string;
+  installed: boolean;
+}) {
   const { data: session } = useSession();
   const [open, onOpenChange] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -152,6 +150,4 @@ const KodixApp: React.FC<Props> = ({
       </Card>
     </>
   );
-};
-
-export default KodixApp;
+}

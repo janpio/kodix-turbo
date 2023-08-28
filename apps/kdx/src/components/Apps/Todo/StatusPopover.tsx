@@ -26,7 +26,7 @@ import {
 /**
  * @description You can optionally input a button to overwrite the default button trigger.
  */
-export default function StatusPopover({
+export function StatusPopover({
   status,
   setStatus,
   children,

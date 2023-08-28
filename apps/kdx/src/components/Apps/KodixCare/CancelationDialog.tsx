@@ -22,7 +22,7 @@ import { api } from "~/utils/api";
 /**
  * To use this this component, you need to wrap it around a AlertDialogTrigger component.
  */
-export default function CancelationDialog({
+export function CancelationDialog({
   eventMasterId,
   eventExceptionId,
   date,

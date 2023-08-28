@@ -1,4 +1,4 @@
-import Dialog from "./Dialog";
+import { Dialog } from "./Dialog";
 
 export async function GithubUser({ username }: { username: string }) {
   const user = await fetch(`https://api.github.com/users/${username}`);

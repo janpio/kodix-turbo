@@ -18,7 +18,7 @@ import {
   PriorityToTxt,
 } from "./PriorityPopover";
 import type { Priority } from "./PriorityPopover";
-import StatusPopover, { StatusIcon, StatusToText } from "./StatusPopover";
+import { StatusIcon, StatusPopover, StatusToText } from "./StatusPopover";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 export type TodoColumn = RouterOutput["todo"]["getAllForLoggedUser"][number];

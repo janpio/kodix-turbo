@@ -29,7 +29,7 @@ import {
   PriorityToTxt,
 } from "~/components/Apps/Todo/PriorityPopover";
 import type { Priority } from "~/components/Apps/Todo/PriorityPopover";
-import StatusPopover from "~/components/Apps/Todo/StatusPopover";
+import { StatusPopover } from "~/components/Apps/Todo/StatusPopover";
 import {
   DatePickerIcon,
   DatePickerWithPresets,

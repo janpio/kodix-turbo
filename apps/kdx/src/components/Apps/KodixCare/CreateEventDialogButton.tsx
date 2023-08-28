@@ -23,9 +23,9 @@ import {
 
 import { api } from "~/utils/api";
 import { DateTimePicker } from "~/components/date-time-picker/date-time-picker";
-import RecurrencePicker from "./RecurrencePicker";
+import { RecurrencePicker } from "./RecurrencePicker";
 
-export default function CreateEventDialogButton() {
+export function CreateEventDialogButton() {
   const [open, setOpen] = useState(false);
   const ctx = api.useContext();
   const { mutate: createEvent } = api.event.create.useMutation({

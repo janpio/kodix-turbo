@@ -21,7 +21,7 @@ const callsToActionProfilePic = [
   { name: "Log Out", href: "#", icon: ArrowLeftOnRectangleIcon },
 ];
 
-export default function NavBar() {
+export function NavBar() {
   const { data: session } = useSession();
 
   return (

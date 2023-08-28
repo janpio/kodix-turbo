@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/require-await */
+ 
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";

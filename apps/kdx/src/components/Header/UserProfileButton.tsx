@@ -22,7 +22,7 @@ import {
 
 import { AddWorkspaceDialog } from "./AddWorkspaceDialog";
 
-export default function UserProfileButton() {
+export function UserProfileButton() {
   const { data: session } = useSession();
   const [showNewWorkspaceDialog, setShowNewWorkspaceDialog] =
     React.useState(false);

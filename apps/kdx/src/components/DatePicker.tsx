@@ -13,7 +13,7 @@ import {
   PopoverTrigger,
 } from "@kdx/ui";
 
-export default function DatePicker({
+export function DatePicker({
   date,
   setDate,
   disabledDate,

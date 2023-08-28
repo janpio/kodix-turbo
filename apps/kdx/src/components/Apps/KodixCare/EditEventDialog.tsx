@@ -42,12 +42,12 @@ import {
 } from "@kdx/ui";
 
 import { api } from "~/utils/api";
-import RecurrencePicker from "./RecurrencePicker";
+import { RecurrencePicker } from "./RecurrencePicker";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 type CalendarTask = RouterOutput["event"]["getAll"][number];
 
-export default function EditEventDialog({
+export function EditEventDialog({
   calendarTask,
   open,
   setOpen,

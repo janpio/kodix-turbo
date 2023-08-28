@@ -6,7 +6,7 @@ import { Button } from "@kdx/ui";
 
 import { DialogContext } from "./Contexts/DialogContexts";
 
-export default function Dialog() {
+export function Dialog() {
   const { open, toggle } = React.useContext(DialogContext);
   return (
     <>

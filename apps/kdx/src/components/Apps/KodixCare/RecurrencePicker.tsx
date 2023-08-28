@@ -31,11 +31,11 @@ import {
 } from "@kdx/ui";
 
 import { tzOffsetText } from "~/utils/helpers";
-import DatePicker from "~/components/DatePicker";
+import { DatePicker } from "~/components/DatePicker";
 import { FrequencyToTxt } from "~/components/FrequencyPicker";
 
 const freqs = [RRule.DAILY, RRule.WEEKLY, RRule.MONTHLY, RRule.YEARLY];
-export default function RecurrencePicker({
+export function RecurrencePicker({
   open,
   setOpen,
   interval,

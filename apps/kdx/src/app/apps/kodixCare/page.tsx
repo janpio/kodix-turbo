@@ -7,7 +7,7 @@ import { H1, Separator } from "@kdx/ui";
 
 import { api } from "~/utils/api";
 import { columns } from "~/components/Apps/KodixCare/columns";
-import CreateEventDialogButton from "~/components/Apps/KodixCare/CreateEventDialogButton";
+import { CreateEventDialogButton } from "~/components/Apps/KodixCare/CreateEventDialogButton";
 import { DataTable } from "~/components/Apps/KodixCare/data-table";
 
 export default function KodixCare() {

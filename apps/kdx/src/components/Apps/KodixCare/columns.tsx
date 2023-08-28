@@ -14,8 +14,8 @@ import {
   DropdownMenuTrigger,
 } from "@kdx/ui";
 
-import CancelationDialog from "./CancelationDialog";
-import EditEventDialog from "./EditEventDialog";
+import { CancelationDialog } from "./CancelationDialog";
+import { EditEventDialog } from "./EditEventDialog";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 type CalendarTask = RouterOutput["event"]["getAll"][number];
