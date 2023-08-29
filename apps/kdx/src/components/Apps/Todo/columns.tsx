@@ -10,15 +10,15 @@ import type { AppRouter } from "@kdx/api";
 import { Button, Checkbox, toast, useToast } from "@kdx/ui";
 
 import { api } from "~/utils/api";
-import { DatePickerWithPresets } from "~/components/DatePickerWithPresets";
-import { AssigneePopover } from "./AssigneePopover";
+import { DatePickerWithPresets } from "~/components/date-picker-with-presets";
+import { AssigneePopover } from "./assignee-popover";
 import {
   PriorityIcon,
   PriorityPopover,
   PriorityToTxt,
-} from "./PriorityPopover";
-import type { Priority } from "./PriorityPopover";
-import { StatusIcon, StatusPopover, StatusToText } from "./StatusPopover";
+} from "./priority-popover";
+import type { Priority } from "./priority-popover";
+import { StatusIcon, StatusPopover, StatusToText } from "./status-popover";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 export type TodoColumn = RouterOutput["todo"]["getAllForLoggedUser"][number];

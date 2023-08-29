@@ -22,18 +22,18 @@ import {
 } from "@kdx/ui";
 
 import { api } from "~/utils/api";
-import { AssigneePopover } from "~/components/Apps/Todo/AssigneePopover";
+import { AssigneePopover } from "~/components/Apps/Todo/assignee-popover";
 import {
   PriorityIcon,
   PriorityPopover,
   PriorityToTxt,
-} from "~/components/Apps/Todo/PriorityPopover";
-import type { Priority } from "~/components/Apps/Todo/PriorityPopover";
-import { StatusPopover } from "~/components/Apps/Todo/StatusPopover";
+} from "~/components/Apps/Todo/priority-popover";
+import type { Priority } from "~/components/Apps/Todo/priority-popover";
+import { StatusPopover } from "~/components/Apps/Todo/status-popover";
 import {
   DatePickerIcon,
   DatePickerWithPresets,
-} from "~/components/DatePickerWithPresets";
+} from "~/components/date-picker-with-presets";
 
 export function CreateTaskDialogButton() {
   function handleCreateTask() {

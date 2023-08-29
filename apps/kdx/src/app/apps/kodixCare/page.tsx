@@ -6,9 +6,9 @@ import moment from "moment";
 import { H1, Separator } from "@kdx/ui";
 
 import { api } from "~/utils/api";
-import { columns } from "~/components/Apps/KodixCare/columns";
-import { CreateEventDialogButton } from "~/components/Apps/KodixCare/CreateEventDialogButton";
-import { DataTable } from "~/components/Apps/KodixCare/data-table";
+import { columns } from "~/components/Apps/kodix-care/columns";
+import { CreateEventDialogButton } from "~/components/Apps/kodix-care/create-event-dialog";
+import { DataTable } from "~/components/Apps/kodix-care/data-table";
 
 export default function KodixCare() {
   //date Start should be the beginninig of the day

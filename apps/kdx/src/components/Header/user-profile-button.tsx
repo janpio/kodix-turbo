@@ -20,7 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@kdx/ui";
 
-import { AddWorkspaceDialog } from "./AddWorkspaceDialog";
+import { AddWorkspaceDialog } from "./add-workspace-dialog";
 
 export function UserProfileButton() {
   const { data: session } = useSession();

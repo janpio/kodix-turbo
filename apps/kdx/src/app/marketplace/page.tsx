@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 
 import { H1, Lead, Separator } from "@kdx/ui";
 
-import { KodixApp } from "~/components/App/KodixApp";
+import { KodixApp } from "~/components/app/kodix-app";
 import { api } from "../../utils/api";
 
 export default function Marketplace() {

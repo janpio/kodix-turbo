@@ -42,7 +42,7 @@ import {
 } from "@kdx/ui";
 
 import { api } from "~/utils/api";
-import { RecurrencePicker } from "./RecurrencePicker";
+import { RecurrencePicker } from "./recurrence-picker";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 type CalendarTask = RouterOutput["event"]["getAll"][number];

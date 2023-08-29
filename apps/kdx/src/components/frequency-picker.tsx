@@ -30,7 +30,7 @@ import {
   SelectValue,
 } from "@kdx/ui";
 
-import { DatePicker } from "./DatePicker";
+import { DatePicker } from "./date-picker";
 
 export function FrequencyPicker({
   frequency,

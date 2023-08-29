@@ -4,7 +4,7 @@ import { H1, Separator } from "@kdx/ui";
 
 import { api } from "~/utils/api";
 import { columns } from "~/components/Apps/Todo/columns";
-import { CreateTaskDialogButton } from "~/components/Apps/Todo/CreateTaskDialogButton";
+import { CreateTaskDialogButton } from "~/components/Apps/Todo/create-task-dialog-button";
 import { DataTable } from "~/components/Apps/Todo/data-table";
 
 export default function Todo() {

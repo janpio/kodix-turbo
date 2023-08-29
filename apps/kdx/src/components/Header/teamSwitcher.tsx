@@ -29,7 +29,7 @@ import {
 } from "@kdx/ui";
 
 import { api } from "~/utils/api";
-import { AddWorkspaceDialog } from "./AddWorkspaceDialog";
+import { AddWorkspaceDialog } from "./add-workspace-dialog";
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger

@@ -23,7 +23,7 @@ import {
 
 import { api } from "~/utils/api";
 import { DateTimePicker } from "~/components/date-time-picker/date-time-picker";
-import { RecurrencePicker } from "./RecurrencePicker";
+import { RecurrencePicker } from "./recurrence-picker";
 
 export function CreateEventDialogButton() {
   const [open, setOpen] = useState(false);
