@@ -1,7 +1,7 @@
 import type { DefaultSession } from "@auth/core/types";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth from "next-auth";
-import EmailProvider from "next-auth/providers/email";
+// import EmailProvider from "next-auth/providers/email";
 import GoogleProvider from "next-auth/providers/google";
 
 import { prisma } from "@kdx/db";
@@ -41,23 +41,23 @@ export const {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     }),
-    EmailProvider({
-      server: {
-        host: env.EMAIL_SERVER_HOST,
-        port: env.EMAIL_SERVER_PORT,
-        auth: {
-          user: env.EMAIL_SERVER_USER,
-          pass: env.EMAIL_SERVER_PASSWORD,
-        },
-      },
-      from: env.EMAIL_FROM,
-      type: "email",
-      sendVerificationRequest: () => {
-        throw new Error("Not implemented");
-      },
-      id: "",
-      name: "",
-    }),
+    // EmailProvider({
+    //   server: {
+    //     host: env.EMAIL_SERVER_HOST,
+    //     port: env.EMAIL_SERVER_PORT,
+    //     auth: {
+    //       user: env.EMAIL_SERVER_USER,
+    //       pass: env.EMAIL_SERVER_PASSWORD,
+    //     },
+    //   },
+    //   from: env.EMAIL_FROM,
+    //   type: "email",
+    //   sendVerificationRequest: () => {
+    //     throw new Error("Not implemented");
+    //   },
+    //   id: "",
+    //   name: "",
+    // }),
   ],
   callbacks: {
     async session({ session, user }) {
