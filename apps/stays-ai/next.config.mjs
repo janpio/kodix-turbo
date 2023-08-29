@@ -21,7 +21,7 @@ const config = {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     config.module.rules.push({
       test: /\.svg$/,
-      use: [{ loader: "@svgr/webpack", options: { icon: true } }],
+      use: ["@svgr/webpack"],
     });
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return config;
