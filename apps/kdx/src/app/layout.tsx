@@ -8,7 +8,7 @@ import { headers } from "next/headers";
 import { cn, Toaster } from "@kdx/ui";
 
 import { Footer } from "~/components/footer/footer";
-import { Header } from "~/components/Header/header";
+import { Header } from "~/components/header/header";
 import { TailwindIndicator } from "~/components/tailwind-indicator";
 import { ThemeSwitcher } from "~/components/theme-switcher";
 import {
