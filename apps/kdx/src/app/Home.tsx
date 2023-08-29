@@ -14,7 +14,7 @@ import {
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 
-export default function HomePage(props: {
+export function HomePage(props: {
   initialData: RouterOutputs["workspace"]["getActiveWorkspace"] | undefined;
 }) {
   const sessionData = useSession();
