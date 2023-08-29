@@ -3,7 +3,7 @@ import { appRouter } from "@kdx/api";
 import { auth } from "@kdx/auth";
 import { prisma } from "@kdx/db";
 
-import { HomePage } from "./home";
+import { HomePage } from "./_home";
 
 export default async function Home() {
   const session = await auth();
