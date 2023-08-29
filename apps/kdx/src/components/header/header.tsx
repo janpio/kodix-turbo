@@ -5,7 +5,7 @@ import { cva } from "class-variance-authority";
 import { auth } from "@kdx/auth";
 import { cn } from "@kdx/ui";
 
-import { TeamSwitcher } from "./teamSwitcher";
+import { TeamSwitcher } from "./team-switcher";
 import { UserProfileButton } from "./user-profile-button";
 
 const buttonVariants = cva(

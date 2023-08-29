@@ -22,14 +22,14 @@ import {
 } from "@kdx/ui";
 
 import { api } from "~/utils/api";
-import { AssigneePopover } from "~/components/Apps/Todo/assignee-popover";
+import { AssigneePopover } from "~/components/apps/todo/assignee-popover";
 import {
   PriorityIcon,
   PriorityPopover,
   PriorityToTxt,
-} from "~/components/Apps/Todo/priority-popover";
-import type { Priority } from "~/components/Apps/Todo/priority-popover";
-import { StatusPopover } from "~/components/Apps/Todo/status-popover";
+} from "~/components/apps/todo/priority-popover";
+import type { Priority } from "~/components/apps/todo/priority-popover";
+import { StatusPopover } from "~/components/apps/todo/status-popover";
 import {
   DatePickerIcon,
   DatePickerWithPresets,
