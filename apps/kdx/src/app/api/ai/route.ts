@@ -1,5 +1,4 @@
 import type { NextRequest } from "next/server";
-import type { Message } from "ai";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import { Configuration, OpenAIApi } from "openai-edge";
 
