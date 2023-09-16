@@ -41,23 +41,23 @@ export const {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     }),
-    EmailProvider({
-      server: {
-        host: env.EMAIL_SERVER_HOST,
-        port: env.EMAIL_SERVER_PORT,
-        auth: {
-          user: env.EMAIL_SERVER_USER,
-          pass: env.EMAIL_SERVER_PASSWORD,
-        },
-      },
-      from: env.EMAIL_FROM,
-      type: "email",
-      sendVerificationRequest: () => {
-        throw new Error("Not implemented");
-      },
-      id: "",
-      name: "",
-    }),
+    // EmailProvider({
+    //   server: {
+    //     host: env.EMAIL_SERVER_HOST,
+    //     port: env.EMAIL_SERVER_PORT,
+    //     auth: {
+    //       user: env.EMAIL_SERVER_USER,
+    //       pass: env.EMAIL_SERVER_PASSWORD,
+    //     },
+    //   },
+    //   from: env.EMAIL_FROM,
+    //   type: "email",
+    //   sendVerificationRequest: () => {
+    //     throw new Error("Not implemented");
+    //   },
+    //   id: "",
+    //   name: "",
+    // }),
   ],
   callbacks: {
     async session({ session, user }) {
