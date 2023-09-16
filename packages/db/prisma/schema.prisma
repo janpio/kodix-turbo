@@ -158,7 +158,7 @@ model EventException {
   originalDate DateTime
   newDate      DateTime
 
-  EventMaster   EventMaster @relation(fields: [eventMasterId], references: [id])
+  EventMaster   EventMaster @relation(fields: [eventMasterId], references: [id], onDelete: Cascade)
   eventMasterId String
 
   EventInfo   EventInfo? @relation(fields: [eventInfoId], references: [id])
@@ -172,7 +172,7 @@ model EventCancellation {
   id           String   @id @default(cuid())
   originalDate DateTime
 
-  EventMaster   EventMaster @relation(fields: [eventMasterId], references: [id])
+  EventMaster   EventMaster @relation(fields: [eventMasterId], references: [id], onDelete: Cascade)
   eventMasterId String
 
   @@index([eventMasterId])

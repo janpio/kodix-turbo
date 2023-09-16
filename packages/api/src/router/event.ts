@@ -1,4 +1,3 @@
-import type { PrismaClient } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import moment from "moment";
 import { Frequency, RRule, RRuleSet, rrulestr } from "rrule";
@@ -23,33 +22,6 @@ function generateRule(
   });
   ruleSet.rrule(rule);
   return ruleSet.toString();
-}
-
-async function deleteAllEvents(prisma: PrismaClient, eventMasterId: string) {
-  return await prisma.$transaction(async (tx) => {
-    const where = {
-      eventMasterId: eventMasterId,
-    };
-    await tx.eventCancellation.deleteMany({
-      where,
-    });
-    await tx.eventException.deleteMany({
-      where,
-    });
-    await tx.eventDone.deleteMany({
-      where,
-    });
-    await tx.eventInfo.deleteMany({
-      where: {
-        id: eventMasterId,
-      },
-    });
-    await tx.eventMaster.deleteMany({
-      where: {
-        id: eventMasterId,
-      },
-    });
-  });
 }
 
 export const eventRouter = createTRPCRouter({
@@ -374,8 +346,14 @@ export const eventRouter = createTRPCRouter({
           true,
         );
         const penultimateOccurence = occurences[occurences.length - 2];
+
+        //Here we should delete the eventMaster
         if (!penultimateOccurence)
-          return await deleteAllEvents(ctx.prisma, eventMaster.id);
+          return await ctx.prisma.eventMaster.delete({
+            where: {
+              id: input.eventMasterId,
+            },
+          });
 
         const options = RRule.parseString(eventMaster.rule);
         options.until = penultimateOccurence;
@@ -390,19 +368,24 @@ export const eventRouter = createTRPCRouter({
           },
         });
       } else if (input.exclusionDefinition === "all") {
-        if (input.eventExceptionId) {
-          const deleted = await ctx.prisma.eventException.delete({
+        //We should delete the event master. It should automatically cascade down to all other tables
+        if (input.eventExceptionId)
+          //Delete where eventMaster that has this eventExceptionId
+          return await ctx.prisma.eventMaster.deleteMany({
             where: {
-              id: input.eventExceptionId,
+              EventExceptions: {
+                some: {
+                  id: input.eventExceptionId,
+                },
+              },
             },
           });
-          input.eventMasterId = deleted.eventMasterId;
-        }
-        if (!input.eventMasterId)
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-          });
-        return deleteAllEvents(ctx.prisma, input.eventMasterId);
+
+        return await ctx.prisma.eventMaster.delete({
+          where: {
+            id: input.eventMasterId,
+          },
+        });
       }
     }),
   edit: protectedProcedure
@@ -599,6 +582,10 @@ export const eventRouter = createTRPCRouter({
         //* Havemos um selectedTimestamp.
         //* Temos que procurar se temos uma exceção que bate com o selectedTimestamp.
         //* Se tivermos, temos que alterá-la.
+        if (input.eventExceptionId) {
+          //* Temos uma exceção. Isso signigica que o usuário quer editar a exceção.
+          //* Aqui, o usuário pode alterar o title e o description ou o from da exceção.
+        }
       } /*else if (input.editDefinition === "all") {
       }*/
     }),
