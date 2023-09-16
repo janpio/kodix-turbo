@@ -7,9 +7,9 @@ import { Inter as FontSans } from "next/font/google";
 import { headers } from "next/headers";
 import Script from "next/script";
 
-import { cn } from "@kdx/ui";
+import { cn, Toaster } from "@kdx/ui";
 
-import { TailwindIndicator } from "~/components/TailwindIndicator";
+import { TailwindIndicator } from "~/components/dev-utils/tailwind-indicator";
 import { TRPCReactProvider } from "./providers";
 
 const fontSans = FontSans({
@@ -45,10 +45,9 @@ export default function Layout(props: { children: React.ReactNode }) {
         ></Script>
         <TRPCReactProvider headers={headers()}>
           {props.children}
+          <Toaster />
           <Analytics />
-          <div className="fixed bottom-1 right-1 z-50 flex flex-row items-center space-x-1">
-            <TailwindIndicator />
-          </div>
+          <TailwindIndicator />
         </TRPCReactProvider>
       </body>
     </html>

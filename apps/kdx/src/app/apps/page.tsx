@@ -2,7 +2,7 @@ import { auth } from "@kdx/auth";
 import { prisma } from "@kdx/db";
 import { H1, Lead } from "@kdx/ui";
 
-import KodixApp from "~/components/App/KodixApp";
+import { KodixApp } from "~/components/app/kodix-app";
 
 export default async function Apps() {
   const session = await auth();

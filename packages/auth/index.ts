@@ -1,7 +1,7 @@
 import type { DefaultSession } from "@auth/core/types";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth from "next-auth";
-import EmailProvider from "next-auth/providers/email";
+// import EmailProvider from "next-auth/providers/email";
 import GoogleProvider from "next-auth/providers/google";
 
 import { prisma } from "@kdx/db";

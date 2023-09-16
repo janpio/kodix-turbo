@@ -52,13 +52,13 @@ export function TRPCReactProvider(props: {
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ReactQueryStreamedHydration>
-        <api.Provider client={trpcClient} queryClient={queryClient}>
+    <api.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <ReactQueryStreamedHydration transformer={superjson}>
           {props.children}
-        </api.Provider>
-      </ReactQueryStreamedHydration>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+        </ReactQueryStreamedHydration>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </api.Provider>
   );
 }
