@@ -87,6 +87,7 @@ const DateTimePicker = React.forwardRef<
             <Calendar {...calendarProps} />
             {!!state.hasTime && (
               <TimeField
+                aria-label="Time"
                 value={state.timeValue}
                 // eslint-disable-next-line @typescript-eslint/unbound-method
                 onChange={state.setTimeValue}
