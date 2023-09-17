@@ -43,7 +43,7 @@ import {
 } from "@kdx/ui";
 
 import { DataTablePagination } from "../../pagination";
-import { CancelationDialog } from "./cancelation-dialog";
+import { CancelationDialog } from "./cancel-event-dialog";
 import { EditEventDialog } from "./edit-event-dialog";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
@@ -180,23 +180,33 @@ export function DataTable({
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <ContextMenu key={row.id}>
-                  <TableRow
-                    data-state={row.getIsSelected() && "selected"}
-                    key={row.id}
-                  >
-                    <EditEventDialog
-                      calendarTask={row.original}
-                      open={openEditDialog}
-                      setOpen={setOpenEditDialog}
-                    />
-                    <CancelationDialog
-                      open={openCancelDialog}
-                      setOpen={setOpenCancelDialog}
-                      eventMasterId={row.original.eventMasterId}
-                      eventExceptionId={row.original.eventExceptionId}
-                      date={row.getValue("date")}
-                    />
-                    <ContextMenuTrigger className="contents">
+                  <EditEventDialog
+                    calendarTask={row.original}
+                    open={openEditDialog}
+                    setOpen={setOpenEditDialog}
+                  />
+                  <CancelationDialog
+                    open={openCancelDialog}
+                    setOpen={setOpenCancelDialog}
+                    eventMasterId={row.original.eventMasterId}
+                    eventExceptionId={row.original.eventExceptionId}
+                    date={row.getValue("date")}
+                  />
+                  <ContextMenuContent>
+                    <ContextMenuItem onClick={() => setOpenEditDialog(true)}>
+                      <PencilIcon className="mr-2 h-4 w-4" />
+                      Edit Event
+                    </ContextMenuItem>
+                    <ContextMenuItem onClick={() => setOpenCancelDialog(true)}>
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete Event
+                    </ContextMenuItem>
+                  </ContextMenuContent>
+                  <ContextMenuTrigger className="contents" asChild>
+                    <TableRow
+                      data-state={row.getIsSelected() && "selected"}
+                      key={row.id}
+                    >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
                           {flexRender(cell.column.columnDef.cell, {
@@ -204,20 +214,8 @@ export function DataTable({
                           })}
                         </TableCell>
                       ))}
-                    </ContextMenuTrigger>
-                    <ContextMenuContent>
-                      <ContextMenuItem onClick={() => setOpenEditDialog(true)}>
-                        <PencilIcon className="mr-2 h-4 w-4" />
-                        Edit Event
-                      </ContextMenuItem>
-                      <ContextMenuItem
-                        onClick={() => setOpenCancelDialog(true)}
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete Event
-                      </ContextMenuItem>
-                    </ContextMenuContent>
-                  </TableRow>
+                    </TableRow>
+                  </ContextMenuTrigger>
                 </ContextMenu>
               ))
             ) : (

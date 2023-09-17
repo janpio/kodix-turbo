@@ -44,26 +44,30 @@ export function CreateEventDialogButton() {
   const [buttonLoading, setButtonLoading] = useState(false);
   const [personalizedRecurrenceOpen, setPersonalizedRecurrenceOpen] =
     useState(false);
-  const now = moment(new Date()).toDate();
+
   const defaultState = {
     title: "",
     description: "",
-    from: new CalendarDateTime(
-      now.getFullYear(),
-      now.getMonth() + 1,
-      now.getDay() + 9,
-      13,
-    ),
+    from: moment()
+      .utc()
+      .hours(
+        moment().utc().minutes() < 30
+          ? new Date().getHours()
+          : new Date().getHours() + 1,
+      )
+      .minutes(moment().utc().minutes() < 30 ? 30 : 0),
+
     frequency: RRule.DAILY,
     interval: 1,
     until: undefined,
     count: 1,
   };
+  console.log(defaultState.from.toDate());
   //create new DateValue
 
   const [title, setTitle] = useState(defaultState.title);
   const [description, setDescription] = useState(defaultState.description);
-  const [from, setFrom] = useState<DateValue>(defaultState.from);
+  const [from, setFrom] = useState<moment.Moment>(defaultState.from);
   const [frequency, setFrequency] = useState(defaultState.frequency);
   const [interval, setInterval] = useState(defaultState.interval);
   const [until, setUntil] = useState<moment.Moment | undefined>(
@@ -80,13 +84,12 @@ export function CreateEventDialogButton() {
     setUntil(defaultState.until);
     setCount(defaultState.count);
   }
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   function handleSubmitFormData() {
     createEvent({
       title,
       description,
-      from: from.toDate(timeZone),
+      from: from.toDate(),
       until: until ? until?.toDate() : undefined,
       frequency,
       interval,
@@ -132,10 +135,19 @@ export function CreateEventDialogButton() {
                 <div className="flex flex-col space-y-2">
                   <Label>From</Label>
                   <DateTimePicker
+                    aria-label="Close"
                     granularity="minute"
-                    value={from}
+                    value={
+                      new CalendarDateTime(
+                        from.get("year"),
+                        from.get("month"),
+                        Number(from.format("DD")),
+                        from.get("hour"),
+                        from.get("minute"),
+                      )
+                    }
                     onChange={(date: DateValue) => {
-                      setFrom(date);
+                      setFrom(moment.utc(date));
                     }}
                   />
                 </div>

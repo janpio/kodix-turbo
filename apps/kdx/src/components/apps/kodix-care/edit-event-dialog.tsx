@@ -89,7 +89,6 @@ export function EditEventDialog({
       count: RRule.fromString(calendarTask.rule).options.count ?? undefined,
     };
   }, [calendarTask]);
-  console.log(defaultState);
 
   const [title, setTitle] = useState(defaultState.title);
   const [description, setDescription] = useState(defaultState.description);

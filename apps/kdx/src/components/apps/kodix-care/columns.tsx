@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@kdx/ui";
 
-import { CancelationDialog } from "./cancelation-dialog";
+import { CancelationDialog } from "./cancel-event-dialog";
 import { EditEventDialog } from "./edit-event-dialog";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
