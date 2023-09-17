@@ -245,8 +245,8 @@ model User {
   sessions          Session[]
   workspaces        Workspace[] @relation("UserWorkspace")
   Todo              Todo[]
-  activeWorkspaceId String      @map("activeWorkspaceId")
-  activeWorkspace   Workspace   @relation("UserActiveWorkspace", fields: [activeWorkspaceId], references: [id])
+  activeWorkspaceId String?     @map("activeWorkspaceId")
+  activeWorkspace   Workspace?  @relation("UserActiveWorkspace", fields: [activeWorkspaceId], references: [id])
   EventDone         EventDone[]
 
   @@index([activeWorkspaceId])

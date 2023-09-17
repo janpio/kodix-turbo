@@ -91,6 +91,8 @@ export const {
   },
   events: {
     createUser: async (message) => {
+      //In here, user has already been created in dataBase. Meaning that we can't make activeWorkspaceId non-null by default.
+      //Could not find a way to override user creation in nextauth.
       const firstName = message.user.name
         ? message.user.name.split(" ")[0]
         : "";
