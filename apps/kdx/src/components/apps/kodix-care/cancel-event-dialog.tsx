@@ -44,7 +44,7 @@ export function CancelationDialog({
 
   const [buttonLoading, setButtonLoading] = useState(false);
   const ctx = api.useContext();
-  const { mutate: cancelEvent } = api.event.cancelEvent.useMutation({
+  const { mutate: cancelEvent } = api.event.cancel.useMutation({
     onMutate: () => {
       setButtonLoading(true);
     },
@@ -66,7 +66,7 @@ export function CancelationDialog({
             <div className="my-6">
               <RadioGroup
                 className="flex flex-col space-y-2"
-                defaultValue="thisEvent"
+                defaultValue="single"
               >
                 <div className="flex">
                   <RadioGroupItem

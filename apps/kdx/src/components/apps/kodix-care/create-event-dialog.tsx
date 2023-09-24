@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CalendarDateTime } from "@internationalized/date";
 import { Loader2, Plus } from "lucide-react";
 import moment from "moment";
@@ -49,7 +49,7 @@ export function CreateEventDialogButton() {
     title: "",
     description: "",
     from: moment()
-      .utc()
+      .startOf("hour")
       .hours(
         moment().utc().minutes() < 30
           ? new Date().getHours()
@@ -62,8 +62,6 @@ export function CreateEventDialogButton() {
     until: undefined,
     count: 1,
   };
-  console.log(defaultState.from.toDate());
-  //create new DateValue
 
   const [title, setTitle] = useState(defaultState.title);
   const [description, setDescription] = useState(defaultState.description);
@@ -97,6 +95,10 @@ export function CreateEventDialogButton() {
     });
   }
 
+  useEffect(() => {
+    console.log(from.toDate());
+  }, [from]);
+
   return (
     <Dialog
       open={open}
@@ -115,13 +117,7 @@ export function CreateEventDialogButton() {
         <DialogHeader>
           <DialogTitle>New Event</DialogTitle>
         </DialogHeader>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSubmitFormData();
-          }}
-          className="space-y-8"
-        >
+        <form onSubmit={handleSubmitFormData} className="space-y-8">
           <DialogDescription>
             <div className="space-y-4">
               <div className="flex flex-row gap-2">
@@ -147,7 +143,7 @@ export function CreateEventDialogButton() {
                       )
                     }
                     onChange={(date: DateValue) => {
-                      setFrom(moment.utc(date));
+                      setFrom(moment(date));
                     }}
                   />
                 </div>

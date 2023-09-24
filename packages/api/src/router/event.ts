@@ -236,7 +236,7 @@ export const eventRouter = createTRPCRouter({
 
       return calendarTasks;
     }),
-  cancelEvent: protectedProcedure
+  cancel: protectedProcedure
     .input(
       z
         .object({
@@ -369,18 +369,25 @@ export const eventRouter = createTRPCRouter({
         });
       } else if (input.exclusionDefinition === "all") {
         //We should delete the event master. It should automatically cascade down to all other tables
-        if (input.eventExceptionId)
-          //Delete where eventMaster that has this eventExceptionId
-          return await ctx.prisma.eventMaster.deleteMany({
-            where: {
-              EventExceptions: {
-                some: {
-                  id: input.eventExceptionId,
-                },
+        if (input.eventExceptionId) {
+          const eventException =
+            await ctx.prisma.eventException.findUniqueOrThrow({
+              where: {
+                id: input.eventExceptionId,
               },
+              select: {
+                eventMasterId: true,
+              },
+            });
+
+          return await ctx.prisma.eventMaster.delete({
+            where: {
+              id: eventException.eventMasterId,
             },
           });
+        }
 
+        //Delete where eventMaster that has this eventExceptionId
         return await ctx.prisma.eventMaster.delete({
           where: {
             id: input.eventMasterId,

@@ -93,7 +93,6 @@ export function EditEventDialog({
   const [title, setTitle] = useState(defaultState.title);
   const [description, setDescription] = useState(defaultState.description);
   const [from, setFrom] = useState(defaultState.from);
-  const [time, setTime] = useState(defaultState.time);
   const [frequency, setFrequency] = useState<Frequency>(defaultState.frequency);
   const [interval, setInterval] = useState<number>(defaultState.interval);
   const [until, setUntil] = useState<moment.Moment | undefined>(
@@ -103,35 +102,25 @@ export function EditEventDialog({
   const [definition, setDefinition] = useState<
     "single" | "thisAndFuture" | "all"
   >("single");
-  const [allowedEditDefinitions, setAllowedEditDefinitions] = useState<
-    ("single" | "thisAndFuture" | "all")[]
-  >(["single", "thisAndFuture", "all"]);
+  const [allowedEditDefinitions, setAllowedEditDefinitions] = useState<{
+    single: boolean;
+    thisAndFuture: boolean;
+    all: boolean;
+  }>({
+    single: true,
+    thisAndFuture: true,
+    all: true,
+  });
 
   const [isFormChanged, setIsFormChanged] = useState(false);
 
   useEffect(() => {
-    setFrom((prev) =>
-      prev.set({
-        hour: parseInt(time.split(":")[0] ?? "0"),
-        minute: parseInt(time.split(":")[1] ?? "0"),
-        second: 0,
-        millisecond: 0,
-      }),
-    );
-    // setUntil((prev) =>
-    //   prev?.set({
-    //     hour: parseInt(time.split(":")[0] ?? "0"),
-    //     minute: parseInt(time.split(":")[1] ?? "0"),
-    //     second: 0,
-    //     millisecond: 0,
-    //   })
-    // );
-  }, [from, until, time]);
+    if (!allowedEditDefinitions.single) setDefinition("thisAndFuture");
+    else setDefinition("single");
+  }, [allowedEditDefinitions]);
 
   useEffect(() => {
-    if (!allowedEditDefinitions.includes("single"))
-      setDefinition("thisAndFuture");
-    else setDefinition("single");
+    console.log(allowedEditDefinitions);
   }, [allowedEditDefinitions]);
 
   useEffect(() => {
@@ -139,7 +128,6 @@ export function EditEventDialog({
       title !== defaultState.title ||
       description !== defaultState.description ||
       !from.isSame(defaultState.from) ||
-      time !== defaultState.time ||
       frequency !== defaultState.frequency ||
       interval !== defaultState.interval ||
       until !== defaultState.until ||
@@ -153,30 +141,31 @@ export function EditEventDialog({
       (until && !until?.isSame(defaultState.until)) ||
       frequency !== defaultState.frequency
     ) {
-      setAllowedEditDefinitions((prev) =>
-        prev.filter((item) => item !== "single"),
-      );
+      setAllowedEditDefinitions((prev) => ({
+        ...prev,
+        single: false,
+      }));
     } else {
-      setAllowedEditDefinitions((prev) => {
-        !prev.includes("single") && prev.push("single");
-        return prev;
-      });
+      setAllowedEditDefinitions((prev) => ({
+        ...prev,
+        single: true,
+      }));
     }
-    if (!from.isSame(defaultState.from)) {
-      setAllowedEditDefinitions((prev) =>
-        prev.filter((item) => item !== "all"),
-      );
+    if (from.format("YYYY-MM-DD") !== defaultState.from.format("YYYY-MM-DD")) {
+      setAllowedEditDefinitions((prev) => ({
+        ...prev,
+        all: false,
+      }));
     } else {
-      setAllowedEditDefinitions((prev) => {
-        !prev.includes("all") && prev.push("all");
-        return prev;
-      });
+      setAllowedEditDefinitions((prev) => ({
+        ...prev,
+        all: true,
+      }));
     }
   }, [
     title,
     description,
     from,
-    time,
     frequency,
     interval,
     until,
@@ -184,48 +173,27 @@ export function EditEventDialog({
     defaultState.title,
     defaultState.description,
     defaultState.from,
-    defaultState.time,
     defaultState.frequency,
     defaultState.interval,
     defaultState.until,
     defaultState.count,
   ]);
 
-  // const defaultState = {
-  //   calendarTask: calendarTask,
-  //   title: calendarTask.title,
-  //   description: calendarTask.description ?? "",
-  //   from: moment(calendarTask.date),
-  //   time: moment(calendarTask.date).format("HH:mm"),
-  //   frequency: RRule.fromString(calendarTask.rule).options.freq,
-  //   interval: RRule.fromString(calendarTask.rule).options.interval,
-  //   until: RRule.fromString(calendarTask.rule).options.until
-  //     ? moment(RRule.fromString(calendarTask.rule).options.until)
-  //     : undefined,
-  // };
-  // const [formData, setFormData] = useState<{
-  //   calendarTask: CalendarTask;
-  //   title: string;
-  //   description: string;
-  //   from: moment.Moment;
-  //   time: string;
-  //   frequency: Frequency;
-  //   interval: number;
-  //   until: moment.Moment | undefined;
-  // }>(defaultState);
-
   function revertStateToDefault() {
     setTitle(defaultState.title);
     setDescription(defaultState.description);
     setFrom(defaultState.from);
-    setTime(defaultState.time);
     setFrequency(defaultState.frequency);
     setInterval(defaultState.interval);
     setUntil(defaultState.until);
     setCount(defaultState.count);
-    setDefinition("single");
 
-    setAllowedEditDefinitions(["single", "thisAndFuture", "all"]);
+    setDefinition("single");
+    setAllowedEditDefinitions({
+      single: true,
+      thisAndFuture: true,
+      all: true,
+    });
   }
 
   function handleSubmitFormData() {
@@ -239,16 +207,7 @@ export function EditEventDialog({
       title: title !== defaultState.title ? title : undefined,
       description:
         description !== defaultState.description ? description : undefined,
-      from: !from.isSame(defaultState.from)
-        ? from
-            .set({
-              hour: parseInt(time.split(":")[0] ?? "0"),
-              minute: parseInt(time.split(":")[1] ?? "0"),
-              second: 0,
-              millisecond: 0,
-            })
-            .toDate()
-        : undefined,
+      from: !from.isSame(defaultState.from) ? from.toDate() : undefined,
       until:
         until && until.isSame(defaultState.until) ? until.toDate() : undefined,
       frequency: frequency !== defaultState.frequency ? frequency : undefined,
@@ -256,6 +215,10 @@ export function EditEventDialog({
       editDefinition: definition,
     });
   }
+
+  useEffect(() => {
+    console.log(from.toDate());
+  }, [from]);
 
   return (
     <Dialog
@@ -302,18 +265,13 @@ export function EditEventDialog({
                     <Calendar
                       mode="single"
                       selected={from.toDate()}
-                      onSelect={(date) =>
-                        date &&
+                      onSelect={(date) => {
                         setFrom(
-                          moment(date).set({
-                            hour: parseInt(time.split(":")[0] ?? "0"),
-                            minute: parseInt(time.split(":")[1] ?? "0"),
-                            second: 0,
-                            millisecond: 0,
-                          }),
-                        )
-                      }
-                      // disabled={(date) => date < new Date()}
+                          moment(date)
+                            .hours(from.hours())
+                            .minutes(from.minutes()),
+                        );
+                      }}
                       initialFocus
                     />
                   </PopoverContent>
@@ -323,9 +281,18 @@ export function EditEventDialog({
                 <Label className="invisible">From</Label>
                 <Input
                   type="time"
-                  value={time}
+                  value={from.format("HH:mm")}
                   onChange={(e) => {
-                    setTime(e.target.value);
+                    const newTime = e.target.value;
+
+                    setFrom(
+                      moment(from).set({
+                        hour: parseInt(newTime.split(":")[0] ?? "0"),
+                        minute: parseInt(newTime.split(":")[1] ?? "0"),
+                        second: 0,
+                        millisecond: 0,
+                      }),
+                    );
                   }}
                   className="w-26"
                 />
@@ -404,7 +371,11 @@ function EditDefinitionDialog({
   setDefinition: React.Dispatch<
     React.SetStateAction<"single" | "thisAndFuture" | "all">
   >;
-  allowedDefinitions: ("single" | "thisAndFuture" | "all")[];
+  allowedDefinitions: {
+    single: boolean;
+    thisAndFuture: boolean;
+    all: boolean;
+  };
   submit: (definition: "single" | "thisAndFuture" | "all") => void;
 }) {
   return (
@@ -424,7 +395,7 @@ function EditDefinitionDialog({
                 className="flex flex-col space-y-2"
                 defaultValue={definition}
               >
-                {allowedDefinitions.includes("single") && (
+                {allowedDefinitions.single && (
                   <div className="flex">
                     <RadioGroupItem
                       id="single"
@@ -439,7 +410,7 @@ function EditDefinitionDialog({
                     </Label>
                   </div>
                 )}
-                {allowedDefinitions.includes("thisAndFuture") && (
+                {allowedDefinitions.thisAndFuture && (
                   <div className="flex">
                     <RadioGroupItem
                       id="thisAndFuture"
@@ -454,7 +425,7 @@ function EditDefinitionDialog({
                     </Label>
                   </div>
                 )}
-                {allowedDefinitions.includes("all") && (
+                {allowedDefinitions.all && (
                   <div className="flex">
                     <RadioGroupItem
                       id="all"

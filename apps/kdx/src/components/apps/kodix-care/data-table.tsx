@@ -202,7 +202,7 @@ export function DataTable({
                       Delete Event
                     </ContextMenuItem>
                   </ContextMenuContent>
-                  <ContextMenuTrigger className="contents" asChild>
+                  <ContextMenuTrigger asChild>
                     <TableRow
                       data-state={row.getIsSelected() && "selected"}
                       key={row.id}
