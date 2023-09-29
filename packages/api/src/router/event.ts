@@ -25,46 +25,6 @@ function generateRule(
 }
 
 export const eventRouter = createTRPCRouter({
-  create: protectedProcedure
-    .input(
-      z.object({
-        title: z.string(),
-        description: z.string().optional(),
-        from: z.date(),
-        until: z.date().optional(),
-        frequency: z.nativeEnum(Frequency),
-        interval: z.number().optional(),
-        count: z.number().optional(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const eventMaster = await ctx.prisma.$transaction(async (tx) => {
-        const eventInfo = await tx.eventInfo.create({
-          data: {
-            title: input.title,
-            description: input.description,
-          },
-        });
-
-        return await tx.eventMaster.create({
-          data: {
-            rule: generateRule(
-              input.from,
-              input.until,
-              input.frequency,
-              input.interval,
-              input.count,
-            ),
-            workspaceId: ctx.session.user.activeWorkspaceId,
-            eventInfoId: eventInfo.id,
-            DateStart: input.from,
-            DateUntil: input.until,
-          },
-        });
-      });
-
-      return eventMaster;
-    }),
   getAll: protectedProcedure
     .input(
       z.object({
@@ -228,6 +188,47 @@ export const eventRouter = createTRPCRouter({
 
       return calendarTasks;
     }),
+  create: protectedProcedure
+    .input(
+      z.object({
+        title: z.string(),
+        description: z.string().optional(),
+        from: z.date(),
+        until: z.date().optional(),
+        frequency: z.nativeEnum(Frequency),
+        interval: z.number().optional(),
+        count: z.number().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const eventMaster = await ctx.prisma.$transaction(async (tx) => {
+        const eventInfo = await tx.eventInfo.create({
+          data: {
+            title: input.title,
+            description: input.description,
+          },
+        });
+
+        return await tx.eventMaster.create({
+          data: {
+            rule: generateRule(
+              input.from,
+              input.until,
+              input.frequency,
+              input.interval,
+              input.count,
+            ),
+            workspaceId: ctx.session.user.activeWorkspaceId,
+            eventInfoId: eventInfo.id,
+            DateStart: input.from,
+            DateUntil: input.until,
+          },
+        });
+      });
+
+      return eventMaster;
+    }),
+
   cancel: protectedProcedure
     .input(
       z
@@ -564,25 +565,68 @@ export const eventRouter = createTRPCRouter({
               },
             });
             const oldRule = rrulestr(oldMaster.rule);
+            const lastOccurence = oldRule.before(
+              input.selectedTimestamp,
+              false,
+            );
+            if (!lastOccurence) {
+              //It means that the selectedTimestamp
+              //is either the first occurence of the event or it is before the first occurence.
+              //If it is before the first occurence, we should have an exception.
+              //If it is the first occurence, we should just edit the eventMaster.
+              if (input.selectedTimestamp < oldRule.options.dtstart)
+                throw new TRPCError({
+                  code: "NOT_FOUND",
+                  message: "Event not found",
+                });
+              else
+                return await tx.eventMaster.update({
+                  where: {
+                    id: input.eventMasterId,
+                    workspaceId: ctx.session.user.activeWorkspaceId,
+                  },
+                  data: {
+                    DateStart: input.from ?? input.selectedTimestamp,
+                    DateUntil:
+                      input.until ?? oldRule.options.until ?? undefined,
+                    rule: generateRule(
+                      input.from ?? input.selectedTimestamp,
+                      input.until ?? oldRule.options.until ?? undefined,
+                      input.frequency ?? oldRule.options.freq,
+                      input.interval ?? oldRule.options.interval,
+                      input.count ?? oldRule.options.count ?? undefined,
+                    ),
+                  },
+                });
+            }
+
             const newRule = generateRule(
               oldRule.options.dtstart,
-              input.selectedTimestamp,
+              lastOccurence,
               oldRule.options.freq,
               oldRule.options.interval,
               oldRule.options.count ?? undefined,
             );
 
-            const eventMaster = await tx.eventMaster.update({
+            const updatedOldMaster = await tx.eventMaster.update({
               where: {
                 id: input.eventMasterId,
                 workspaceId: ctx.session.user.activeWorkspaceId,
               },
               data: {
-                DateUntil: input.selectedTimestamp,
+                DateUntil: lastOccurence,
                 rule: newRule.toString(),
               },
+              select: {
+                eventInfo: {
+                  select: {
+                    title: true,
+                    description: true,
+                  },
+                },
+              },
             });
-            if (!eventMaster)
+            if (!updatedOldMaster)
               throw new TRPCError({
                 code: "NOT_FOUND",
                 message: "Could not update event master",
@@ -590,10 +634,10 @@ export const eventRouter = createTRPCRouter({
 
             const newMasterCreateData = {
               workspaceId: ctx.session.user.activeWorkspaceId,
-              DateStart: input.selectedTimestamp,
+              DateStart: input.from ?? input.selectedTimestamp,
               DateUntil: input.until ?? oldRule.options.until ?? undefined,
               rule: generateRule(
-                input.selectedTimestamp,
+                input.from ?? input.selectedTimestamp,
                 input.until ?? oldRule.options.until ?? undefined,
                 input.frequency ?? oldRule.options.freq,
                 input.interval ?? oldRule.options.interval,
@@ -604,8 +648,9 @@ export const eventRouter = createTRPCRouter({
             if (input.title ?? input.description)
               return await tx.eventInfo.create({
                 data: {
-                  title: input.title,
-                  description: input.description,
+                  title: input.title ?? updatedOldMaster.eventInfo.title,
+                  description:
+                    input.description ?? updatedOldMaster.eventInfo.description,
                   EventMaster: {
                     create: newMasterCreateData,
                   },

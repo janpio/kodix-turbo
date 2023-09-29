@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CalendarDateTime } from "@internationalized/date";
 import { Loader2, Plus } from "lucide-react";
 import moment from "moment";
@@ -83,21 +83,30 @@ export function CreateEventDialogButton() {
     setCount(defaultState.count);
   }
 
-  function handleSubmitFormData() {
+  function handleSubmitFormData(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    //We need to make sure that everything is the same as from, except for the date.
+    const formattedUntil = until
+      ? from
+          .clone()
+          .set({
+            date: until.date(),
+            month: until.month(),
+            year: until.year(),
+          })
+          .toDate()
+      : undefined;
+
     createEvent({
       title,
       description,
       from: from.toDate(),
-      until: until ? until?.toDate() : undefined,
+      until: formattedUntil,
       frequency,
       interval,
       count,
     });
   }
-
-  useEffect(() => {
-    console.log(from.toDate());
-  }, [from]);
 
   return (
     <Dialog
