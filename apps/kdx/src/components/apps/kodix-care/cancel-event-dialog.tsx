@@ -29,15 +29,12 @@ export function CancelationDialog({
   open,
   setOpen,
 }: {
-  eventMasterId: string | undefined;
+  eventMasterId: string;
   eventExceptionId: string | undefined;
   date: Date;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  if (!eventMasterId && !eventExceptionId)
-    throw new Error("eventMasterId or eventExceptionId must be defined");
-
   const [radioValue, setRadioValue] = useState<
     "all" | "thisAndFuture" | "single"
   >("single");
@@ -115,13 +112,10 @@ export function CancelationDialog({
             onClick={(e) => {
               e.preventDefault();
 
-              const objWithId = eventExceptionId
-                ? { eventExceptionId }
-                : { eventMasterId };
-
               if (radioValue === "all")
                 cancelEvent({
-                  ...objWithId,
+                  eventExceptionId: eventExceptionId,
+                  eventMasterId: eventMasterId,
                   exclusionDefinition: "all",
                 });
               else if (
@@ -129,7 +123,8 @@ export function CancelationDialog({
                 radioValue === "single"
               )
                 cancelEvent({
-                  ...objWithId,
+                  eventExceptionId: eventExceptionId,
+                  eventMasterId: eventMasterId,
                   exclusionDefinition: radioValue,
                   date,
                 });

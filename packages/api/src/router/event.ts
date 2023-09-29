@@ -95,21 +95,14 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      type CalendarTask = {
+      interface CalendarTask {
         title: string | undefined;
         description: string | undefined;
         date: Date;
         rule: string;
-      } & (
-        | {
-            eventMasterId: string;
-            eventExceptionId: undefined;
-          }
-        | {
-            eventExceptionId: string;
-            eventMasterId: undefined;
-          }
-      );
+        eventMasterId: string;
+        eventExceptionId: string | undefined;
+      }
 
       let calendarTasks: CalendarTask[] = [];
 
@@ -203,8 +196,7 @@ export const eventRouter = createTRPCRouter({
             calendarTask = {
               ...calendarTask,
               eventExceptionId: foundException.id,
-              eventMasterId: undefined,
-            }; //Altero o CalendarTask para ter o eventExceptionId e não ter o eventMasterId
+            }; //Altero o CalendarTask para ter o eventExceptionId
             if (
               moment(input.dateStart).isSameOrBefore(foundException.newDate) &&
               moment(input.dateEnd).isSameOrAfter(foundException.newDate)
@@ -239,16 +231,10 @@ export const eventRouter = createTRPCRouter({
   cancel: protectedProcedure
     .input(
       z
-        .union([
-          z.object({
-            eventMasterId: z.string().cuid(),
-            eventExceptionId: z.undefined(),
-          }),
-          z.object({
-            eventMasterId: z.undefined(),
-            eventExceptionId: z.string().cuid(),
-          }),
-        ])
+        .object({
+          eventMasterId: z.string(),
+          eventExceptionId: z.string().optional(),
+        })
         .and(
           z.union([
             z.object({
@@ -266,7 +252,7 @@ export const eventRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       if (input.exclusionDefinition === "single") {
-        if (input.eventExceptionId) {
+        if (input.eventExceptionId)
           return await ctx.prisma.$transaction(async (tx) => {
             const deletedException = await tx.eventException.delete({
               where: {
@@ -280,7 +266,7 @@ export const eventRouter = createTRPCRouter({
               },
             });
           });
-        }
+
         return await ctx.prisma.eventCancellation.create({
           data: {
             EventMaster: {
@@ -293,17 +279,7 @@ export const eventRouter = createTRPCRouter({
         });
       } else if (input.exclusionDefinition === "thisAndFuture") {
         return await ctx.prisma.$transaction(async (tx) => {
-          let eventMasterId = input.eventMasterId;
           if (input.eventExceptionId) {
-            const eventException = await tx.eventException.findUniqueOrThrow({
-              where: {
-                id: input.eventExceptionId,
-              },
-              select: {
-                eventMasterId: true,
-              },
-            });
-
             const result = await tx.eventException.deleteMany({
               where: {
                 id: input.eventExceptionId,
@@ -317,12 +293,11 @@ export const eventRouter = createTRPCRouter({
                 code: "NOT_FOUND",
                 message: "Exception not found",
               });
-            eventMasterId = eventException.eventMasterId;
           }
 
           const eventMaster = await tx.eventMaster.findUnique({
             where: {
-              id: eventMasterId,
+              id: input.eventMasterId,
             },
           });
 
@@ -344,7 +319,7 @@ export const eventRouter = createTRPCRouter({
           if (!penultimateOccurence)
             return await tx.eventMaster.delete({
               where: {
-                id: eventMasterId,
+                id: input.eventMasterId,
               },
             });
 
@@ -353,7 +328,7 @@ export const eventRouter = createTRPCRouter({
 
           return await tx.eventMaster.update({
             where: {
-              id: eventMasterId,
+              id: input.eventMasterId,
             },
             data: {
               DateUntil: penultimateOccurence,
@@ -363,25 +338,6 @@ export const eventRouter = createTRPCRouter({
         });
       } else if (input.exclusionDefinition === "all") {
         //We should delete the event master. It should automatically cascade down to all other tables
-        if (input.eventExceptionId) {
-          const eventException =
-            await ctx.prisma.eventException.findUniqueOrThrow({
-              where: {
-                id: input.eventExceptionId,
-              },
-              select: {
-                eventMasterId: true,
-              },
-            });
-
-          return await ctx.prisma.eventMaster.delete({
-            where: {
-              id: eventException.eventMasterId,
-            },
-          });
-        }
-
-        //Delete where eventMaster that has this eventExceptionId
         return await ctx.prisma.eventMaster.delete({
           where: {
             id: input.eventMasterId,
@@ -395,11 +351,10 @@ export const eventRouter = createTRPCRouter({
     //* I cannot send until with single
     //* I cannot send frequency with single
     //* I cannot send from with all
-    //* I cannot send eventId with eventExceptionId
     .input(
       z
         .object({
-          eventMasterId: z.string().optional(),
+          eventMasterId: z.string(),
           eventExceptionId: z.string().optional(),
 
           selectedTimestamp: z.date(),
@@ -407,14 +362,6 @@ export const eventRouter = createTRPCRouter({
           title: z.string().optional(),
           description: z.string().optional(),
         })
-        .refine(
-          (data) => data.eventExceptionId ?? data.eventMasterId,
-          "Either eventMasterId or eventExceptionId must be provided",
-        )
-        .refine((data) => {
-          if (data.eventMasterId && data.eventExceptionId) return false;
-          return true;
-        }, "You cannot send both eventMasterId and eventExceptionId")
         .and(
           z.union([
             z.object({
@@ -587,23 +534,11 @@ export const eventRouter = createTRPCRouter({
           async (tx) => {
             if (input.eventExceptionId) {
               //*Deletamos a exceção se exisitir.
-              const eventMaster = await tx.eventException.findUniqueOrThrow({
-                where: {
-                  id: input.eventExceptionId,
-                  EventMaster: {
-                    workspaceId: ctx.session.user.activeWorkspaceId,
-                  },
-                },
-                select: {
-                  eventMasterId: true,
-                },
-              });
-
               const exception = await tx.eventException.deleteMany({
                 where: {
                   EventMaster: {
                     workspaceId: ctx.session.user.activeWorkspaceId,
-                    id: eventMaster.eventMasterId,
+                    id: input.eventMasterId,
                   },
                   newDate: {
                     gte: input.selectedTimestamp,
@@ -615,7 +550,6 @@ export const eventRouter = createTRPCRouter({
                   code: "NOT_FOUND",
                   message: "Exception not found",
                 });
-              input.eventMasterId = eventMaster.eventMasterId;
             }
 
             //* Aqui, Vamos editar o eventMaster antigo.

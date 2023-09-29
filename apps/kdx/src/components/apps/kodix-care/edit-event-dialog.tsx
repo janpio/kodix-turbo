@@ -197,12 +197,9 @@ export function EditEventDialog({
   }
 
   function handleSubmitFormData() {
-    const idObj = calendarTask.eventExceptionId
-      ? { eventExceptionId: calendarTask.eventExceptionId }
-      : { eventMasterId: calendarTask.eventMasterId };
-
     editEvent({
-      ...idObj,
+      eventExceptionId: calendarTask.eventExceptionId,
+      eventMasterId: calendarTask.eventMasterId,
       selectedTimestamp: calendarTask.date,
       title: title !== defaultState.title ? title : undefined,
       description:
