@@ -239,32 +239,27 @@ export const eventRouter = createTRPCRouter({
   cancel: protectedProcedure
     .input(
       z
-        .object({
-          eventMasterId: z.string().cuid(),
-          eventExceptionId: z.string().cuid(),
-        })
-        .partial({
-          eventMasterId: true,
-          eventExceptionId: true,
-        })
-        .refine(
-          (data) => data.eventExceptionId ?? data.eventMasterId,
-          "Either eventMasterId or eventExceptionId must be provided",
-        )
-        .refine((data) => {
-          if (data.eventMasterId && data.eventExceptionId) return false;
-          return true;
-        }, "You cannot send both eventMasterId and eventExceptionId")
+        .union([
+          z.object({
+            eventMasterId: z.string().cuid(),
+            eventExceptionId: z.undefined(),
+          }),
+          z.object({
+            eventMasterId: z.undefined(),
+            eventExceptionId: z.string().cuid(),
+          }),
+        ])
         .and(
           z.union([
             z.object({
               exclusionDefinition: z.literal("all"),
             }),
             z.object({
-              exclusionDefinition: z
-                .literal("thisAndFuture")
-                .or(z.literal("single")),
               date: z.date(),
+              exclusionDefinition: z.union([
+                z.literal("thisAndFuture"),
+                z.literal("single"),
+              ]),
             }),
           ]),
         ),
@@ -298,6 +293,7 @@ export const eventRouter = createTRPCRouter({
         });
       } else if (input.exclusionDefinition === "thisAndFuture") {
         return await ctx.prisma.$transaction(async (tx) => {
+          let eventMasterId = input.eventMasterId;
           if (input.eventExceptionId) {
             const eventException = await tx.eventException.findUniqueOrThrow({
               where: {
@@ -308,7 +304,7 @@ export const eventRouter = createTRPCRouter({
               },
             });
 
-            await tx.eventException.deleteMany({
+            const result = await tx.eventException.deleteMany({
               where: {
                 id: input.eventExceptionId,
                 newDate: {
@@ -316,13 +312,17 @@ export const eventRouter = createTRPCRouter({
                 },
               },
             });
-
-            input.eventMasterId = eventException.eventMasterId;
+            if (!result.count)
+              throw new TRPCError({
+                code: "NOT_FOUND",
+                message: "Exception not found",
+              });
+            eventMasterId = eventException.eventMasterId;
           }
 
           const eventMaster = await tx.eventMaster.findUnique({
             where: {
-              id: input.eventMasterId,
+              id: eventMasterId,
             },
           });
 
@@ -344,7 +344,7 @@ export const eventRouter = createTRPCRouter({
           if (!penultimateOccurence)
             return await tx.eventMaster.delete({
               where: {
-                id: input.eventMasterId,
+                id: eventMasterId,
               },
             });
 
@@ -353,7 +353,7 @@ export const eventRouter = createTRPCRouter({
 
           return await tx.eventMaster.update({
             where: {
-              id: input.eventMasterId,
+              id: eventMasterId,
             },
             data: {
               DateUntil: penultimateOccurence,
