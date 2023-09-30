@@ -201,7 +201,7 @@ export function EditEventDialog({
         description !== defaultState.description ? description : undefined,
       from: !from.isSame(defaultState.from) ? from.toDate() : undefined,
       until:
-        until && until.isSame(defaultState.until) ? until.toDate() : undefined,
+        until && !until.isSame(defaultState.until) ? until.toDate() : undefined, //TODO: This is sometimes incorrect. See weird google calendar example.
       frequency: frequency !== defaultState.frequency ? frequency : undefined,
       interval: interval !== defaultState.interval ? interval : undefined,
       editDefinition: definition,
