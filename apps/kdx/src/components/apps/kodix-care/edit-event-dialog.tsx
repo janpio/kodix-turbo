@@ -118,11 +118,6 @@ export function EditEventDialog({
     if (!allowedEditDefinitions.single) setDefinition("thisAndFuture");
     else setDefinition("single");
   }, [allowedEditDefinitions]);
-
-  useEffect(() => {
-    console.log(allowedEditDefinitions);
-  }, [allowedEditDefinitions]);
-
   useEffect(() => {
     const isChanged =
       title !== defaultState.title ||
