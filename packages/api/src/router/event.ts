@@ -422,6 +422,10 @@ export const eventRouter = createTRPCRouter({
                           description: input.description,
                           title: input.title,
                         },
+                        where: {
+                          description: input.description,
+                          title: input.title,
+                        },
                       },
                     }
                   : undefined,
@@ -531,145 +535,190 @@ export const eventRouter = createTRPCRouter({
         //* Havemos um selectedTimestamp.
         //* Temos que procurar se temos uma exceção que bate com o selectedTimestamp.
         //* Se tivermos, temos que alterá-la.
-        await ctx.prisma.$transaction(
-          async (tx) => {
-            if (input.eventExceptionId) {
-              //*Deletamos a exceção se exisitir.
-              const exception = await tx.eventException.deleteMany({
+        await ctx.prisma.$transaction(async (tx) => {
+          if (input.eventExceptionId) {
+            //*Deletamos a exceção se exisitir.
+            const exception = await tx.eventException.deleteMany({
+              where: {
+                EventMaster: {
+                  workspaceId: ctx.session.user.activeWorkspaceId,
+                  id: input.eventMasterId,
+                },
+                newDate: {
+                  gte: input.selectedTimestamp,
+                },
+              },
+            });
+            if (!exception.count)
+              throw new TRPCError({
+                code: "NOT_FOUND",
+                message: "Exception not found",
+              });
+          }
+
+          //* Aqui, Vamos editar o eventMaster antigo.
+          const oldMaster = await tx.eventMaster.findUniqueOrThrow({
+            where: {
+              id: input.eventMasterId,
+              workspaceId: ctx.session.user.activeWorkspaceId,
+            },
+            select: {
+              rule: true,
+              eventInfoId: true,
+            },
+          });
+          const oldRule = rrulestr(oldMaster.rule);
+          const lastOccurence = oldRule.before(input.selectedTimestamp, false);
+          if (!lastOccurence) {
+            //It means that the selectedTimestamp
+            //is either the first occurence of the event or it is before the first occurence.
+            //If it is before the first occurence, we should have an exception.
+            //If it is the first occurence, we should just edit the eventMaster.
+            if (input.selectedTimestamp < oldRule.options.dtstart)
+              throw new TRPCError({
+                code: "NOT_FOUND",
+                message: "Event not found",
+              });
+            else
+              return await tx.eventMaster.update({
                 where: {
-                  EventMaster: {
-                    workspaceId: ctx.session.user.activeWorkspaceId,
-                    id: input.eventMasterId,
-                  },
-                  newDate: {
-                    gte: input.selectedTimestamp,
-                  },
+                  id: input.eventMasterId,
+                  workspaceId: ctx.session.user.activeWorkspaceId,
+                },
+                data: {
+                  DateStart: input.from ?? input.selectedTimestamp,
+                  DateUntil: input.until ?? oldRule.options.until ?? undefined,
+                  rule: generateRule(
+                    input.from ?? input.selectedTimestamp,
+                    input.until ?? oldRule.options.until ?? undefined,
+                    input.frequency ?? oldRule.options.freq,
+                    input.interval ?? oldRule.options.interval,
+                    input.count ?? oldRule.options.count ?? undefined,
+                  ),
                 },
               });
-              if (!exception.count)
-                throw new TRPCError({
-                  code: "NOT_FOUND",
-                  message: "Exception not found",
-                });
-            }
+          }
 
-            //* Aqui, Vamos editar o eventMaster antigo.
-            const oldMaster = await tx.eventMaster.findUniqueOrThrow({
+          const newRule = generateRule(
+            oldRule.options.dtstart,
+            lastOccurence,
+            oldRule.options.freq,
+            oldRule.options.interval,
+            oldRule.options.count ?? undefined,
+          );
+
+          const updatedOldMaster = await tx.eventMaster.update({
+            where: {
+              id: input.eventMasterId,
+              workspaceId: ctx.session.user.activeWorkspaceId,
+            },
+            data: {
+              DateUntil: lastOccurence,
+              rule: newRule.toString(),
+            },
+            select: {
+              eventInfo: {
+                select: {
+                  title: true,
+                  description: true,
+                },
+              },
+            },
+          });
+          if (!updatedOldMaster)
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Could not update event master",
+            });
+
+          const newMasterCreateData = {
+            workspaceId: ctx.session.user.activeWorkspaceId,
+            DateStart: input.from ?? input.selectedTimestamp,
+            DateUntil: input.until ?? oldRule.options.until ?? undefined,
+            rule: generateRule(
+              input.from ?? input.selectedTimestamp,
+              input.until ?? oldRule.options.until ?? undefined,
+              input.frequency ?? oldRule.options.freq,
+              input.interval ?? oldRule.options.interval,
+              input.count ?? oldRule.options.count ?? undefined,
+            ),
+          };
+
+          if (input.title ?? input.description)
+            return await tx.eventInfo.create({
+              data: {
+                title: input.title ?? updatedOldMaster.eventInfo.title,
+                description:
+                  input.description ?? updatedOldMaster.eventInfo.description,
+                EventMaster: {
+                  create: newMasterCreateData,
+                },
+              },
+            });
+          else
+            return await tx.eventMaster.create({
+              data: {
+                ...newMasterCreateData,
+                eventInfoId: oldMaster.eventInfoId,
+              },
+            });
+        });
+      } else if (input.editDefinition === "all") {
+        const shouldUpdateRule = Boolean(
+          input.frequency ?? input.interval ?? input.count ?? input.until,
+        );
+
+        if (!input.frequency) {
+          const oldRule = (
+            await ctx.prisma.eventMaster.findUniqueOrThrow({
               where: {
                 id: input.eventMasterId,
                 workspaceId: ctx.session.user.activeWorkspaceId,
               },
               select: {
                 rule: true,
-                eventInfoId: true,
               },
-            });
-            const oldRule = rrulestr(oldMaster.rule);
-            const lastOccurence = oldRule.before(
-              input.selectedTimestamp,
-              false,
-            );
-            if (!lastOccurence) {
-              //It means that the selectedTimestamp
-              //is either the first occurence of the event or it is before the first occurence.
-              //If it is before the first occurence, we should have an exception.
-              //If it is the first occurence, we should just edit the eventMaster.
-              if (input.selectedTimestamp < oldRule.options.dtstart)
-                throw new TRPCError({
-                  code: "NOT_FOUND",
-                  message: "Event not found",
-                });
-              else
-                return await tx.eventMaster.update({
-                  where: {
-                    id: input.eventMasterId,
-                    workspaceId: ctx.session.user.activeWorkspaceId,
-                  },
-                  data: {
-                    DateStart: input.from ?? input.selectedTimestamp,
-                    DateUntil:
-                      input.until ?? oldRule.options.until ?? undefined,
-                    rule: generateRule(
-                      input.from ?? input.selectedTimestamp,
-                      input.until ?? oldRule.options.until ?? undefined,
-                      input.frequency ?? oldRule.options.freq,
-                      input.interval ?? oldRule.options.interval,
-                      input.count ?? oldRule.options.count ?? undefined,
-                    ),
-                  },
-                });
-            }
+            })
+          ).rule;
+          input.frequency = rrulestr(oldRule).options.freq;
+        }
 
-            const newRule = generateRule(
-              oldRule.options.dtstart,
-              lastOccurence,
-              oldRule.options.freq,
-              oldRule.options.interval,
-              oldRule.options.count ?? undefined,
-            );
+        const eventInfoCreateOrUpdateData = {
+          title: input.title,
+          description: input.description,
+        };
 
-            const updatedOldMaster = await tx.eventMaster.update({
-              where: {
-                id: input.eventMasterId,
-                workspaceId: ctx.session.user.activeWorkspaceId,
-              },
-              data: {
-                DateUntil: lastOccurence,
-                rule: newRule.toString(),
-              },
-              select: {
-                eventInfo: {
-                  select: {
-                    title: true,
-                    description: true,
-                  },
-                },
-              },
-            });
-            if (!updatedOldMaster)
-              throw new TRPCError({
-                code: "NOT_FOUND",
-                message: "Could not update event master",
-              });
-
-            const newMasterCreateData = {
-              workspaceId: ctx.session.user.activeWorkspaceId,
-              DateStart: input.from ?? input.selectedTimestamp,
-              DateUntil: input.until ?? oldRule.options.until ?? undefined,
-              rule: generateRule(
-                input.from ?? input.selectedTimestamp,
-                input.until ?? oldRule.options.until ?? undefined,
-                input.frequency ?? oldRule.options.freq,
-                input.interval ?? oldRule.options.interval,
-                input.count ?? oldRule.options.count ?? undefined,
-              ),
-            };
-
-            if (input.title ?? input.description)
-              return await tx.eventInfo.create({
-                data: {
-                  title: input.title ?? updatedOldMaster.eventInfo.title,
-                  description:
-                    input.description ?? updatedOldMaster.eventInfo.description,
+        return await ctx.prisma.eventMaster.update({
+          where: {
+            id: input.eventMasterId,
+            workspaceId: ctx.session.user.activeWorkspaceId,
+          },
+          data: {
+            DateUntil: input.until,
+            rule: shouldUpdateRule
+              ? generateRule(
+                  input.selectedTimestamp,
+                  input.until,
+                  input.frequency,
+                  input.interval,
+                  input.count,
+                )
+              : undefined,
+            eventInfo: {
+              upsert: {
+                create: eventInfoCreateOrUpdateData,
+                update: eventInfoCreateOrUpdateData,
+                where: {
                   EventMaster: {
-                    create: newMasterCreateData,
+                    some: {
+                      id: input.eventMasterId,
+                    },
                   },
                 },
-              });
-            else
-              return await tx.eventMaster.create({
-                data: {
-                  ...newMasterCreateData,
-                  eventInfoId: oldMaster.eventInfoId,
-                },
-              });
+              },
+            },
           },
-          {
-            maxWait: 500000, // default: 2000
-            timeout: 1000000, // default: 5000
-          },
-        );
-      } /*else if (input.editDefinition === "all") {
-      }*/
+        });
+      }
     }),
 });
