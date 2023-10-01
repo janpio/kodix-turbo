@@ -86,22 +86,11 @@ export function CreateEventDialogButton() {
   function handleSubmitFormData(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     //We need to make sure that everything is the same as from, except for the date.
-    const formattedUntil = until
-      ? from
-          .clone()
-          .set({
-            date: until.date(),
-            month: until.month(),
-            year: until.year(),
-          })
-          .toDate()
-      : undefined;
-
     createEvent({
       title,
       description,
-      from: from.toDate(),
-      until: formattedUntil,
+      from: from.add(-1, "M").toDate(), //IDK why we need to do this, but it works
+      until: until?.toDate(),
       frequency,
       interval,
       count,

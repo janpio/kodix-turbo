@@ -190,15 +190,20 @@ export const eventRouter = createTRPCRouter({
     }),
   create: protectedProcedure
     .input(
-      z.object({
-        title: z.string(),
-        description: z.string().optional(),
-        from: z.date(),
-        until: z.date().optional(),
-        frequency: z.nativeEnum(Frequency),
-        interval: z.number().optional(),
-        count: z.number().optional(),
-      }),
+      z
+        .object({
+          title: z.string(),
+          description: z.string().optional(),
+          from: z.date(),
+          until: z.date().optional(),
+          frequency: z.nativeEnum(Frequency),
+          interval: z.number().optional(),
+          count: z.number().optional(),
+        })
+        .transform((obj) => {
+          obj.until?.setTime(obj.from.getTime());
+          return obj;
+        }),
     )
     .mutation(async ({ ctx, input }) => {
       const eventMaster = await ctx.prisma.$transaction(async (tx) => {
@@ -351,7 +356,7 @@ export const eventRouter = createTRPCRouter({
     //* I cannot send interval with single
     //* I cannot send until with single
     //* I cannot send frequency with single
-    //* I cannot send from with all
+    //* I CAN send from with all, but from cannot be at a different date (day, year, or month) from the selected timestamp event's master/exception. Only hour.
     .input(
       z
         .object({
@@ -362,6 +367,7 @@ export const eventRouter = createTRPCRouter({
 
           title: z.string().optional(),
           description: z.string().optional(),
+          from: z.date().optional(),
         })
         .and(
           z.union([
@@ -371,24 +377,28 @@ export const eventRouter = createTRPCRouter({
               interval: z.number().optional(),
               count: z.number().optional(),
 
-              from: z.date().optional(),
-              editDefinition: z.literal("thisAndFuture"),
+              editDefinition: z.enum(["thisAndFuture", "all"]),
             }),
             z.object({
-              frequency: z.nativeEnum(Frequency).optional(),
-              until: z.date().optional(),
-              interval: z.number().optional(),
-              count: z.number().optional(),
-
-              editDefinition: z.literal("all"),
-            }),
-            z.object({
-              from: z.date().optional(),
               editDefinition: z.literal("single"),
             }),
           ]),
-        ),
+        )
+        .transform((obj) => {
+          if (
+            obj.from &&
+            (obj.editDefinition === "thisAndFuture" ||
+              obj.editDefinition === "all")
+          )
+            obj.until?.setTime(obj.from?.getTime());
+          return obj;
+        }),
     )
+    .use(({ ctx, input, next }) => {
+      return next({
+        ctx,
+      });
+    })
     .mutation(async ({ ctx, input }) => {
       if (input.editDefinition === "single") {
         //* Havemos description, title, from e selectedTimestamp.
@@ -491,51 +501,13 @@ export const eventRouter = createTRPCRouter({
             },
           }); //! END OF PROCEDURE
 
-        // return await ctx.prisma.eventException.create({
-        //   data: {
-        //     eventMasterId: eventMaster.id,
-        //     originalDate: foundTimestamp,
-        //     newDate: input.from,
-        //     EventInfo: {
-        // 			create: {
-        // 				description: input.description,
-        // 				title: input.title,
-        // 			}
-        // 		}
-        //   },
-        // });
-        //! END OF PROCEDURE
-
-        // return await ctx.prisma.eventMaster.update({
-        //   where: {
-        //     id: eventMaster.id,
-        //   },
-        //   data: {
-        //     DateStart: input.from,
-        //     eventInfo: {
-        //       upsert: {
-        //         //* Upsert é um update ou um create. Se não existir, cria. Se existir, atualiza.
-        //         create: {
-        //           description: input.description,
-        //           title: input.title,
-        //         },
-        //         update: {
-        //           description: input.description,
-        //           title: input.title,
-        //         },
-        //       },
-        //     },
-        //   },
-        // });
-        //! END OF PROCEDURE
-
         //* Não temos uma exceção nem uma ocorrência que bate com o selectedTimestamp. Vamos gerar um erro.
       } else if (input.editDefinition === "thisAndFuture") {
-        //* Havemos description, title, from, until, frequency, inteval, count e selectedTimestamp.
-        //* Havemos um selectedTimestamp.
-        //* Temos que procurar se temos uma exceção que bate com o selectedTimestamp.
-        //* Se tivermos, temos que alterá-la.
         await ctx.prisma.$transaction(async (tx) => {
+          //* Havemos description, title, from, until, frequency, inteval, count e selectedTimestamp.
+          //* Havemos um selectedTimestamp.
+          //* Temos que procurar se temos uma exceção que bate com o selectedTimestamp.
+          //* Se tivermos, temos que alterá-la.
           if (input.eventExceptionId) {
             //*Deletamos a exceção se exisitir.
             const exception = await tx.eventException.deleteMany({
@@ -570,10 +542,10 @@ export const eventRouter = createTRPCRouter({
           const oldRule = rrulestr(oldMaster.rule);
           const lastOccurence = oldRule.before(input.selectedTimestamp, false);
           if (!lastOccurence) {
-            //It means that the selectedTimestamp
-            //is either the first occurence of the event or it is before the first occurence.
-            //If it is before the first occurence, we should have an exception.
-            //If it is the first occurence, we should just edit the eventMaster.
+            //* It means that the selectedTimestamp
+            //* is either the first occurence of the event or it is before the first occurence.
+            //* If it is before the first occurence, we should have an exception.
+            //* If it is the first occurence, we should just edit the eventMaster.
             if (input.selectedTimestamp < oldRule.options.dtstart)
               throw new TRPCError({
                 code: "NOT_FOUND",
@@ -664,29 +636,222 @@ export const eventRouter = createTRPCRouter({
             });
         });
       } else if (input.editDefinition === "all") {
-        const shouldUpdateRule = Boolean(
-          input.frequency ?? input.interval ?? input.count ?? input.until,
-        );
+        //TODO: Wrap this in a transaction
+        if (input.eventExceptionId) {
+          if (input.title ?? input.description) {
+            //* Temos alteração do event info.
+            const newRule = await (async () => {
+              const shouldUpdateRule = Boolean(
+                input.frequency ?? input.interval ?? input.count ?? input.until,
+              );
+              if (!shouldUpdateRule) return undefined;
+              const master = await ctx.prisma.eventMaster.findUniqueOrThrow({
+                where: {
+                  id: input.eventMasterId,
+                  workspaceId: ctx.session.user.activeWorkspaceId,
+                },
+                select: {
+                  rule: true,
+                },
+              });
+              const oldRule = rrulestr(master.rule);
+              return generateRule(
+                oldRule.options.dtstart,
+                input.until ?? oldRule.options.until ?? undefined,
+                input.frequency ?? oldRule.options.freq,
+                input.interval ?? oldRule.options.interval,
+                input.count ?? oldRule.options.count ?? undefined,
+              );
+            })();
 
-        if (!input.frequency) {
-          const oldRule = (
-            await ctx.prisma.eventMaster.findUniqueOrThrow({
-              where: {
-                id: input.eventMasterId,
-                workspaceId: ctx.session.user.activeWorkspaceId,
-              },
-              select: {
-                rule: true,
-              },
-            })
-          ).rule;
-          input.frequency = rrulestr(oldRule).options.freq;
+            if (input.title && input.description) {
+              //* Caso todos os campos do eventInfo, (title e description) tenham sido alterados, devemos apagar o eventInfo
+              //* relacionado ao exception e criar um novo que esteja linkado ao master.
+
+              return await ctx.prisma.eventException.update({
+                where: {
+                  id: input.eventExceptionId,
+                },
+                data: {
+                  EventMaster: {
+                    update: {
+                      rule: newRule,
+                    },
+                  },
+                  EventInfo: {
+                    delete: true,
+                    create: {
+                      title: input.title,
+                      description: input.description,
+                      EventMaster: {
+                        connect: {
+                          id: input.eventMasterId,
+                        },
+                      },
+                    },
+                  },
+                },
+              });
+            }
+            //* Caso apenas um dos campos tenham sido alterados, chegamos aqui. devemos checar se o exception tem um eventInfo.
+            //* Caso ele tenha, devemos alterar o eventInfo do exception.
+            //* Caso ele não tenha, devemos criar um novo eventInfo e linkar ao master.
+            const eventException =
+              await ctx.prisma.eventException.findUniqueOrThrow({
+                where: {
+                  id: input.eventExceptionId,
+                },
+                select: {
+                  EventInfo: {
+                    select: {
+                      id: true,
+                    },
+                  },
+                },
+              });
+            if (eventException.EventInfo) {
+              return await ctx.prisma.eventException.update({
+                where: {
+                  id: input.eventExceptionId,
+                  EventMaster: {
+                    workspaceId: ctx.session.user.activeWorkspaceId,
+                  },
+                },
+                data: {
+                  EventInfo: {
+                    update: {
+                      title: input.title,
+                      description: input.description,
+                    },
+                  },
+                  EventMaster: {
+                    update: {
+                      rule: newRule,
+                    },
+                  },
+                },
+              });
+            } else
+              return await ctx.prisma.eventException.update({
+                where: {
+                  id: input.eventExceptionId,
+                  EventMaster: {
+                    workspaceId: ctx.session.user.activeWorkspaceId,
+                  },
+                },
+                data: {
+                  EventInfo: {
+                    create: {
+                      title: input.title,
+                      description: input.description,
+                      EventMaster: {
+                        connect: {
+                          id: input.eventMasterId,
+                        },
+                      },
+                    },
+                  },
+                  EventMaster: {
+                    update: {
+                      rule: newRule,
+                    },
+                  },
+                },
+              });
+          }
         }
+
+        //* O usuário quer editar o master.
+        //* Se ele alterou o title ou description, Devemos verificar se ele alterou os dois.
+        //* Se ele alterou os dois, devemos apagar o eventInfo de todos os eventExceptions associados ao master e criar um novo eventInfo no master.
+        //* Se ele apagou apenas um dos dois, devemos alterar o eventInfo do master e dos eventException associado ao master caso o eventException possua eventInfo.
+
+        //* Se ele alterou o from, devemos alterar o DateStart, rule e DateUntil do master e remover os newDates dos eventExceptions associados ao master.
+
+        //*Temos que pegar a nova regra se alterou o input.frequency ?? input.interval ?? input.count ?? input.until ou se alterou o input.from
+        const oldRule = await (async () => {
+          const shouldUpdateRuleFromAndUntil = Boolean(
+            input.frequency ??
+              input.interval ??
+              input.count ??
+              input.until ??
+              input.from,
+          );
+          if (!shouldUpdateRuleFromAndUntil) return undefined;
+          const master = await ctx.prisma.eventMaster.findUniqueOrThrow({
+            where: {
+              id: input.eventMasterId,
+              workspaceId: ctx.session.user.activeWorkspaceId,
+            },
+            select: {
+              rule: true,
+            },
+          });
+          return rrulestr(master.rule);
+        })();
+
+        const newRule = oldRule
+          ? generateRule(
+              input.from ?? oldRule.options.dtstart,
+              input.until ?? oldRule.options.until ?? undefined,
+              input.frequency ?? oldRule.options.freq,
+              input.interval ?? oldRule.options.interval,
+              input.count ?? oldRule.options.count ?? undefined,
+            )
+          : undefined; //If oldRule doesn't exist, we don't have to update rule, from or until
 
         const eventInfoCreateOrUpdateData = {
           title: input.title,
           description: input.description,
         };
+
+        if (input.title ?? input.description) {
+          if (input.title && input.description) {
+            await ctx.prisma.eventMaster.update({
+              where: {
+                id: input.eventMasterId,
+                workspaceId: ctx.session.user.activeWorkspaceId,
+              },
+              data: {
+                eventInfo: {
+                  upsert: {
+                    create: eventInfoCreateOrUpdateData,
+                    update: eventInfoCreateOrUpdateData,
+                    where: {
+                      EventMaster: {
+                        some: {
+                          id: input.eventMasterId,
+                        },
+                      },
+                    },
+                  },
+                },
+                rule: newRule,
+                DateStart: input.from,
+                EventExceptions: {
+                  updateMany: {
+                    where: {},
+                    data: {
+                      newDate: {},
+                    },
+                  },
+                },
+              },
+            });
+
+            return await ctx.prisma.eventInfo.deleteMany({
+              where: {
+                EventException: {
+                  some: {
+                    EventMaster: {
+                      id: input.eventMasterId,
+                    },
+                  },
+                },
+              },
+            });
+          }
+        }
 
         return await ctx.prisma.eventMaster.update({
           where: {
@@ -695,15 +860,7 @@ export const eventRouter = createTRPCRouter({
           },
           data: {
             DateUntil: input.until,
-            rule: shouldUpdateRule
-              ? generateRule(
-                  input.selectedTimestamp,
-                  input.until,
-                  input.frequency,
-                  input.interval,
-                  input.count,
-                )
-              : undefined,
+            rule: newRule,
             eventInfo: {
               upsert: {
                 create: eventInfoCreateOrUpdateData,
@@ -716,6 +873,12 @@ export const eventRouter = createTRPCRouter({
                   },
                 },
               },
+            },
+            EventExceptions: {
+              // updateMany: {
+              //   data: {
+              // 	}
+              // },
             },
           },
         });
