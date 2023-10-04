@@ -112,24 +112,19 @@ export function EditEventDialog({
     defaultState.until,
   );
   const [count, setCount] = useState<number | undefined>(defaultState.count);
-  const [definition, setDefinition] = useState<
-    "single" | "thisAndFuture" | "all"
-  >("single");
 
   const allowedEditDefinitions = {
-    thisAndFuture: true,
-    all: !(
-      from.format("YYYY-MM-DD") !== defaultState.from.format("YYYY-MM-DD")
-    ),
     single: !(
       count !== defaultState.count ||
       interval !== defaultState.interval ||
       (until && !until?.isSame(defaultState.until)) ||
       frequency !== defaultState.frequency
     ),
+    thisAndFuture: true,
+    all: !(
+      from.format("YYYY-MM-DD") !== defaultState.from.format("YYYY-MM-DD")
+    ),
   };
-
-  console.log("asd");
 
   const isFormChanged =
     title !== defaultState.title ||
@@ -148,11 +143,11 @@ export function EditEventDialog({
     setInterval(defaultState.interval);
     setUntil(defaultState.until);
     setCount(defaultState.count);
-
-    setDefinition("single");
   }
 
-  function handleSubmitFormData() {
+  function handleSubmitFormData(
+    definition: "single" | "thisAndFuture" | "all",
+  ) {
     const input: RouterInputs["event"]["edit"] = {
       eventExceptionId: calendarTask.eventExceptionId,
       eventMasterId: calendarTask.eventMasterId,
@@ -313,11 +308,9 @@ export function EditEventDialog({
             </Tooltip>
           </TooltipProvider>
         </DialogFooter>
-        <EditDefinitionDialog
+        <SubmitEditEventDialog
           open={editDefinitionOpen}
           setOpen={setEditDefinitionOpen}
-          definition={definition}
-          setDefinition={setDefinition}
           allowedDefinitions={allowedEditDefinitions}
           submit={handleSubmitFormData}
         />
@@ -326,20 +319,14 @@ export function EditEventDialog({
   );
 }
 
-function EditDefinitionDialog({
+function SubmitEditEventDialog({
   open,
   setOpen,
-  definition,
-  setDefinition,
   allowedDefinitions,
   submit,
 }: {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  definition: "single" | "thisAndFuture" | "all";
-  setDefinition: React.Dispatch<
-    React.SetStateAction<"single" | "thisAndFuture" | "all">
-  >;
   allowedDefinitions: {
     single: boolean;
     thisAndFuture: boolean;
@@ -347,23 +334,23 @@ function EditDefinitionDialog({
   };
   submit: (definition: "single" | "thisAndFuture" | "all") => void;
 }) {
+  const [definition, setDefinition] = useState<
+    "single" | "thisAndFuture" | "all"
+  >("single");
+
   return (
     <AlertDialog
       open={open}
       onOpenChange={(boolean) => {
         setOpen(boolean);
-        if (!boolean) setDefinition("single"); //Revert the data back to default when closing
       }}
     >
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Edit recurrent event</AlertDialogTitle>
+          <AlertDialogTitle>Edit event</AlertDialogTitle>
           <AlertDialogDescription>
             <div className="my-6">
-              <RadioGroup
-                className="flex flex-col space-y-2"
-                defaultValue={definition}
-              >
+              <RadioGroup className="flex flex-col space-y-2">
                 {allowedDefinitions.single && (
                   <div className="flex">
                     <RadioGroupItem
