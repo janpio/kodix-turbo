@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useMemo, useState } from "react";
 import type { inferRouterOutputs } from "@trpc/server";
 import { format } from "date-fns";
@@ -39,8 +37,10 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
+  useToast,
 } from "@kdx/ui";
 
+import type { RouterInputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { RecurrencePicker } from "./recurrence-picker";
 
@@ -57,6 +57,7 @@ export function EditEventDialog({
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const ctx = api.useContext();
+  const { toast } = useToast();
   const { mutate: editEvent } = api.event.edit.useMutation({
     onMutate: () => {
       setButtonLoading(true);
@@ -67,6 +68,18 @@ export function EditEventDialog({
     },
     onSettled: () => {
       setButtonLoading(false);
+    },
+    onError: (e) => {
+      const zodContentErrors = e.data?.zodError?.fieldErrors.content;
+      const zodFormErrors = e.data?.zodError?.formErrors;
+      toast({
+        title:
+          zodContentErrors?.[0] ??
+          zodFormErrors?.[0] ??
+          e.message ??
+          "Something went wrong, please try again later.",
+        variant: "destructive",
+      });
     },
   });
   const [buttonLoading, setButtonLoading] = useState(false);
@@ -192,20 +205,40 @@ export function EditEventDialog({
   }
 
   function handleSubmitFormData() {
-    editEvent({
+    const input: RouterInputs["event"]["edit"] = {
       eventExceptionId: calendarTask.eventExceptionId,
       eventMasterId: calendarTask.eventMasterId,
       selectedTimestamp: calendarTask.date,
-      title: title !== defaultState.title ? title : undefined,
-      description:
-        description !== defaultState.description ? description : undefined,
-      from: !from.isSame(defaultState.from) ? from.toDate() : undefined,
-      until:
-        until && !until.isSame(defaultState.until) ? until.toDate() : undefined, //TODO: This is sometimes incorrect. See weird google calendar example.
-      frequency: frequency !== defaultState.frequency ? frequency : undefined,
-      interval: interval !== defaultState.interval ? interval : undefined,
       editDefinition: definition,
-    });
+    };
+
+    if (title !== defaultState.title) input.title = title;
+    if (description !== defaultState.description)
+      input.description = description;
+
+    if (input.editDefinition === "single") {
+      if (!from.isSame(defaultState.from)) input.from = from.toDate();
+    }
+
+    if (input.editDefinition === "thisAndFuture") {
+      if (!from.isSame(defaultState.from)) input.from = from.toDate();
+
+      if (count !== defaultState.count) input.count = count;
+      if (interval !== defaultState.interval) input.interval = interval;
+      if (!until?.isSame(defaultState.until)) input.until = until?.toDate();
+      if (frequency !== defaultState.frequency) input.frequency = frequency;
+    }
+
+    if (input.editDefinition === "all") {
+      if (!from.isSame(defaultState.from)) input.from = from.format("HH:mm");
+
+      if (count !== defaultState.count) input.count = count;
+      if (interval !== defaultState.interval) input.interval = interval;
+      if (!until?.isSame(defaultState.until)) input.until = until?.toDate();
+      if (frequency !== defaultState.frequency) input.frequency = frequency;
+    }
+
+    editEvent(input);
   }
 
   useEffect(() => {
