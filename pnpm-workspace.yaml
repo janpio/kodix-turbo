@@ -3,7 +3,6 @@ packages:
   - apps/kodix-care
   - apps/nextjs
   - apps/stays-ai
-  - apps/expo
   - packages/api
   - packages/auth
   - packages/db
