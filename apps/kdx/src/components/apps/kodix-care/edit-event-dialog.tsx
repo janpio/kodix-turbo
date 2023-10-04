@@ -115,77 +115,30 @@ export function EditEventDialog({
   const [definition, setDefinition] = useState<
     "single" | "thisAndFuture" | "all"
   >("single");
-  const [allowedEditDefinitions, setAllowedEditDefinitions] = useState<{
-    single: boolean;
-    thisAndFuture: boolean;
-    all: boolean;
-  }>({
-    single: true,
+
+  const allowedEditDefinitions = {
     thisAndFuture: true,
-    all: true,
-  });
-
-  const [isFormChanged, setIsFormChanged] = useState(false);
-
-  useEffect(() => {
-    if (!allowedEditDefinitions.single) setDefinition("thisAndFuture");
-    else setDefinition("single");
-  }, [allowedEditDefinitions]);
-  useEffect(() => {
-    const isChanged =
-      title !== defaultState.title ||
-      description !== defaultState.description ||
-      !from.isSame(defaultState.from) ||
-      frequency !== defaultState.frequency ||
-      interval !== defaultState.interval ||
-      until !== defaultState.until ||
-      count !== defaultState.count;
-    setIsFormChanged(isChanged);
-
-    if (
+    all: !(
+      from.format("YYYY-MM-DD") !== defaultState.from.format("YYYY-MM-DD")
+    ),
+    single: !(
       count !== defaultState.count ||
       interval !== defaultState.interval ||
-      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
       (until && !until?.isSame(defaultState.until)) ||
       frequency !== defaultState.frequency
-    ) {
-      setAllowedEditDefinitions((prev) => ({
-        ...prev,
-        single: false,
-      }));
-    } else {
-      setAllowedEditDefinitions((prev) => ({
-        ...prev,
-        single: true,
-      }));
-    }
-    if (from.format("YYYY-MM-DD") !== defaultState.from.format("YYYY-MM-DD")) {
-      setAllowedEditDefinitions((prev) => ({
-        ...prev,
-        all: false,
-      }));
-    } else {
-      setAllowedEditDefinitions((prev) => ({
-        ...prev,
-        all: true,
-      }));
-    }
-  }, [
-    title,
-    description,
-    from,
-    frequency,
-    interval,
-    until,
-    count,
-    defaultState.title,
-    defaultState.description,
-    defaultState.from,
-    defaultState.frequency,
-    defaultState.interval,
-    defaultState.until,
-    defaultState.count,
-  ]);
+    ),
+  };
+
+  console.log("asd");
+
+  const isFormChanged =
+    title !== defaultState.title ||
+    description !== defaultState.description ||
+    !from.isSame(defaultState.from) ||
+    frequency !== defaultState.frequency ||
+    interval !== defaultState.interval ||
+    until !== defaultState.until ||
+    count !== defaultState.count;
 
   function revertStateToDefault() {
     setTitle(defaultState.title);
@@ -197,11 +150,6 @@ export function EditEventDialog({
     setCount(defaultState.count);
 
     setDefinition("single");
-    setAllowedEditDefinitions({
-      single: true,
-      thisAndFuture: true,
-      all: true,
-    });
   }
 
   function handleSubmitFormData() {
@@ -240,10 +188,6 @@ export function EditEventDialog({
 
     editEvent(input);
   }
-
-  useEffect(() => {
-    console.log(from.toDate());
-  }, [from]);
 
   return (
     <Dialog

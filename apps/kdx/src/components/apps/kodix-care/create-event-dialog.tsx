@@ -19,6 +19,7 @@ import {
   Input,
   Label,
   Textarea,
+  useToast,
 } from "@kdx/ui";
 
 import { api } from "~/utils/api";
@@ -28,6 +29,7 @@ import { RecurrencePicker } from "./recurrence-picker";
 export function CreateEventDialogButton() {
   const [open, setOpen] = useState(false);
   const ctx = api.useContext();
+  const { toast } = useToast();
   const { mutate: createEvent } = api.event.create.useMutation({
     onMutate: () => {
       setButtonLoading(true);
@@ -40,6 +42,18 @@ export function CreateEventDialogButton() {
     onSettled: () => {
       setButtonLoading(false);
     },
+    onError: (e) => {
+      const zodContentErrors = e.data?.zodError?.fieldErrors.content;
+      const zodFormErrors = e.data?.zodError?.formErrors;
+      toast({
+        title:
+          zodContentErrors?.[0] ??
+          zodFormErrors?.[0] ??
+          e.message ??
+          "Something went wrong, please try again later.",
+        variant: "destructive",
+      });
+    },
   });
   const [buttonLoading, setButtonLoading] = useState(false);
   const [personalizedRecurrenceOpen, setPersonalizedRecurrenceOpen] =
@@ -48,7 +62,8 @@ export function CreateEventDialogButton() {
   const defaultState = {
     title: "",
     description: "",
-    from: moment()
+    from: moment(new Date())
+      .add(1, "M") //IDK why we need to do this...
       .startOf("hour")
       .hours(
         moment().utc().minutes() < 30
