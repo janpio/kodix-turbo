@@ -5,7 +5,7 @@ import NextAuth from "next-auth";
 // import EmailProvider from "next-auth/providers/email";
 import GoogleProvider from "next-auth/providers/google";
 
-import type { User } from "@kdx/db";
+import type { PrismaClient, User } from "@kdx/db";
 import { prisma } from "@kdx/db";
 
 import { env } from "./env.mjs";
@@ -28,7 +28,7 @@ declare module "next-auth" {
   }
 }
 
-function CustomPrismaAdapter(p: typeof prisma): Adapter {
+function CustomPrismaAdapter(p: PrismaClient): Adapter {
   return {
     ...PrismaAdapter(p),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

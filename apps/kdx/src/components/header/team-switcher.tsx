@@ -3,10 +3,10 @@
 import * as React from "react";
 import Link from "next/link";
 import Router from "next/router";
-import type { Workspace as PrismaWorkspace } from "@prisma/client";
 import { Check, ChevronsUpDown, Loader2, PlusCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
 
+import type { Workspace as PrismaWorkspace } from "@kdx/db";
 import {
   Avatar,
   AvatarFallback,

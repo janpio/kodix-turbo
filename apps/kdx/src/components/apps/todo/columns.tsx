@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { Status } from "@prisma/client";
 import type { RowData } from "@tanstack/react-table";
 import { createColumnHelper } from "@tanstack/react-table";
 import type { inferRouterOutputs } from "@trpc/server";
 
 import type { AppRouter } from "@kdx/api";
+import type { Status } from "@kdx/db";
 import { Button, Checkbox, toast, useToast } from "@kdx/ui";
 
 import { DatePickerWithPresets } from "~/components/date-picker-with-presets";

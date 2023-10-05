@@ -1,6 +1,7 @@
-import { Status } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+
+import { Status } from "@kdx/db";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import type { Status } from "@prisma/client";
 import {
   Check,
   CheckCircle2,
@@ -10,6 +9,7 @@ import {
   CircleSlash,
 } from "lucide-react";
 
+import type { Status } from "@kdx/db";
 import {
   Button,
   cn,
