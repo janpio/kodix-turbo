@@ -1,3 +1,4 @@
+import type { Adapter } from "@auth/core/adapters";
 import type { DefaultSession } from "@auth/core/types";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth from "next-auth";
@@ -27,12 +28,33 @@ declare module "next-auth" {
   }
 }
 
+function CustomPrismaAdapter(p: typeof prisma): Adapter {
+  return {
+    ...PrismaAdapter(p),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async createUser(data): Promise<any> {
+      return await p.user.create({
+        data: {
+          ...data,
+          activeWorkspace: {
+            create: {
+              name: `${data.name ?? ""}'s Workspace`,
+            },
+          },
+        },
+      });
+    },
+  };
+}
+
 export const {
   handlers: { GET, POST },
   auth,
   CSRF_experimental,
 } = NextAuth({
-  adapter: PrismaAdapter(prisma),
+  adapter: {
+    ...CustomPrismaAdapter(prisma),
+  },
   providers: [
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
@@ -58,17 +80,21 @@ export const {
   ],
   callbacks: {
     async session({ session, user }) {
-      const workspace = await prisma.workspace.findUnique({
+      const activeWs = await prisma.workspace.findFirstOrThrow({
         where: {
-          id: session.user.activeWorkspaceId,
+          activeUsers: {
+            some: {
+              id: user.id,
+            },
+          },
+        },
+        select: {
+          name: true,
         },
       });
-      if (!workspace) {
-        throw new Error("Workspace not found");
-      }
+      session.user.activeWorkspaceName = activeWs.name;
+      session.user.activeWorkspaceId = (user as User).activeWorkspaceId;
 
-      session.user.activeWorkspaceId = (user as User).activeWorkspaceId!;
-      session.user.activeWorkspaceName = workspace.name;
       return session;
     },
 
@@ -86,33 +112,34 @@ export const {
     //   return !!auth?.user
     // }
   },
-  events: {
-    createUser: async (message) => {
-      //In here, user has already been created in dataBase. Meaning that we can't make activeWorkspaceId non-null by default.
-      //Could not find a way to override user creation in nextauth.
-      const firstName = message.user.name
-        ? message.user.name.split(" ")[0]
-        : "";
-      //Create a personal workspace for the user on signup, set it as their active workspace
-      const workspace = await prisma.workspace.create({
-        data: {
-          name: `${firstName ?? ""}'s Workspace`,
-          users: {
-            connect: [{ id: message.user.id }],
-          },
-        },
-      });
 
-      await prisma.user.update({
-        where: {
-          id: message.user.id,
-        },
-        data: {
-          activeWorkspaceId: workspace.id,
-        },
-      });
-    },
+  events: {
+    // createUser: async (message) => {
+    //   //In here, user has already been created in dataBase. Meaning that we can't make activeWorkspaceId non-null by default.
+    //   //Could not find a way to override user creation in nextauth.
+    //   const firstName = message.user.name
+    //     ? message.user.name.split(" ")[0]
+    //     : "";
+    //   //Create a personal workspace for the user on signup, set it as their active workspace
+    //   const workspace = await prisma.workspace.create({
+    //     data: {
+    //       name: `${firstName ?? ""}'s Workspace`,
+    //       users: {
+    //         connect: [{ id: message.user.id }],
+    //       },
+    //     },
+    //   });
+    //   await prisma.user.update({
+    //     where: {
+    //       id: message.user.id,
+    //     },
+    //     data: {
+    //       activeWorkspaceId: workspace.id,
+    //     },
+    //   });
+    // },
   },
+
   secret: env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/auth/signIn",
