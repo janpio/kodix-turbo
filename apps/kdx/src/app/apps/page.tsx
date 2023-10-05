@@ -1,16 +1,12 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 
-import { auth } from "@kdx/auth";
 import { H1, Lead, Skeleton } from "@kdx/ui";
 
 import { KodixApp } from "~/components/app/kodix-app";
 import { api } from "~/trpc/server";
 
-export default async function Apps() {
-  const session = await auth();
-  if (!session) return redirect("/");
-
+export default function Apps() {
   return (
     <div className="p-4">
       <H1>Your installed apps</H1>
