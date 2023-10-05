@@ -181,6 +181,8 @@ export function EditEventDialog({
       if (frequency !== defaultState.frequency) input.frequency = frequency;
     }
 
+    console.log(input);
+
     editEvent(input);
   }
 
