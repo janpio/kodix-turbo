@@ -33,7 +33,7 @@ function CustomPrismaAdapter(p: typeof prisma): Adapter {
     ...PrismaAdapter(p),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async createUser(data): Promise<any> {
-      return await p.user.create({
+      const user = await p.user.create({
         data: {
           ...data,
           activeWorkspace: {
@@ -43,6 +43,21 @@ function CustomPrismaAdapter(p: typeof prisma): Adapter {
           },
         },
       });
+
+      await p.workspace.update({
+        where: {
+          id: user.activeWorkspaceId,
+        },
+        data: {
+          users: {
+            connect: {
+              id: user.id,
+            },
+          },
+        },
+      });
+
+      return user;
     },
   };
 }
