@@ -28,7 +28,7 @@ import {
   Skeleton,
 } from "@kdx/ui";
 
-import { api } from "~/utils/api";
+import { api } from "~/trpc/react";
 import { AddWorkspaceDialog } from "./add-workspace-dialog";
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<

@@ -1,39 +1,48 @@
-"use client";
+import { Suspense } from "react";
 
-import { useSession } from "next-auth/react";
-
-import { H1, Lead, Separator } from "@kdx/ui";
+import { auth } from "@kdx/auth";
+import { H1, Lead, Skeleton } from "@kdx/ui";
 
 import { KodixApp } from "~/components/app/kodix-app";
-import { api } from "../../utils/api";
+import { api } from "~/trpc/server";
 
 export default function Marketplace() {
-  const { data: session } = useSession();
-  const { data } = api.app.getAll.useQuery();
+  return (
+    <div className="p-4">
+      <H1>Marketplace</H1>
+      <Lead className="mt-2">
+        Take a look at all available apps, and install them
+      </Lead>
+      <br />
 
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Suspense
+          fallback={new Array(2).fill(Math.random()).map((p: number) => (
+            <Skeleton key={p} className="h-36 max-w-sm" />
+          ))}
+        >
+          <AppsSection />
+        </Suspense>
+      </div>
+    </div>
+  );
+}
+
+async function AppsSection() {
+  const apps = await api.app.getAll.query();
   return (
     <>
-      <H1>Marketplace</H1>
-      <Lead>Take a look at all available apps, and install them</Lead>
-      <Separator className="my-4" />
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {data?.map((app) => (
+      {apps?.map((app) => (
+        <div key={app.id}>
           <KodixApp
-            key={app.id}
             id={app.id}
             appName={app.name}
             appDescription={app.description}
             appUrl={app.urlApp}
-            installed={
-              session
-                ? app.activeWorkspaces.some(
-                    (x) => x.id === session.user.activeWorkspaceId,
-                  )
-                : false
-            }
+            installed={app.installed}
           />
-        ))}
-      </div>
+        </div>
+      ))}
     </>
   );
 }

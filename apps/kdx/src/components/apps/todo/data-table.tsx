@@ -22,8 +22,8 @@ import {
   TableRow,
 } from "@kdx/ui";
 
-import { api } from "~/utils/api";
 import { DataTablePagination } from "~/components/pagination";
+import { api } from "~/trpc/react";
 import { CreateTaskDialogButton } from "./create-task-dialog-button";
 
 interface DataTableProps<TData> {

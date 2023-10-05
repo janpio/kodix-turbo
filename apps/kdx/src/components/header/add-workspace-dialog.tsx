@@ -19,7 +19,7 @@ import {
   useToast,
 } from "@kdx/ui";
 
-import { api } from "~/utils/api";
+import { api } from "~/trpc/react";
 
 /**
  * To use this Dialog, make sure you wrap it in a DialogTrigger component.

@@ -22,8 +22,8 @@ import {
   useToast,
 } from "@kdx/ui";
 
-import { api } from "~/utils/api";
 import { DateTimePicker } from "~/components/date-time-picker/date-time-picker";
+import { api } from "~/trpc/react";
 import { RecurrencePicker } from "./recurrence-picker";
 
 export function CreateEventDialogButton() {

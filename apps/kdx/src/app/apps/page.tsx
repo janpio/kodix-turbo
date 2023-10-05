@@ -1,20 +1,15 @@
+import { Suspense } from "react";
+import { redirect } from "next/navigation";
+
 import { auth } from "@kdx/auth";
-import { prisma } from "@kdx/db";
-import { H1, Lead } from "@kdx/ui";
+import { H1, Lead, Skeleton } from "@kdx/ui";
 
 import { KodixApp } from "~/components/app/kodix-app";
+import { api } from "~/trpc/server";
 
 export default async function Apps() {
   const session = await auth();
-  const apps = await prisma.app.findMany({
-    include: {
-      activeWorkspaces: {
-        where: {
-          id: session.user.activeWorkspaceId,
-        },
-      },
-    },
-  });
+  if (!session) return redirect("/");
 
   return (
     <div className="p-4">
@@ -23,18 +18,34 @@ export default async function Apps() {
       <br />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {apps?.map((app) => (
-          <div key={app.id}>
-            <KodixApp
-              id={app.id}
-              appName={app.name}
-              appDescription={app.description}
-              appUrl={app.urlApp}
-              installed={true}
-            />
-          </div>
-        ))}
+        <Suspense
+          fallback={new Array(2).fill(Math.random()).map((p: number) => (
+            <Skeleton key={p} className="h-36 max-w-sm" />
+          ))}
+        >
+          <AppsSection />
+        </Suspense>
       </div>
     </div>
+  );
+}
+
+async function AppsSection() {
+  const apps = await api.app.getInstalled.query();
+
+  return (
+    <>
+      {apps?.map((app) => (
+        <div key={app.id}>
+          <KodixApp
+            id={app.id}
+            appName={app.name}
+            appDescription={app.description}
+            appUrl={app.urlApp}
+            installed={true}
+          />
+        </div>
+      ))}
+    </>
   );
 }

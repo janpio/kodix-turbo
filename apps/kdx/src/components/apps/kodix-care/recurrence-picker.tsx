@@ -29,9 +29,9 @@ import {
   RadioGroupItem,
 } from "@kdx/ui";
 
-import { tzOffsetText } from "~/utils/helpers";
 import { DatePicker } from "~/components/date-picker";
 import { FrequencyToTxt } from "~/components/frequency-picker";
+import { tzOffsetText } from "~/helpers";
 
 const freqs = [RRule.DAILY, RRule.WEEKLY, RRule.MONTHLY, RRule.YEARLY];
 export function RecurrencePicker({

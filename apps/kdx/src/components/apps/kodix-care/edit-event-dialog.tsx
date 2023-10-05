@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type { inferRouterOutputs } from "@trpc/server";
 import { format } from "date-fns";
 import { CalendarIcon, Loader2 } from "lucide-react";
@@ -40,8 +40,8 @@ import {
   useToast,
 } from "@kdx/ui";
 
-import type { RouterInputs } from "~/utils/api";
-import { api } from "~/utils/api";
+import { api } from "~/trpc/react";
+import type { RouterInputs } from "~/trpc/shared";
 import { RecurrencePicker } from "./recurrence-picker";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;

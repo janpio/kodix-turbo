@@ -11,8 +11,8 @@ import {
   Skeleton,
 } from "@kdx/ui";
 
-import type { RouterOutputs } from "~/utils/api";
-import { api } from "~/utils/api";
+import type { RouterOutputs } from "~/trpc/react";
+import { api } from "~/trpc/react";
 
 export function HomePage(props: {
   initialData: RouterOutputs["workspace"]["getActiveWorkspace"] | undefined;

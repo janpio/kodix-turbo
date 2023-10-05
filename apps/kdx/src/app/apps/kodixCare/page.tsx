@@ -5,10 +5,10 @@ import moment from "moment";
 
 import { H1, Separator } from "@kdx/ui";
 
-import { api } from "~/utils/api";
 import { columns } from "~/components/apps/kodix-care/columns";
 import { CreateEventDialogButton } from "~/components/apps/kodix-care/create-event-dialog";
 import { DataTable } from "~/components/apps/kodix-care/data-table";
+import { api } from "~/trpc/react";
 
 export default function KodixCare() {
   //date Start should be the beginninig of the day

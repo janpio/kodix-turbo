@@ -17,7 +17,7 @@ import {
   RadioGroupItem,
 } from "@kdx/ui";
 
-import { api } from "~/utils/api";
+import { api } from "~/trpc/react";
 
 /**
  * To use this this component, you need to wrap it around a AlertDialogTrigger component.

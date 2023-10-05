@@ -9,8 +9,8 @@ import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "@kdx/api";
 import { Button, Checkbox, toast, useToast } from "@kdx/ui";
 
-import { api } from "~/utils/api";
 import { DatePickerWithPresets } from "~/components/date-picker-with-presets";
+import { api } from "~/trpc/react";
 import { AssigneePopover } from "./assignee-popover";
 import {
   PriorityIcon,

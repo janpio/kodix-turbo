@@ -21,7 +21,6 @@ import {
   Textarea,
 } from "@kdx/ui";
 
-import { api } from "~/utils/api";
 import { AssigneePopover } from "~/components/apps/todo/assignee-popover";
 import {
   PriorityIcon,
@@ -34,6 +33,7 @@ import {
   DatePickerIcon,
   DatePickerWithPresets,
 } from "~/components/date-picker-with-presets";
+import { api } from "~/trpc/react";
 
 export function CreateTaskDialogButton() {
   function handleCreateTask() {

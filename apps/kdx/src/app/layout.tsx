@@ -11,11 +11,8 @@ import { Footer } from "~/components/footer/footer";
 import { Header } from "~/components/header/header";
 import { TailwindIndicator } from "~/components/tailwind-indicator";
 import { ThemeSwitcher } from "~/components/theme-switcher";
-import {
-  NextAuthProvider,
-  NextThemeProvider,
-  TRPCReactProvider,
-} from "../components/providers";
+import { TRPCReactProvider } from "~/trpc/react";
+import { NextAuthProvider, NextThemeProvider } from "../components/providers";
 
 const fontSans = FontSans({
   subsets: ["latin"],

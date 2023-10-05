@@ -4,6 +4,7 @@ import NextAuth from "next-auth";
 // import EmailProvider from "next-auth/providers/email";
 import GoogleProvider from "next-auth/providers/google";
 
+import type { User } from "@kdx/db";
 import { prisma } from "@kdx/db";
 
 import { env } from "./env.mjs";
@@ -23,10 +24,6 @@ declare module "next-auth" {
       activeWorkspaceId: string; // Might need fix
       activeWorkspaceName: string;
     } & DefaultSession["user"];
-  }
-
-  interface User {
-    activeWorkspaceId?: string | null;
   }
 }
 
@@ -63,15 +60,15 @@ export const {
     async session({ session, user }) {
       const workspace = await prisma.workspace.findUnique({
         where: {
-          id: user.activeWorkspaceId!, //Non-null assertion because for some reason nextauth is not letting me set it as non null by default
+          id: session.user.activeWorkspaceId,
         },
       });
       if (!workspace) {
         throw new Error("Workspace not found");
       }
 
-      session.user.activeWorkspaceId = user.activeWorkspaceId!;
-      session.user.activeWorkspaceName = workspace?.name ?? "Workspace";
+      session.user.activeWorkspaceId = (user as User).activeWorkspaceId!;
+      session.user.activeWorkspaceName = workspace.name;
       return session;
     },
 

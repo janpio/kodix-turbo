@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { Loader2, MoreHorizontal, Trash2 } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { api } from "src/utils/api";
 
 import {
   Button,
@@ -27,6 +26,8 @@ import {
   DropdownMenuTrigger,
   useToast,
 } from "@kdx/ui";
+
+import { api } from "~/trpc/react";
 
 export function KodixApp({
   id,

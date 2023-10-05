@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeftOnRectangleIcon } from "@heroicons/react/24/outline";
 import { signOut, useSession } from "next-auth/react";
-import { api } from "src/utils/api";
 
 import {
   Button,
@@ -15,6 +14,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@kdx/ui";
+
+import { api } from "~/trpc/react";
 
 const callsToActionProfilePic = [
   //{ name: 'Settings', href: '#', icon: Cog6ToothIcon },
