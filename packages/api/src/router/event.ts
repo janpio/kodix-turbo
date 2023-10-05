@@ -417,10 +417,6 @@ export const eventRouter = createTRPCRouter({
                           description: input.description,
                           title: input.title,
                         },
-                        where: {
-                          description: input.description,
-                          title: input.title,
-                        },
                       },
                     }
                   : undefined,
