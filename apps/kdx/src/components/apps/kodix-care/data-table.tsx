@@ -93,13 +93,10 @@ export function DataTable({
   //when i click left or right arrow on keyboard, it shold add 1 day the state of selectedEvent or remove 1 day
   useEffect(() => {
     const keyDownHandler = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") {
+      if (e.key === "ArrowLeft")
         setSelectedDay((prev) => prev && addDays(prev, -1));
-      } else if (e.key === "ArrowRight") {
+      else if (e.key === "ArrowRight")
         setSelectedDay((prev) => prev && addDays(prev, 1));
-      } else if (e.key === "Escape" || e.key === "Backspace") {
-        setSelectedDay(moment().utc().toDate());
-      }
     };
     document.addEventListener("keydown", keyDownHandler);
     return () => document.removeEventListener("keydown", keyDownHandler);
@@ -110,7 +107,7 @@ export function DataTable({
   return (
     <div className="mt-8">
       <div className="flex justify-between">
-        <div className="space-y-2">
+        <div className=" w-44 space-y-2">
           <Label htmlFor="search">Search...</Label>
           <Input
             id="search"
@@ -122,7 +119,7 @@ export function DataTable({
             className="max-w-sm"
           />
         </div>
-        <div className="mt-auto flex space-x-2">
+        <div className="mx-auto mt-auto flex space-x-2">
           <Button
             variant="outline"
             onClick={() => {
@@ -170,9 +167,14 @@ export function DataTable({
             <ChevronRight />
           </Button>
         </div>
-        <div className="invisible space-y-2">
-          <Label>Invisible cause Im bat at css...</Label>
-          <Input className="max-w-sm" />
+        <div className="flex w-44">
+          <Button
+            className="ml-auto self-end "
+            onClick={() => setSelectedDay(new Date())}
+            variant={"secondary"}
+          >
+            Today
+          </Button>
         </div>
       </div>
 
