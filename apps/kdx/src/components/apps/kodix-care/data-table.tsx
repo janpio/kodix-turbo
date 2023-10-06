@@ -19,6 +19,7 @@ import {
   PencilIcon,
   Trash2,
 } from "lucide-react";
+import moment from "moment";
 
 import type { AppRouter } from "@kdx/api";
 import {
@@ -42,6 +43,7 @@ import {
   TableRow,
 } from "@kdx/ui";
 
+import { api } from "~/trpc/react";
 import { DataTablePagination } from "../../pagination";
 import { CancelationDialog } from "./cancel-event-dialog";
 import { EditEventDialog } from "./edit-event-dialog";
@@ -52,16 +54,10 @@ type CalendarTask = RouterOutput["event"]["getAll"][number];
 export function DataTable({
   columns,
   data,
-  selectedDate,
-  setSelectedDate,
-  isLoading,
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   columns: ColumnDef<CalendarTask, any>[];
   data: CalendarTask[];
-  selectedDate: Date | undefined;
-  setSelectedDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
-  isLoading: boolean;
 }) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
@@ -77,8 +73,28 @@ export function DataTable({
     },
   });
 
+  const [selectedDay, setSelectedDay] = useState<Date>(
+    moment().utc().startOf("day").toDate(),
+  );
+
   const [openCancelDialog, setOpenCancelDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
+
+  const result = api.event.getAll.useQuery(
+    {
+      dateStart: moment(selectedDay).startOf("day").toDate(),
+      dateEnd: moment(selectedDay).endOf("day").toDate(),
+    },
+    {
+      initialData: data,
+      refetchOnWindowFocus: false,
+    },
+  );
+
+  const [calendarTask, setCalendarTask] = useState<CalendarTask | undefined>(
+    result.data[0],
+  );
+
   return (
     <div className="mt-8">
       <div className="flex justify-between">
@@ -98,7 +114,7 @@ export function DataTable({
           <Button
             variant="outline"
             onClick={() => {
-              setSelectedDate((prev) => prev && addDays(prev, -1));
+              setSelectedDay((prev) => prev && addDays(prev, -1));
             }}
             className="h-10 w-10 p-3"
           >
@@ -110,12 +126,12 @@ export function DataTable({
                 variant={"outline"}
                 className={cn(
                   "justify-start text-left font-normal",
-                  !selectedDate && "text-muted-foreground",
+                  !selectedDay && "text-muted-foreground",
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {selectedDate ? (
-                  format(selectedDate, "PPP")
+                {selectedDay ? (
+                  format(selectedDay, "PPP")
                 ) : (
                   <span>Pick a date</span>
                 )}
@@ -124,9 +140,9 @@ export function DataTable({
             <PopoverContent className="w-auto p-0">
               <Calendar
                 mode="single"
-                selected={selectedDate}
+                selected={selectedDay}
                 onSelect={(date) => {
-                  setSelectedDate(date);
+                  if (date) setSelectedDay(date);
                 }}
                 initialFocus
               />
@@ -135,7 +151,7 @@ export function DataTable({
           <Button
             variant="outline"
             onClick={() => {
-              setSelectedDate((prev) => prev && addDays(prev, 1));
+              setSelectedDay((prev) => prev && addDays(prev, 1));
             }}
             className="h-10 w-10 p-3"
           >
@@ -149,6 +165,22 @@ export function DataTable({
       </div>
 
       <div className="mt-4 rounded-md border">
+        {calendarTask && (
+          <EditEventDialog
+            calendarTask={calendarTask}
+            open={openEditDialog}
+            setOpen={setOpenEditDialog}
+          />
+        )}
+        {calendarTask && (
+          <CancelationDialog
+            open={openCancelDialog}
+            setOpen={setOpenCancelDialog}
+            eventMasterId={calendarTask.eventMasterId}
+            eventExceptionId={calendarTask.eventExceptionId}
+            date={calendarTask.date}
+          />
+        )}
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -169,7 +201,7 @@ export function DataTable({
             ))}
           </TableHeader>
           <TableBody>
-            {isLoading ? (
+            {result.isLoading || result.isFetching ? (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24">
                   <div className="flex h-full items-center justify-center">
@@ -180,20 +212,13 @@ export function DataTable({
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <ContextMenu key={row.id}>
-                  <EditEventDialog
-                    calendarTask={row.original}
-                    open={openEditDialog}
-                    setOpen={setOpenEditDialog}
-                  />
-                  <CancelationDialog
-                    open={openCancelDialog}
-                    setOpen={setOpenCancelDialog}
-                    eventMasterId={row.original.eventMasterId}
-                    eventExceptionId={row.original.eventExceptionId}
-                    date={row.getValue("date")}
-                  />
                   <ContextMenuContent>
-                    <ContextMenuItem onClick={() => setOpenEditDialog(true)}>
+                    <ContextMenuItem
+                      onClick={() => {
+                        setCalendarTask(row.original);
+                        setOpenEditDialog(true);
+                      }}
+                    >
                       <PencilIcon className="mr-2 h-4 w-4" />
                       Edit Event
                     </ContextMenuItem>
