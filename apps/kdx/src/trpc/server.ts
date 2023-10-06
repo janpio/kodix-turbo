@@ -28,7 +28,7 @@ export const api = createTRPCProxyClient<AppRouter>({
       },
     }),
   ],
-});
+}); //!THIS IS UNSTABLE! DO NOT USE!
 
 export const helpers = createServerSideHelpers({
   router: appRouter,

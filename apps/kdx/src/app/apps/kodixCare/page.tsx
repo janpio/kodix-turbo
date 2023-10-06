@@ -1,17 +1,26 @@
+import { redirect } from "next/navigation";
 import moment from "moment";
 
+import { appRouter } from "@kdx/api";
+import { auth } from "@kdx/auth";
+import { prisma } from "@kdx/db";
 import { H1, Separator } from "@kdx/ui";
 
 import { columns } from "~/components/apps/kodix-care/columns";
 import { CreateEventDialogButton } from "~/components/apps/kodix-care/create-event-dialog";
 import { DataTable } from "~/components/apps/kodix-care/data-table";
-import { api } from "~/trpc/server";
 
 export default async function KodixCare() {
+  const session = await auth();
+  if (!session) return redirect("/");
+
+  const caller = appRouter.createCaller({
+    prisma,
+    session,
+  });
   //date Start should be the beginninig of the day
   //date End should be the end of the day
-
-  const data = await api.event.getAll.query({
+  const data = await caller.event.getAll({
     dateStart: moment().utc().startOf("day").toDate(),
     dateEnd: moment().utc().endOf("day").toDate(),
   });
