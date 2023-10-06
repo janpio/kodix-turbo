@@ -180,9 +180,6 @@ export function EditEventDialog({
       if (!until?.isSame(defaultState.until)) input.until = until?.toDate();
       if (frequency !== defaultState.frequency) input.frequency = frequency;
     }
-
-    console.log(input);
-
     editEvent(input);
   }
 

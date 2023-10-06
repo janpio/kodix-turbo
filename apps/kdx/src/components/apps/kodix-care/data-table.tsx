@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -72,6 +72,7 @@ export function DataTable({
       dateEnd: moment(selectedDay).endOf("day").toDate(),
     },
     {
+      refetchOnWindowFocus: false,
       initialData: data,
       staleTime: 0,
     },
@@ -88,6 +89,21 @@ export function DataTable({
       columnFilters,
     },
   });
+
+  //when i click left or right arrow on keyboard, it shold add 1 day the state of selectedEvent or remove 1 day
+  useEffect(() => {
+    const keyDownHandler = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        setSelectedDay((prev) => prev && addDays(prev, -1));
+      } else if (e.key === "ArrowRight") {
+        setSelectedDay((prev) => prev && addDays(prev, 1));
+      } else if (e.key === "Escape" || e.key === "Backspace") {
+        setSelectedDay(moment().utc().toDate());
+      }
+    };
+    document.addEventListener("keydown", keyDownHandler);
+    return () => document.removeEventListener("keydown", keyDownHandler);
+  }, []);
 
   const [calendarTask, setCalendarTask] = useState<CalendarTask | undefined>();
 
