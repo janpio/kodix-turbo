@@ -61,21 +61,7 @@ export function DataTable({
 }) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-    state: {
-      columnFilters,
-    },
-  });
-
-  const [selectedDay, setSelectedDay] = useState<Date>(
-    moment().utc().startOf("day").toDate(),
-  );
+  const [selectedDay, setSelectedDay] = useState<Date>(moment().utc().toDate());
 
   const [openCancelDialog, setOpenCancelDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -87,13 +73,23 @@ export function DataTable({
     },
     {
       initialData: data,
-      refetchOnWindowFocus: false,
+      staleTime: 0,
     },
   );
 
-  const [calendarTask, setCalendarTask] = useState<CalendarTask | undefined>(
-    result.data[0],
-  );
+  const table = useReactTable({
+    data: result.data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      columnFilters,
+    },
+  });
+
+  const [calendarTask, setCalendarTask] = useState<CalendarTask | undefined>();
 
   return (
     <div className="mt-8">
