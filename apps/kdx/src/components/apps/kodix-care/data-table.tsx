@@ -9,7 +9,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import type { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
-import type { inferRouterOutputs } from "@trpc/server";
 import { addDays, format } from "date-fns";
 import {
   CalendarIcon,
@@ -21,7 +20,7 @@ import {
 } from "lucide-react";
 import moment from "moment";
 
-import type { AppRouter } from "@kdx/api";
+import type { RouterOutputs } from "@kdx/api";
 import {
   Button,
   Calendar,
@@ -48,8 +47,7 @@ import { DataTablePagination } from "../../pagination";
 import { CancelationDialog } from "./cancel-event-dialog";
 import { EditEventDialog } from "./edit-event-dialog";
 
-type RouterOutput = inferRouterOutputs<AppRouter>;
-type CalendarTask = RouterOutput["event"]["getAll"][number];
+type CalendarTask = RouterOutputs["event"]["getAll"][number];
 
 export function DataTable({
   columns,
@@ -62,6 +60,7 @@ export function DataTable({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const [selectedDay, setSelectedDay] = useState<Date>(moment().utc().toDate());
+  const [calendarTask, setCalendarTask] = useState<CalendarTask | undefined>();
 
   const [openCancelDialog, setOpenCancelDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -90,7 +89,6 @@ export function DataTable({
     },
   });
 
-  //when i click left or right arrow on keyboard, it shold add 1 day the state of selectedEvent or remove 1 day
   useEffect(() => {
     const keyDownHandler = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft")
@@ -101,8 +99,6 @@ export function DataTable({
     document.addEventListener("keydown", keyDownHandler);
     return () => document.removeEventListener("keydown", keyDownHandler);
   }, []);
-
-  const [calendarTask, setCalendarTask] = useState<CalendarTask | undefined>();
 
   return (
     <div className="mt-8">

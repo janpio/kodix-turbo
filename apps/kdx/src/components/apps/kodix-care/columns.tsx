@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
-import type { inferRouterOutputs } from "@trpc/server";
 import { MoreHorizontal, PencilIcon, Trash2 } from "lucide-react";
 
-import type { AppRouter } from "@kdx/api";
+import type { RouterOutputs } from "@kdx/api";
 import {
   Button,
   DropdownMenu,
@@ -17,8 +16,7 @@ import {
 import { CancelationDialog } from "./cancel-event-dialog";
 import { EditEventDialog } from "./edit-event-dialog";
 
-type RouterOutput = inferRouterOutputs<AppRouter>;
-type CalendarTask = RouterOutput["event"]["getAll"][number];
+type CalendarTask = RouterOutputs["event"]["getAll"][number];
 const columnHelper = createColumnHelper<CalendarTask>();
 
 export const columns = [

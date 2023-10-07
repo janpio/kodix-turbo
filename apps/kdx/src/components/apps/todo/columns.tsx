@@ -3,9 +3,8 @@
 import { useEffect, useState } from "react";
 import type { RowData } from "@tanstack/react-table";
 import { createColumnHelper } from "@tanstack/react-table";
-import type { inferRouterOutputs } from "@trpc/server";
 
-import type { AppRouter } from "@kdx/api";
+import type { RouterOutputs } from "@kdx/api";
 import type { Status } from "@kdx/db";
 import { Button, Checkbox, toast, useToast } from "@kdx/ui";
 
@@ -20,10 +19,9 @@ import {
 import type { Priority } from "./priority-popover";
 import { StatusIcon, StatusPopover, StatusToText } from "./status-popover";
 
-type RouterOutput = inferRouterOutputs<AppRouter>;
-export type TodoColumn = RouterOutput["todo"]["getAllForLoggedUser"][number];
+export type TodoColumn = RouterOutputs["todo"]["getAllForLoggedUser"][number];
 const columnHelper = createColumnHelper<TodoColumn>();
-type workspace = RouterOutput["workspace"]["getActiveWorkspace"];
+type workspace = RouterOutputs["workspace"]["getActiveWorkspace"];
 
 declare module "@tanstack/react-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 
+import type { RouterOutputs } from "@kdx/api";
 import {
   Avatar,
   AvatarFallback,
@@ -11,7 +12,6 @@ import {
   Skeleton,
 } from "@kdx/ui";
 
-import type { RouterOutputs } from "~/trpc/react";
 import { api } from "~/trpc/react";
 
 export function HomePage(props: {

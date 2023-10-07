@@ -1,12 +1,11 @@
-import { useMemo, useState } from "react";
-import type { inferRouterOutputs } from "@trpc/server";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 import { CalendarIcon, Loader2 } from "lucide-react";
 import moment from "moment";
 import { RRule } from "rrule";
 import type { Frequency } from "rrule";
 
-import type { AppRouter } from "@kdx/api";
+import type { RouterOutputs } from "@kdx/api";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -44,8 +43,7 @@ import { api } from "~/trpc/react";
 import type { RouterInputs } from "~/trpc/shared";
 import { RecurrencePicker } from "./recurrence-picker";
 
-type RouterOutput = inferRouterOutputs<AppRouter>;
-type CalendarTask = RouterOutput["event"]["getAll"][number];
+type CalendarTask = RouterOutputs["event"]["getAll"][number];
 
 export function EditEventDialog({
   calendarTask,
@@ -87,8 +85,10 @@ export function EditEventDialog({
     useState(false);
   const [editDefinitionOpen, setEditDefinitionOpen] = useState(false);
 
-  const defaultState = useMemo(() => {
+  const defaultCalendarTask = useMemo(() => {
     return {
+      eventMasterId: calendarTask.eventMasterId,
+      eventExceptionId: calendarTask.eventExceptionId,
       calendarTask: calendarTask,
       title: calendarTask.title,
       description: calendarTask.description ?? "",
@@ -100,85 +100,103 @@ export function EditEventDialog({
         ? moment(RRule.fromString(calendarTask.rule).options.until)
         : undefined,
       count: RRule.fromString(calendarTask.rule).options.count ?? undefined,
+      date: calendarTask.date,
     };
   }, [calendarTask]);
 
-  const [title, setTitle] = useState(defaultState.title);
-  const [description, setDescription] = useState(defaultState.description);
-  const [from, setFrom] = useState(defaultState.from);
-  const [frequency, setFrequency] = useState<Frequency>(defaultState.frequency);
-  const [interval, setInterval] = useState<number>(defaultState.interval);
-  const [until, setUntil] = useState<moment.Moment | undefined>(
-    defaultState.until,
+  const [title, setTitle] = useState(calendarTask.title);
+  const [description, setDescription] = useState(calendarTask.description);
+  const [from, setFrom] = useState(moment(calendarTask.date));
+  const [frequency, setFrequency] = useState<Frequency>(
+    defaultCalendarTask.frequency,
   );
-  const [count, setCount] = useState<number | undefined>(defaultState.count);
+  const [interval, setInterval] = useState<number>(
+    defaultCalendarTask.interval,
+  );
+  const [until, setUntil] = useState<moment.Moment | undefined>(
+    defaultCalendarTask.until,
+  );
+  const [count, setCount] = useState<number | undefined>(
+    defaultCalendarTask.count,
+  );
+
+  const setStateToDefault = useCallback(() => {
+    setTitle(defaultCalendarTask.title);
+    setDescription(defaultCalendarTask.description);
+    setFrom(defaultCalendarTask.from);
+    setFrequency(defaultCalendarTask.frequency);
+    setInterval(defaultCalendarTask.interval);
+    setUntil(defaultCalendarTask.until);
+    setCount(defaultCalendarTask.count);
+  }, [defaultCalendarTask]);
+
+  useEffect(() => {
+    setStateToDefault();
+  }, [defaultCalendarTask, setStateToDefault]);
 
   const allowedEditDefinitions = {
     single: !(
-      count !== defaultState.count ||
-      interval !== defaultState.interval ||
-      (until && !until?.isSame(defaultState.until)) ||
-      frequency !== defaultState.frequency
+      count !== defaultCalendarTask.count ||
+      interval !== defaultCalendarTask.interval ||
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+      (until && !until?.isSame(defaultCalendarTask.until)) ||
+      frequency !== defaultCalendarTask.frequency
     ),
     thisAndFuture: true,
     all: !(
-      from.format("YYYY-MM-DD") !== defaultState.from.format("YYYY-MM-DD")
+      from.format("YYYY-MM-DD") !==
+      defaultCalendarTask.from.format("YYYY-MM-DD")
     ),
   };
 
   const isFormChanged =
-    title !== defaultState.title ||
-    description !== defaultState.description ||
-    !from.isSame(defaultState.from) ||
-    frequency !== defaultState.frequency ||
-    interval !== defaultState.interval ||
-    until !== defaultState.until ||
-    count !== defaultState.count;
-
-  function revertStateToDefault() {
-    setTitle(defaultState.title);
-    setDescription(defaultState.description);
-    setFrom(defaultState.from);
-    setFrequency(defaultState.frequency);
-    setInterval(defaultState.interval);
-    setUntil(defaultState.until);
-    setCount(defaultState.count);
-  }
+    title !== defaultCalendarTask.title ||
+    description !== defaultCalendarTask.description ||
+    !from.isSame(defaultCalendarTask.from) ||
+    frequency !== defaultCalendarTask.frequency ||
+    interval !== defaultCalendarTask.interval ||
+    until !== defaultCalendarTask.until ||
+    count !== defaultCalendarTask.count;
 
   function handleSubmitFormData(
     definition: "single" | "thisAndFuture" | "all",
   ) {
     const input: RouterInputs["event"]["edit"] = {
-      eventExceptionId: calendarTask.eventExceptionId,
-      eventMasterId: calendarTask.eventMasterId,
-      selectedTimestamp: calendarTask.date,
+      eventExceptionId: defaultCalendarTask.eventExceptionId,
+      eventMasterId: defaultCalendarTask.eventMasterId,
+      selectedTimestamp: defaultCalendarTask.date,
       editDefinition: definition,
     };
 
-    if (title !== defaultState.title) input.title = title;
-    if (description !== defaultState.description)
+    if (title !== defaultCalendarTask.title) input.title = title;
+    if (description !== defaultCalendarTask.description)
       input.description = description;
 
     if (input.editDefinition === "single") {
-      if (!from.isSame(defaultState.from)) input.from = from.toDate();
+      if (!from.isSame(defaultCalendarTask.from)) input.from = from.toDate();
     }
 
     if (input.editDefinition === "thisAndFuture") {
-      if (!from.isSame(defaultState.from)) input.from = from.toDate();
+      if (!from.isSame(defaultCalendarTask.from)) input.from = from.toDate();
 
-      if (count !== defaultState.count) input.count = count;
-      if (interval !== defaultState.interval) input.interval = interval;
-      if (!until?.isSame(defaultState.until)) input.until = until?.toDate();
-      if (frequency !== defaultState.frequency) input.frequency = frequency;
+      if (count !== defaultCalendarTask.count) input.count = count;
+      if (interval !== defaultCalendarTask.interval) input.interval = interval;
+      if (!until?.isSame(defaultCalendarTask.until))
+        input.until = until?.toDate();
+      if (frequency !== defaultCalendarTask.frequency)
+        input.frequency = frequency;
     }
 
     if (input.editDefinition === "all") {
-      if (!from.isSame(defaultState.from)) input.from = from.format("HH:mm");
+      if (!from.isSame(defaultCalendarTask.from))
+        input.from = from.format("HH:mm");
 
-      if (count !== defaultState.count) input.count = count;
-      if (interval !== defaultState.interval) input.interval = interval;
-      if (!until?.isSame(defaultState.until)) input.until = until?.toDate();
-      if (frequency !== defaultState.frequency) input.frequency = frequency;
+      if (count !== defaultCalendarTask.count) input.count = count;
+      if (interval !== defaultCalendarTask.interval) input.interval = interval;
+      if (!until?.isSame(defaultCalendarTask.until))
+        input.until = until?.toDate();
+      if (frequency !== defaultCalendarTask.frequency)
+        input.frequency = frequency;
     }
     editEvent(input);
   }
@@ -187,7 +205,7 @@ export function EditEventDialog({
     <Dialog
       open={open}
       onOpenChange={(openDialog) => {
-        if (!openDialog) revertStateToDefault(); //Revert the data back to default when closing
+        if (!openDialog) setStateToDefault(); //Revert the data back to default when closing
         setOpen(openDialog);
       }}
     >
