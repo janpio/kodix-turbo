@@ -58,12 +58,7 @@ export const eventRouter = createTRPCRouter({
         include: {
           EventMaster: {
             select: {
-              eventInfo: {
-                select: {
-                  title: true,
-                  description: true,
-                },
-              },
+              eventInfo: true,
               rule: true,
               id: true,
             },
