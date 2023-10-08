@@ -1,6 +1,7 @@
 import { helpers } from "~/utils/proxy";
 
 async function getData() {
+  //
   return await helpers.app.getAll.fetch();
 }
 
