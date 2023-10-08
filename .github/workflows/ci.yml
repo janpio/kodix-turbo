@@ -56,4 +56,4 @@ jobs:
         run: pnpm turbo build lint type-check --filter=\!@kdx/stays-ai --filter=\!@kdx/nextjs --filter=\!@kdx/kodix-care #TODO: REMOVE filters!!
 
       - name: Check workspaces
-        run: pnpm manypkg check --filter=\!@kdx/stays-ai --filter=\!@kdx/nextjs --filter=\!@kdx/kodix-care #TODO: REMOVE filters!!
+        run: pnpm manypkg check
