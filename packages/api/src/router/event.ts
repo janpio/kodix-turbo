@@ -491,163 +491,152 @@ export const eventRouter = createTRPCRouter({
 
         //* Não temos uma exceção nem uma ocorrência que bate com o selectedTimestamp. Vamos gerar um erro.
       } else if (input.editDefinition === "thisAndFuture") {
-        await ctx.prisma.$transaction(
-          async (tx) => {
-            //* Havemos description, title, from, until, frequency, inteval, count e selectedTimestamp.
-            //* Havemos um selectedTimestamp.
-            //* Temos que procurar se temos uma exceção que bate com o selectedTimestamp.
-            //* Se tivermos, temos que alterá-la.
+        await ctx.prisma.$transaction(async (tx) => {
+          //* Havemos description, title, from, until, frequency, inteval, count e selectedTimestamp.
+          //* Havemos um selectedTimestamp.
+          //* Temos que procurar se temos uma exceção que bate com o selectedTimestamp.
+          //* Se tivermos, temos que alterá-la.
 
-            if (input.eventExceptionId) {
-              //*Deletamos a exceção se exisitir.
-              const exception = await tx.eventException.deleteMany({
-                where: {
-                  EventMaster: {
-                    workspaceId: ctx.session.user.activeWorkspaceId,
-                    id: input.eventMasterId,
-                  },
-                  newDate: {
-                    gte: input.selectedTimestamp,
-                  },
+          if (input.eventExceptionId) {
+            //*Deletamos a exceção se exisitir.
+            const exception = await tx.eventException.deleteMany({
+              where: {
+                EventMaster: {
+                  workspaceId: ctx.session.user.activeWorkspaceId,
+                  id: input.eventMasterId,
                 },
-              });
-              if (!exception.count)
-                throw new TRPCError({
-                  code: "NOT_FOUND",
-                  message: "Exception not found",
-                });
-            }
-
-            //* Aqui, Vamos editar o eventMaster antigo.
-            const oldMaster = await tx.eventMaster.findUniqueOrThrow({
-              where: {
-                id: input.eventMasterId,
-                workspaceId: ctx.session.user.activeWorkspaceId,
-              },
-              select: {
-                rule: true,
-                eventInfoId: true,
-              },
-            });
-            const oldRule = rrulestr(oldMaster.rule);
-            const lastOccurence = oldRule.before(
-              input.selectedTimestamp,
-              false,
-            );
-            if (!lastOccurence) {
-              //* It means that the selectedTimestamp
-              //* is either the first occurence of the event or it is before the first occurence.
-              //* If it is before the first occurence, we should have an exception.
-              //* If it is the first occurence, we should just edit the eventMaster.
-              if (input.selectedTimestamp < oldRule.options.dtstart)
-                throw new TRPCError({
-                  code: "NOT_FOUND",
-                  message: "Event not found",
-                });
-              else
-                return await tx.eventMaster.update({
-                  where: {
-                    id: input.eventMasterId,
-                    workspaceId: ctx.session.user.activeWorkspaceId,
-                  },
-                  data: {
-                    eventInfo:
-                      input.title !== undefined ||
-                      input.description !== undefined
-                        ? {
-                            upsert: {
-                              create: {
-                                title: input.title,
-                                description: input.description,
-                              },
-                              update: {
-                                title: input.title,
-                                description: input.description,
-                              },
-                            },
-                          }
-                        : undefined,
-                    DateStart: input.from ?? input.selectedTimestamp,
-                    DateUntil:
-                      input.until ?? oldRule.options.until ?? undefined,
-                    rule: new RRule({
-                      dtstart: input.from ?? input.selectedTimestamp,
-                      until: input.until ?? oldRule.options.until ?? undefined,
-                      freq: input.frequency ?? oldRule.options.freq,
-                      interval: input.interval ?? oldRule.options.interval,
-                      count: input.count ?? oldRule.options.count ?? undefined,
-                    }).toString(),
-                  },
-                });
-            }
-
-            const updatedOldMaster = await tx.eventMaster.update({
-              where: {
-                id: input.eventMasterId,
-                workspaceId: ctx.session.user.activeWorkspaceId,
-              },
-              data: {
-                DateUntil: lastOccurence,
-                rule: new RRule({
-                  dtstart: oldRule.options.dtstart,
-                  until: lastOccurence,
-                  freq: oldRule.options.freq,
-                  interval: oldRule.options.interval,
-                  count: oldRule.options.count ?? undefined,
-                }).toString(),
-              },
-              select: {
-                eventInfo: {
-                  select: {
-                    title: true,
-                    description: true,
-                  },
+                newDate: {
+                  gte: input.selectedTimestamp,
                 },
               },
             });
-            if (!updatedOldMaster)
+            if (!exception.count)
               throw new TRPCError({
                 code: "NOT_FOUND",
-                message: "Could not update event master",
+                message: "Exception not found",
               });
+          }
 
-            const newMasterCreateData = {
+          //* Aqui, Vamos editar o eventMaster antigo.
+          const oldMaster = await tx.eventMaster.findUniqueOrThrow({
+            where: {
+              id: input.eventMasterId,
               workspaceId: ctx.session.user.activeWorkspaceId,
-              DateStart: input.from ?? input.selectedTimestamp,
-              DateUntil: input.until ?? oldRule.options.until ?? undefined,
-              rule: new RRule({
-                dtstart: input.from ?? input.selectedTimestamp,
-                until: input.until ?? oldRule.options.until ?? undefined,
-                freq: input.frequency ?? oldRule.options.freq,
-                interval: input.interval ?? oldRule.options.interval,
-                count: input.count ?? oldRule.options.count ?? undefined,
-              }).toString(),
-            };
-
-            if (input.title !== undefined || input.description !== undefined)
-              await tx.eventInfo.create({
-                data: {
-                  title: input.title ?? updatedOldMaster.eventInfo.title,
-                  description:
-                    input.description ?? updatedOldMaster.eventInfo.description,
-                  EventMaster: {
-                    create: newMasterCreateData,
-                  },
-                },
+            },
+            select: {
+              rule: true,
+              eventInfoId: true,
+            },
+          });
+          const oldRule = rrulestr(oldMaster.rule);
+          const lastOccurence = oldRule.before(input.selectedTimestamp, false);
+          if (!lastOccurence) {
+            //* It means that the selectedTimestamp
+            //* is either the first occurence of the event or it is before the first occurence.
+            //* If it is before the first occurence, we should have an exception.
+            //* If it is the first occurence, we should just edit the eventMaster.
+            if (input.selectedTimestamp < oldRule.options.dtstart)
+              throw new TRPCError({
+                code: "NOT_FOUND",
+                message: "Event not found",
               });
             else
-              await tx.eventMaster.create({
+              return await tx.eventMaster.update({
+                where: {
+                  id: input.eventMasterId,
+                  workspaceId: ctx.session.user.activeWorkspaceId,
+                },
                 data: {
-                  ...newMasterCreateData,
-                  eventInfoId: oldMaster.eventInfoId,
+                  eventInfo:
+                    input.title !== undefined || input.description !== undefined
+                      ? {
+                          upsert: {
+                            create: {
+                              title: input.title,
+                              description: input.description,
+                            },
+                            update: {
+                              title: input.title,
+                              description: input.description,
+                            },
+                          },
+                        }
+                      : undefined,
+                  DateStart: input.from ?? input.selectedTimestamp,
+                  DateUntil: input.until ?? oldRule.options.until ?? undefined,
+                  rule: new RRule({
+                    dtstart: input.from ?? input.selectedTimestamp,
+                    until: input.until ?? oldRule.options.until ?? undefined,
+                    freq: input.frequency ?? oldRule.options.freq,
+                    interval: input.interval ?? oldRule.options.interval,
+                    count: input.count ?? oldRule.options.count ?? undefined,
+                  }).toString(),
                 },
               });
-          },
-          {
-            maxWait: 100000,
-            timeout: 100000,
-          },
-        );
+          }
+
+          const updatedOldMaster = await tx.eventMaster.update({
+            where: {
+              id: input.eventMasterId,
+              workspaceId: ctx.session.user.activeWorkspaceId,
+            },
+            data: {
+              DateUntil: lastOccurence,
+              rule: new RRule({
+                dtstart: oldRule.options.dtstart,
+                until: lastOccurence,
+                freq: oldRule.options.freq,
+                interval: oldRule.options.interval,
+                count: oldRule.options.count ?? undefined,
+              }).toString(),
+            },
+            select: {
+              eventInfo: {
+                select: {
+                  title: true,
+                  description: true,
+                },
+              },
+            },
+          });
+          if (!updatedOldMaster)
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Could not update event master",
+            });
+
+          const newMasterCreateData = {
+            workspaceId: ctx.session.user.activeWorkspaceId,
+            DateStart: input.from ?? input.selectedTimestamp,
+            DateUntil: input.until ?? oldRule.options.until ?? undefined,
+            rule: new RRule({
+              dtstart: input.from ?? input.selectedTimestamp,
+              until: input.until ?? oldRule.options.until ?? undefined,
+              freq: input.frequency ?? oldRule.options.freq,
+              interval: input.interval ?? oldRule.options.interval,
+              count: input.count ?? oldRule.options.count ?? undefined,
+            }).toString(),
+          };
+
+          if (input.title !== undefined || input.description !== undefined)
+            await tx.eventInfo.create({
+              data: {
+                title: input.title ?? updatedOldMaster.eventInfo.title,
+                description:
+                  input.description ?? updatedOldMaster.eventInfo.description,
+                EventMaster: {
+                  create: newMasterCreateData,
+                },
+              },
+            });
+          else
+            await tx.eventMaster.create({
+              data: {
+                ...newMasterCreateData,
+                eventInfoId: oldMaster.eventInfoId,
+              },
+            });
+        });
       } else if (input.editDefinition === "all") {
         //* Se ele alterou o title ou description, Devemos verificar se ele alterou os dois.
         //* Se ele alterou os dois, devemos apagar o eventInfo de todos os eventExceptions associados ao master e criar um novo eventInfo no master (ou atualizar um existente).
