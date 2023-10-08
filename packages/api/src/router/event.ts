@@ -773,6 +773,20 @@ export const eventRouter = createTRPCRouter({
       }
     }),
   nuke: protectedProcedure.mutation(async ({ ctx }) => {
+    const authorizedNames = [
+      "Gabriel Bianchi",
+      "Mahadeva Das",
+      "Mahadeva Das - Despertar",
+    ];
+    if (
+      ctx.session.user.name &&
+      !authorizedNames.includes(ctx.session.user.name)
+    )
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "You are not authorized to do this",
+      });
+
     await ctx.prisma.$transaction([
       ctx.prisma.eventMaster.deleteMany({
         where: { workspaceId: ctx.session.user.activeWorkspaceId },
