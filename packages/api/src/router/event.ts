@@ -126,12 +126,12 @@ export const eventRouter = createTRPCRouter({
           if (foundCancelation) return null;
 
           // No CalendarTasks tenho Date e EventId
-          // Pesquiso dentro do EventExceptions filtrado se tenho algum item com OriginalDate e EventId semelhante
+          // Pesquiso dentro do EventExceptions filtrado se tenho algum item com OriginalDate e EventmasterId semelhante
           // Se sim, vejo o que a exceção me pede para fazer e executo
           const foundException = eventExceptions.find(
             (exception) =>
               exception.eventMasterId === calendarTask.eventMasterId &&
-              moment(exception.originalDate).isSame(calendarTask.date),
+              moment(exception.originalDate).isSame(calendarTask.date), //!Essa lógica está errada.
           );
           if (foundException) {
             calendarTask = {
@@ -247,7 +247,7 @@ export const eventRouter = createTRPCRouter({
             return await tx.eventCancellation.create({
               data: {
                 eventMasterId: deletedException.eventMasterId,
-                originalDate: input.date,
+                originalDate: deletedException.originalDate,
               },
             });
           });
@@ -772,4 +772,31 @@ export const eventRouter = createTRPCRouter({
         });
       }
     }),
+  nuke: protectedProcedure.mutation(async ({ ctx }) => {
+    await ctx.prisma.$transaction([
+      ctx.prisma.eventMaster.deleteMany({
+        where: { workspaceId: ctx.session.user.activeWorkspaceId },
+      }),
+      ctx.prisma.eventInfo.deleteMany({
+        where: {
+          OR: [
+            {
+              EventMaster: {
+                some: {
+                  workspaceId: ctx.session.user.activeWorkspaceId,
+                },
+              },
+              EventException: {
+                some: {
+                  EventMaster: {
+                    workspaceId: ctx.session.user.activeWorkspaceId,
+                  },
+                },
+              },
+            },
+          ],
+        },
+      }),
+    ]);
+  }),
 });

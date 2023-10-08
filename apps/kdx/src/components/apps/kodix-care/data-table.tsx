@@ -64,7 +64,7 @@ export function DataTable({
 
   const [openCancelDialog, setOpenCancelDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
-
+  const ctx = api.useContext();
   const result = api.event.getAll.useQuery(
     {
       dateStart: moment(selectedDay).startOf("day").toDate(),
@@ -76,6 +76,12 @@ export function DataTable({
       staleTime: 0,
     },
   );
+
+  const { mutate: nukeEvents } = api.event.nuke.useMutation({
+    onSuccess() {
+      void ctx.event.getAll.invalidate();
+    },
+  });
 
   const table = useReactTable({
     data: result.data,
@@ -165,6 +171,14 @@ export function DataTable({
         </div>
         <div className="flex w-44">
           <Button
+            className="ml-auto mr-2 self-end"
+            onClick={() => nukeEvents()}
+            variant={"destructive"}
+          >
+            Nuke Events
+          </Button>
+
+          <Button
             className="ml-auto self-end "
             onClick={() => setSelectedDay(new Date())}
             variant={"secondary"}
@@ -232,7 +246,12 @@ export function DataTable({
                       <PencilIcon className="mr-2 h-4 w-4" />
                       Edit Event
                     </ContextMenuItem>
-                    <ContextMenuItem onClick={() => setOpenCancelDialog(true)}>
+                    <ContextMenuItem
+                      onClick={() => {
+                        setCalendarTask(row.original);
+                        setOpenCancelDialog(true);
+                      }}
+                    >
                       <Trash2 className="mr-2 h-4 w-4" />
                       Delete Event
                     </ContextMenuItem>
