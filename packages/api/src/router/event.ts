@@ -37,35 +37,6 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      interface CalendarTask {
-        title: string | undefined;
-        description: string | undefined;
-        date: Date;
-        rule: string;
-        eventMasterId: string;
-        eventExceptionId: string | undefined;
-      }
-
-      let calendarTasks: CalendarTask[] = [];
-
-      //const eventGlobalIds = eventGlobal.map((eventMaster) => eventMaster.id)
-
-      for (const eventMaster of eventMasters) {
-        const rrule = rrulestr(eventMaster.rule);
-        const allDates = rrule.between(input.dateStart, input.dateEnd, true);
-
-        for (const date of allDates) {
-          calendarTasks.push({
-            eventMasterId: eventMaster.id,
-            eventExceptionId: undefined,
-            title: eventMaster.eventInfo.title ?? undefined,
-            description: eventMaster.eventInfo.description ?? undefined,
-            date: date,
-            rule: eventMaster.rule,
-          });
-        }
-      }
-
       //Handling Exceptions and Cancelations
       const eventExceptions = await ctx.prisma.eventException.findMany({
         where: {
@@ -87,6 +58,13 @@ export const eventRouter = createTRPCRouter({
         include: {
           EventMaster: {
             select: {
+              eventInfo: {
+                select: {
+                  title: true,
+                  description: true,
+                },
+              },
+              rule: true,
               id: true,
             },
           },
@@ -115,48 +93,81 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
+      //* We have all needed data. Now, let's add all masters and exceptions to calendarTasks.
+      interface CalendarTask {
+        title: string | undefined;
+        description: string | undefined;
+        date: Date;
+        rule: string;
+        eventMasterId: string;
+        eventExceptionId: string | undefined;
+        originaDate?: Date | undefined;
+      }
+      let calendarTasks: CalendarTask[] = [];
+
+      for (const eventMaster of eventMasters) {
+        const rrule = rrulestr(eventMaster.rule);
+        const allDates = rrule.between(input.dateStart, input.dateEnd, true);
+
+        for (const date of allDates) {
+          calendarTasks.push({
+            eventMasterId: eventMaster.id,
+            eventExceptionId: undefined,
+            title: eventMaster.eventInfo.title ?? undefined,
+            description: eventMaster.eventInfo.description ?? undefined,
+            date: date,
+            rule: eventMaster.rule,
+          });
+        }
+      }
+
+      for (const eventException of eventExceptions) {
+        calendarTasks.push({
+          eventMasterId: eventException.EventMaster.id,
+          eventExceptionId: eventException.id,
+          title:
+            eventException.EventInfo?.title ??
+            eventException.EventMaster.eventInfo.title ??
+            undefined,
+          description:
+            eventException.EventInfo?.description ??
+            eventException.EventMaster.eventInfo.description ??
+            undefined,
+          date: eventException.newDate,
+          originaDate: eventException.originalDate,
+          rule: eventException.EventMaster.rule,
+        });
+      }
+
+      //we have exceptions and recurrences from masters in calendarTasks. Some master recurrences must be deleted.
+      //because of the exception's change of date.
       calendarTasks = calendarTasks
         .map((calendarTask) => {
-          //Cuidar de cancelamentos
-          const foundCancelation = eventCancelations.some(
-            (x) =>
-              calendarTask.eventMasterId &&
-              x.eventMasterId === calendarTask.eventMasterId &&
-              moment(x.originalDate).isSame(calendarTask.date),
-          );
-          if (foundCancelation) return null;
+          if (!calendarTask.eventExceptionId) {
+            //Cuidar de cancelamentos -> deletar os advindos do master
+            const foundCancelation = eventCancelations.some(
+              (x) =>
+                x.eventMasterId === calendarTask.eventMasterId &&
+                moment(x.originalDate).isSame(calendarTask.date),
+            );
+            if (foundCancelation) return null;
 
-          // No CalendarTasks tenho Date e EventId
-          // Pesquiso dentro do EventExceptions filtrado se tenho algum item com OriginalDate e EventmasterId semelhante
-          // Se sim, vejo o que a exceção me pede para fazer e executo
-          const foundException = eventExceptions.find(
-            (exception) =>
-              exception.eventMasterId === calendarTask.eventMasterId &&
-              moment(exception.originalDate).isSame(calendarTask.date), //!Essa lógica está errada.
-          );
-          if (foundException) {
-            calendarTask = {
-              ...calendarTask,
-              eventExceptionId: foundException.id,
-            }; //Altero o CalendarTask para ter o eventExceptionId
+            //For a calendarTask that came from master,
+            //Delete it if it has an exception associated with it. (originalDate === calendartask date)
+            const foundException = calendarTasks.some(
+              (x) =>
+                x.eventExceptionId &&
+                x.eventMasterId === calendarTask.eventMasterId &&
+                moment(calendarTask.date).isSame(x.originaDate),
+            );
+            if (foundException) return null;
+          } else {
+            //handle exclusion of tasks that came from exceptions. (shouldnt appear if are outside selected range)
             if (
-              moment(input.dateStart).isSameOrBefore(foundException.newDate) &&
-              moment(input.dateEnd).isSameOrAfter(foundException.newDate)
-            ) {
-              calendarTask.date = foundException.newDate;
-            } else {
-              //Temos exclusão do calendarTask
+              moment(input.dateStart).isAfter(calendarTask.date) ||
+              moment(input.dateEnd).isBefore(calendarTask.date)
+            )
               return null;
-            }
-
-            if (foundException.eventInfoId) {
-              //Alterou informacao
-              calendarTask.description =
-                foundException.EventInfo?.description ??
-                calendarTask.description;
-              calendarTask.title =
-                foundException.EventInfo?.title ?? calendarTask.title;
-            }
           }
 
           return calendarTask;
