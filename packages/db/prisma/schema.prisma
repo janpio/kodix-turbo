@@ -36,12 +36,12 @@ model AppWorkspaceConfig {
   AppId String
   app   App    @relation("AppConfig", fields: [AppId], references: [id])
 
-  WorkspaceId String
-  workspace   Workspace @relation("WorkspaceConfig", fields: [WorkspaceId], references: [id])
+  workspaceId String
+  workspace   Workspace @relation("WorkspaceConfig", fields: [workspaceId], references: [id])
 
-  @@unique([AppId, WorkspaceId])
+  @@unique([AppId, workspaceId])
   @@index([AppId])
-  @@index([WorkspaceId])
+  @@index([workspaceId])
   @@map("App_Workspace_Config")
 }
 
