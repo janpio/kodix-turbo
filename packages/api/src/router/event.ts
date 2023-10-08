@@ -138,7 +138,14 @@ export const eventRouter = createTRPCRouter({
       //because of the exception's change of date.
       calendarTasks = calendarTasks
         .map((calendarTask) => {
-          if (!calendarTask.eventExceptionId) {
+          if (calendarTask.eventExceptionId) {
+            //handle exclusion of tasks that came from exceptions. (shouldnt appear if are outside selected range)
+            if (
+              moment(input.dateStart).isAfter(calendarTask.date) ||
+              moment(input.dateEnd).isBefore(calendarTask.date)
+            )
+              return null;
+          } else {
             //Cuidar de cancelamentos -> deletar os advindos do master
             const foundCancelation = eventCancelations.some(
               (x) =>
@@ -156,13 +163,6 @@ export const eventRouter = createTRPCRouter({
                 moment(calendarTask.date).isSame(x.originaDate),
             );
             if (foundException) return null;
-          } else {
-            //handle exclusion of tasks that came from exceptions. (shouldnt appear if are outside selected range)
-            if (
-              moment(input.dateStart).isAfter(calendarTask.date) ||
-              moment(input.dateEnd).isBefore(calendarTask.date)
-            )
-              return null;
           }
 
           return calendarTask;
