@@ -19,6 +19,7 @@ import {
   Trash2,
 } from "lucide-react";
 import moment from "moment";
+import { useSession } from "next-auth/react";
 
 import type { RouterOutputs } from "@kdx/api";
 import {
@@ -64,6 +65,9 @@ export function DataTable({
 
   const [openCancelDialog, setOpenCancelDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
+
+  const session = useSession();
+
   const ctx = api.useContext();
   const result = api.event.getAll.useQuery(
     {
@@ -170,13 +174,17 @@ export function DataTable({
           </Button>
         </div>
         <div className="flex w-44">
-          <Button
-            className="ml-auto mr-2 self-end"
-            onClick={() => nukeEvents()}
-            variant={"destructive"}
-          >
-            Nuke Events
-          </Button>
+          {(session.data?.user.name === "Gabriel Bianchi" ||
+            session.data?.user.name === "Mahadeva Das" ||
+            session.data?.user.name === "Mahadeva Das - Despertar") && (
+            <Button
+              className="ml-auto mr-2 self-end"
+              onClick={() => nukeEvents()}
+              variant={"destructive"}
+            >
+              Nuke Events
+            </Button>
+          )}
 
           <Button
             className="ml-auto self-end "
