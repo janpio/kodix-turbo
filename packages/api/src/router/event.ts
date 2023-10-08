@@ -3,6 +3,7 @@ import moment from "moment";
 import { Frequency, RRule, rrulestr } from "rrule";
 import { z } from "zod";
 
+import { authorizedEmails } from "../shared";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const eventRouter = createTRPCRouter({
@@ -773,14 +774,9 @@ export const eventRouter = createTRPCRouter({
       }
     }),
   nuke: protectedProcedure.mutation(async ({ ctx }) => {
-    const authorizedNames = [
-      "Gabriel Bianchi",
-      "Mahadeva Das",
-      "Mahadeva Das - Despertar",
-    ];
     if (
-      ctx.session.user.name &&
-      !authorizedNames.includes(ctx.session.user.name)
+      ctx.session.user.email &&
+      !authorizedEmails.includes(ctx.session.user.email)
     )
       throw new TRPCError({
         code: "UNAUTHORIZED",
