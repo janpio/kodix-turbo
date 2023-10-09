@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Check } from "lucide-react";
 import moment from "moment";
 import { RRule } from "rrule";
@@ -63,12 +63,17 @@ export function RecurrencePicker({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [draftCount, setDraftCount] = useState(count);
 
-  function discardDraft() {
+  const discardDraft = useCallback(() => {
     setDraftInterval(interval);
     setDraftFrequency(frequency);
     setDraftUntil(until);
     setDraftCount(count);
-  }
+  }, [interval, frequency, until, count]);
+
+  useEffect(() => {
+    discardDraft();
+  }, [open, discardDraft]);
+
   function saveDraft() {
     setInterval(draftInterval);
     setFrequency(draftFrequency);
