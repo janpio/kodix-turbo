@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { CalendarDateTime } from "@internationalized/date";
-import { Loader2, Plus } from "lucide-react";
+import { format } from "date-fns";
+import { CalendarIcon, Loader2, Plus } from "lucide-react";
 import moment from "moment";
-import type { DateValue } from "react-aria";
 import { RRule } from "rrule";
 
 import {
   Button,
+  Calendar,
+  cn,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -18,11 +19,13 @@ import {
   DialogTrigger,
   Input,
   Label,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Textarea,
   useToast,
 } from "@kdx/ui";
 
-import { DateTimePicker } from "~/components/date-time-picker/date-time-picker";
 import { api } from "~/trpc/react";
 import { RecurrencePicker } from "./recurrence-picker";
 
@@ -143,21 +146,57 @@ export function CreateEventDialogButton() {
               <div className="flex flex-row gap-4">
                 <div className="flex flex-col space-y-2">
                   <Label>From</Label>
-                  <DateTimePicker
-                    aria-label="Close"
-                    granularity="minute"
-                    value={
-                      new CalendarDateTime(
-                        from.get("year"),
-                        from.get("month"),
-                        Number(from.format("DD")),
-                        from.get("hour"),
-                        from.get("minute"),
-                      )
-                    }
-                    onChange={(date: DateValue) => {
-                      setFrom(moment(date));
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-[200px] pl-3 text-left font-normal",
+                          !from && "text-muted-foreground",
+                        )}
+                      >
+                        {from ? (
+                          format(from.toDate(), "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={from.toDate()}
+                        onSelect={(date) => {
+                          setFrom(
+                            moment(date)
+                              .hours(from.hours())
+                              .minutes(from.minutes()),
+                          );
+                        }}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <div className="flex flex-col space-y-2">
+                  <Label className="invisible">From</Label>
+                  <Input
+                    type="time"
+                    value={from.format("HH:mm")}
+                    onChange={(e) => {
+                      const newTime = e.target.value;
+
+                      setFrom(
+                        moment(from).set({
+                          hour: parseInt(newTime.split(":")[0] ?? "0"),
+                          minute: parseInt(newTime.split(":")[1] ?? "0"),
+                          second: 0,
+                          millisecond: 0,
+                        }),
+                      );
                     }}
+                    className="w-26"
                   />
                 </div>
               </div>
