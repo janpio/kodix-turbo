@@ -128,7 +128,7 @@ export function DataTable({
         </div>
         <div className="mx-auto mt-auto flex space-x-2">
           <Button
-            variant="outline"
+            variant="ghost"
             onClick={() => {
               setSelectedDay((prev) => prev && addDays(prev, -1));
             }}
@@ -165,7 +165,7 @@ export function DataTable({
             </PopoverContent>
           </Popover>
           <Button
-            variant="outline"
+            variant="ghost"
             onClick={() => {
               setSelectedDay((prev) => prev && addDays(prev, 1));
             }}
