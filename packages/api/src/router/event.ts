@@ -3,6 +3,8 @@ import moment from "moment";
 import { Frequency, RRule, rrulestr } from "rrule";
 import { z } from "zod";
 
+import { _wsPrisma } from "@kdx/db";
+
 import { authorizedEmails } from "../shared";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
@@ -15,9 +17,11 @@ export const eventRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const eventMasters = await ctx.prisma.eventMaster.findMany({
+      const wsPrisma = ctx.prisma.$extends(
+        _wsPrisma(ctx.session.user.activeWorkspaceId),
+      );
+      const eventMasters = await wsPrisma.eventMaster.findMany({
         where: {
-          workspaceId: ctx.session.user.activeWorkspaceId,
           AND: [
             {
               DateStart: {
@@ -38,8 +42,11 @@ export const eventRouter = createTRPCRouter({
       });
 
       //Handling Exceptions and Cancelations
-      const eventExceptions = await ctx.prisma.eventException.findMany({
+      const eventExceptions = await wsPrisma.eventException.findMany({
         where: {
+          EventMaster: {
+            workspaceId: ctx.session.user.activeWorkspaceId,
+          },
           OR: [
             {
               originalDate: {
@@ -72,8 +79,11 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      const eventCancelations = await ctx.prisma.eventCancellation.findMany({
+      const eventCancelations = await wsPrisma.eventCancellation.findMany({
         where: {
+          EventMaster: {
+            workspaceId: ctx.session.user.activeWorkspaceId,
+          },
           originalDate: {
             gte: input.dateStart,
             lte: input.dateEnd,
@@ -192,27 +202,28 @@ export const eventRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const eventMaster = await ctx.prisma.$transaction(async (tx) => {
+      const wsPrisma = ctx.prisma.$extends(
+        _wsPrisma(ctx.session.user.activeWorkspaceId),
+      );
+      const eventMaster = await wsPrisma.$transaction(async (tx) => {
         const eventInfo = await tx.eventInfo.create({
           data: {
             title: input.title,
             description: input.description,
-          },
-        });
-
-        return await tx.eventMaster.create({
-          data: {
-            rule: new RRule({
-              dtstart: input.from,
-              until: input.until,
-              freq: input.frequency,
-              interval: input.interval,
-              count: input.count,
-            }).toString(),
-            workspaceId: ctx.session.user.activeWorkspaceId,
-            eventInfoId: eventInfo.id,
-            DateStart: input.from,
-            DateUntil: input.until,
+            EventMaster: {
+              create: {
+                rule: new RRule({
+                  dtstart: input.from,
+                  until: input.until,
+                  freq: input.frequency,
+                  interval: input.interval,
+                  count: input.count,
+                }).toString(),
+                workspaceId: ctx.session.user.activeWorkspaceId,
+                DateStart: input.from,
+                DateUntil: input.until,
+              },
+            },
           },
         });
       });
@@ -243,9 +254,13 @@ export const eventRouter = createTRPCRouter({
         ),
     )
     .mutation(async ({ ctx, input }) => {
+      const wsPrisma = ctx.prisma.$extends(
+        _wsPrisma(ctx.session.user.activeWorkspaceId),
+      );
+
       if (input.exclusionDefinition === "single") {
         if (input.eventExceptionId)
-          return await ctx.prisma.$transaction(async (tx) => {
+          return await wsPrisma.$transaction(async (tx) => {
             const deletedException = await tx.eventException.delete({
               where: {
                 id: input.eventExceptionId,
@@ -259,7 +274,7 @@ export const eventRouter = createTRPCRouter({
             });
           });
 
-        return await ctx.prisma.eventCancellation.create({
+        return await wsPrisma.eventCancellation.create({
           data: {
             EventMaster: {
               connect: {
@@ -270,7 +285,7 @@ export const eventRouter = createTRPCRouter({
           },
         });
       } else if (input.exclusionDefinition === "thisAndFuture") {
-        return await ctx.prisma.$transaction(async (tx) => {
+        return await wsPrisma.$transaction(async (tx) => {
           if (input.eventExceptionId) {
             const result = await tx.eventException.deleteMany({
               where: {
@@ -328,7 +343,7 @@ export const eventRouter = createTRPCRouter({
         });
       } else if (input.exclusionDefinition === "all") {
         //We should delete the event master. It should automatically cascade down to all other tables
-        return await ctx.prisma.eventMaster.delete({
+        return await wsPrisma.eventMaster.delete({
           where: {
             id: input.eventMasterId,
           },
@@ -392,6 +407,9 @@ export const eventRouter = createTRPCRouter({
         ),
     )
     .mutation(async ({ ctx, input }) => {
+      const wsPrisma = ctx.prisma.$extends(
+        _wsPrisma(ctx.session.user.activeWorkspaceId),
+      );
       if (input.editDefinition === "single") {
         //* Havemos description, title, from e selectedTimestamp.
         //* Havemos um selectedTimestamp.
@@ -401,7 +419,7 @@ export const eventRouter = createTRPCRouter({
         if (input.eventExceptionId) {
           //* Temos uma exceção.  Isso significa que o usuário quer editar a exceção.
           //* Aqui, o usuário pode alterar o title e o description ou o from da exceção.
-          return await ctx.prisma.eventException.update({
+          return await wsPrisma.eventException.update({
             where: {
               id: input.eventExceptionId,
               newDate: input.selectedTimestamp,
@@ -433,7 +451,7 @@ export const eventRouter = createTRPCRouter({
         }
 
         //* Se estamos aqui, o usuário enviou o masterId. Vamos procurar no eventMaster uma ocorrência do RRULE que bate com o selectedTimestamp.
-        const eventMaster = await ctx.prisma.eventMaster.findUniqueOrThrow({
+        const eventMaster = await wsPrisma.eventMaster.findUniqueOrThrow({
           where: {
             id: input.eventMasterId,
             workspaceId: ctx.session.user.activeWorkspaceId,
@@ -461,7 +479,7 @@ export const eventRouter = createTRPCRouter({
         //* Para fazer isso, temos que criar uma NOVA EXCEÇÃO.
         if (input.title !== undefined || input.description !== undefined) {
           //* Se tivermos title ou description, criamos um eventInfo e também uma exceção.
-          return await ctx.prisma.eventInfo.create({
+          return await wsPrisma.eventInfo.create({
             data: {
               description: input.description,
               title: input.title,
@@ -480,7 +498,7 @@ export const eventRouter = createTRPCRouter({
           });
           //! END OF PROCEDURE
         } else
-          return await ctx.prisma.eventException.create({
+          return await wsPrisma.eventException.create({
             //* Se não tivermos title nem description, ainda temos o from. Criamos uma exceção sem eventInfo.
             data: {
               eventMasterId: eventMaster.id,
@@ -491,7 +509,7 @@ export const eventRouter = createTRPCRouter({
 
         //* Não temos uma exceção nem uma ocorrência que bate com o selectedTimestamp. Vamos gerar um erro.
       } else if (input.editDefinition === "thisAndFuture") {
-        await ctx.prisma.$transaction(async (tx) => {
+        await wsPrisma.$transaction(async (tx) => {
           //* Havemos description, title, from, until, frequency, inteval, count e selectedTimestamp.
           //* Havemos um selectedTimestamp.
           //* Temos que procurar se temos uma exceção que bate com o selectedTimestamp.
@@ -646,7 +664,7 @@ export const eventRouter = createTRPCRouter({
 
         //*Temos que pegar a nova regra se alterou o input.frequency ?? input.interval ?? input.count ?? input.until ou se alterou o input.from
 
-        return await ctx.prisma.$transaction(async (tx) => {
+        return await wsPrisma.$transaction(async (tx) => {
           const newRule = await (async () => {
             const shouldUpdateRule = Boolean(
               input.frequency ??
@@ -769,6 +787,9 @@ export const eventRouter = createTRPCRouter({
       }
     }),
   nuke: protectedProcedure.mutation(async ({ ctx }) => {
+    const wsPrisma = ctx.prisma.$extends(
+      _wsPrisma(ctx.session.user.activeWorkspaceId),
+    );
     if (
       ctx.session.user.email &&
       !authorizedEmails.includes(ctx.session.user.email)
@@ -778,11 +799,11 @@ export const eventRouter = createTRPCRouter({
         message: "You are not authorized to do this",
       });
 
-    await ctx.prisma.$transaction([
-      ctx.prisma.eventMaster.deleteMany({
+    await wsPrisma.$transaction([
+      wsPrisma.eventMaster.deleteMany({
         where: { workspaceId: ctx.session.user.activeWorkspaceId },
       }),
-      ctx.prisma.eventInfo.deleteMany({
+      wsPrisma.eventInfo.deleteMany({
         where: {
           OR: [
             {

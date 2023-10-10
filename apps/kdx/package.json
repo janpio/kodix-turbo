@@ -40,6 +40,7 @@
     "react-dom": "18.2.0",
     "react-icons": "^4.11.0",
     "react-stately": "^3.26.0",
+    "string-ts": "^1.2.0",
     "superjson": "1.9.1",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.2"

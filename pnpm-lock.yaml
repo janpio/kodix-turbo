@@ -107,6 +107,9 @@ importers:
       react-stately:
         specifier: ^3.26.0
         version: 3.26.0(react@18.2.0)
+      string-ts:
+        specifier: ^1.2.0
+        version: 1.2.0
       superjson:
         specifier: 1.9.1
         version: 1.9.1
@@ -9101,6 +9104,10 @@ packages:
   /streamsearch@1.1.0:
     resolution: {integrity: sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg==}
     engines: {node: '>=10.0.0'}
+    dev: false
+
+  /string-ts@1.2.0:
+    resolution: {integrity: sha512-4pRpax75q05wvh7HS3I3TgXM1R24NrS/x4yZ1Y46IOwavriZi5/cjC9OEn9BrJpjXV7VTcF1s/Wj6iEv2rlVvg==}
     dev: false
 
   /string.prototype.matchall@4.0.10:

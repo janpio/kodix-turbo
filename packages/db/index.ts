@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
 export * from "@prisma/client";
+export * from "./extensions";
 
 const globalForPrisma = globalThis as { prisma?: PrismaClient };
 
