@@ -29,6 +29,9 @@ declare module "@tanstack/react-table" {
     workspace: workspace | undefined;
   }
 }
+
+//TODO: Yikes! This stinks. Let's create a new mutation inside a meta, so we dont have so many apiCalls in this file.
+//TODO: https://muhimasri.com/blogs/react-editable-table/
 export const columns = [
   columnHelper.display({
     id: "select",

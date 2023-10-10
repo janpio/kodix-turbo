@@ -19,6 +19,7 @@ import { EditEventDialog } from "./edit-event-dialog";
 type CalendarTask = RouterOutputs["event"]["getAll"][number];
 const columnHelper = createColumnHelper<CalendarTask>();
 
+//TODO: extract dialogs to one meta component
 export const columns = [
   columnHelper.accessor("eventMasterId", {
     header: () => (
