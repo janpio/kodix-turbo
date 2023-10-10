@@ -206,7 +206,7 @@ export const eventRouter = createTRPCRouter({
         _wsPrisma(ctx.session.user.activeWorkspaceId),
       );
       const eventMaster = await wsPrisma.$transaction(async (tx) => {
-        const eventInfo = await tx.eventInfo.create({
+        return await tx.eventInfo.create({
           data: {
             title: input.title,
             description: input.description,
