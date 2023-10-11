@@ -191,6 +191,8 @@ export function EditEventDialog({
         input.until = until?.toDate();
       if (frequency !== defaultCalendarTask.frequency)
         input.frequency = frequency;
+      if (weekdays !== defaultCalendarTask.weekdays)
+        input.weekdays = weekdays?.map((w) => w.weekday);
     }
 
     if (input.editDefinition === "all") {
