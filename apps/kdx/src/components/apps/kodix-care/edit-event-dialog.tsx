@@ -42,14 +42,12 @@ import { api } from "~/trpc/react";
 import type { RouterInputs, RouterOutputs } from "~/trpc/shared";
 import { RecurrencePicker } from "./recurrence-picker";
 
-type CalendarTask = RouterOutputs["event"]["getAll"][number];
-
 export function EditEventDialog({
   calendarTask,
   open,
   setOpen,
 }: {
-  calendarTask: CalendarTask;
+  calendarTask: RouterOutputs["event"]["getAll"][number];
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
@@ -100,7 +98,7 @@ export function EditEventDialog({
         : undefined,
       count: RRule.fromString(calendarTask.rule).options.count ?? undefined,
       date: calendarTask.date,
-      weekdays: RRule.fromString(calendarTask.rule).options.byweekday.map(
+      weekdays: RRule.fromString(calendarTask.rule).options.byweekday?.map(
         (w) => new Weekday(w),
       ),
     };
@@ -121,7 +119,7 @@ export function EditEventDialog({
   const [count, setCount] = useState<number | undefined>(
     defaultCalendarTask.count,
   );
-  const [byweekdays, setByWeekDays] = useState<Weekday[] | undefined>(
+  const [weekdays, setWeekdays] = useState<Weekday[] | undefined>(
     defaultCalendarTask.weekdays,
   );
 
@@ -133,6 +131,7 @@ export function EditEventDialog({
     setInterval(defaultCalendarTask.interval);
     setUntil(defaultCalendarTask.until);
     setCount(defaultCalendarTask.count);
+    setWeekdays(defaultCalendarTask.weekdays);
   }, [defaultCalendarTask]);
 
   useEffect(() => {
@@ -145,7 +144,8 @@ export function EditEventDialog({
       interval !== defaultCalendarTask.interval ||
       // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
       (until && !until?.isSame(defaultCalendarTask.until)) ||
-      frequency !== defaultCalendarTask.frequency
+      frequency !== defaultCalendarTask.frequency ||
+      weekdays !== defaultCalendarTask.weekdays
     ),
     thisAndFuture: true,
     all: !(
@@ -161,7 +161,8 @@ export function EditEventDialog({
     frequency !== defaultCalendarTask.frequency ||
     interval !== defaultCalendarTask.interval ||
     until !== defaultCalendarTask.until ||
-    count !== defaultCalendarTask.count;
+    count !== defaultCalendarTask.count ||
+    weekdays !== defaultCalendarTask.weekdays;
 
   function handleSubmitFormData(
     definition: "single" | "thisAndFuture" | "all",
@@ -202,6 +203,8 @@ export function EditEventDialog({
         input.until = until?.toDate();
       if (frequency !== defaultCalendarTask.frequency)
         input.frequency = frequency;
+      if (weekdays !== defaultCalendarTask.weekdays)
+        input.weekdays = weekdays?.map((w) => w.weekday);
     }
     editEvent(input);
   }
@@ -296,8 +299,8 @@ export function EditEventDialog({
                 setUntil={setUntil}
                 count={count}
                 setCount={setCount}
-                weekdays={byweekdays}
-                setWeekdays={setByWeekDays}
+                weekdays={weekdays}
+                setWeekdays={setWeekdays}
               />
             </div>
             <Textarea

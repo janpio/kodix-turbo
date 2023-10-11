@@ -363,6 +363,7 @@ export const eventRouter = createTRPCRouter({
     //* I cannot send interval with single
     //* I cannot send until with single
     //* I cannot send frequency with single
+    //* I cannot send weekdays with single
     //* I CAN send from with all, but from cannot be at a different date (day, year, or month) from the selected timestamp event's master/exception. Only hour.
     .input(
       z
@@ -384,6 +385,7 @@ export const eventRouter = createTRPCRouter({
               interval: z.number().optional(),
               count: z.number().optional(),
               from: z.date().optional(),
+              weekdays: z.number().array().optional(),
 
               editDefinition: z.enum(["thisAndFuture"]),
             }),
@@ -395,6 +397,7 @@ export const eventRouter = createTRPCRouter({
                 .optional(),
               interval: z.number().optional(),
               count: z.number().optional(),
+              weekdays: z.number().array().optional(),
 
               from: z
                 .string()
@@ -596,6 +599,8 @@ export const eventRouter = createTRPCRouter({
                     freq: input.frequency ?? oldRule.options.freq,
                     interval: input.interval ?? oldRule.options.interval,
                     count: input.count ?? oldRule.options.count ?? undefined,
+                    byweekday:
+                      input.weekdays ?? oldRule.options.byweekday ?? undefined,
                   }).toString(),
                 },
               });
@@ -614,6 +619,7 @@ export const eventRouter = createTRPCRouter({
                 freq: oldRule.options.freq,
                 interval: oldRule.options.interval,
                 count: oldRule.options.count ?? undefined,
+                byweekday: oldRule.options.byweekday ?? undefined,
               }).toString(),
             },
             select: {
@@ -641,6 +647,8 @@ export const eventRouter = createTRPCRouter({
               freq: input.frequency ?? oldRule.options.freq,
               interval: input.interval ?? oldRule.options.interval,
               count: input.count ?? oldRule.options.count ?? undefined,
+              byweekday:
+                input.weekdays ?? oldRule.options.byweekday ?? undefined,
             }).toString(),
           };
 
@@ -679,7 +687,8 @@ export const eventRouter = createTRPCRouter({
                 input.interval ??
                 input.count ??
                 input.until ??
-                input.from,
+                input.from ??
+                input.weekdays,
             );
             if (!shouldUpdateRule) return undefined;
 
@@ -710,6 +719,8 @@ export const eventRouter = createTRPCRouter({
               freq: input.frequency ?? oldRule.options.freq,
               interval: input.interval ?? oldRule.options.interval,
               count: input.count ?? oldRule.options.count ?? undefined,
+              byweekday:
+                input.weekdays ?? oldRule.options.byweekday ?? undefined,
             }).toString();
           })();
           const eventInfoCreateOrUpdateData = {

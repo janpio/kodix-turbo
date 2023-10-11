@@ -5,7 +5,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Check } from "lucide-react";
 import moment from "moment";
-import { Frequency, RRule, Weekday } from "rrule";
+import type { Weekday } from "rrule";
+import { Frequency, RRule } from "rrule";
 
 import {
   AlertDialog,
@@ -35,14 +36,15 @@ import { tzOffsetText } from "~/helpers";
 
 const freqs = [RRule.DAILY, RRule.WEEKLY, RRule.MONTHLY, RRule.YEARLY];
 const allWeekdays: Weekday[] = [
-  new Weekday(0),
-  new Weekday(1),
-  new Weekday(2),
-  new Weekday(3),
-  new Weekday(4),
-  new Weekday(5),
-  new Weekday(6),
+  RRule.SU,
+  RRule.MO,
+  RRule.TU,
+  RRule.WE,
+  RRule.TH,
+  RRule.FR,
+  RRule.SA,
 ];
+
 export function RecurrencePicker({
   open,
   setOpen,
@@ -76,6 +78,7 @@ export function RecurrencePicker({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [draftCount, setDraftCount] = useState(count);
   const [draftWeekdays, setDraftWeekdays] = useState(weekdays);
+
   const discardDraft = useCallback(() => {
     setDraftInterval(interval);
     setDraftFrequency(frequency);
@@ -214,8 +217,9 @@ export function RecurrencePicker({
                           <CommandItem
                             key={i}
                             onSelect={() => {
-                              freq !== Frequency.WEEKLY &&
-                                setDraftWeekdays(weekdays);
+                              if (freq !== Frequency.WEEKLY) {
+                                setDraftWeekdays(undefined);
+                              }
                               setDraftFrequency(freq);
                             }}
                           >
@@ -245,20 +249,24 @@ export function RecurrencePicker({
                     {allWeekdays.map((weekday) => (
                       <Toggle
                         size={"sm"}
-                        pressed={draftWeekdays?.includes(weekday)}
+                        pressed={draftWeekdays?.some(
+                          (dw) => dw.getJsWeekday() === weekday.getJsWeekday(),
+                        )}
                         aria-label="Toggle italic"
                         key={JSON.stringify(weekday)}
                         onPressedChange={(pressed) => {
-                          if (pressed) {
-                            setDraftWeekdays([
-                              ...(draftWeekdays ?? []),
-                              weekday,
-                            ]);
-                          } else {
-                            setDraftWeekdays(
-                              draftWeekdays?.filter((d) => d !== weekday),
+                          setDraftWeekdays((prev) => {
+                            if (prev === undefined) {
+                              return [weekday];
+                            }
+                            if (pressed) {
+                              return [...prev, weekday];
+                            }
+                            return prev.filter(
+                              (dw) =>
+                                dw.getJsWeekday() !== weekday.getJsWeekday(),
                             );
-                          }
+                          });
                         }}
                       >
                         {moment().weekday(weekday.getJsWeekday()).format("ddd")}
