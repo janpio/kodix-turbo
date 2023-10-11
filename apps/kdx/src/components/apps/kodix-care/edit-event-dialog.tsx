@@ -5,7 +5,6 @@ import moment from "moment";
 import { RRule, Weekday } from "rrule";
 import type { Frequency } from "rrule";
 
-import type { RouterOutputs } from "@kdx/api";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,7 +39,7 @@ import {
 } from "@kdx/ui";
 
 import { api } from "~/trpc/react";
-import type { RouterInputs } from "~/trpc/shared";
+import type { RouterInputs, RouterOutputs } from "~/trpc/shared";
 import { RecurrencePicker } from "./recurrence-picker";
 
 type CalendarTask = RouterOutputs["event"]["getAll"][number];
