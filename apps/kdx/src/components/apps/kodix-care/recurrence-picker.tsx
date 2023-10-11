@@ -151,12 +151,17 @@ export function RecurrencePicker({
                       setFrequency(freq);
                       setUntil(undefined);
                       setCount(undefined);
+                      freq !== Frequency.WEEKLY && setWeekdays(undefined);
                     }}
                   >
                     <Check
                       className={cn(
                         "mr-2 h-4 w-4",
-                        frequency === freq && interval === 1 && !until && !count
+                        frequency === freq &&
+                          interval === 1 &&
+                          !until &&
+                          !count &&
+                          !weekdays
                           ? "opacity-100"
                           : "opacity-0",
                       )}
