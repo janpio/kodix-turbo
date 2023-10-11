@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 import { CalendarIcon, Loader2 } from "lucide-react";
 import moment from "moment";
-import { RRule } from "rrule";
+import { RRule, Weekday } from "rrule";
 import type { Frequency } from "rrule";
 
 import type { RouterOutputs } from "@kdx/api";
@@ -101,6 +101,9 @@ export function EditEventDialog({
         : undefined,
       count: RRule.fromString(calendarTask.rule).options.count ?? undefined,
       date: calendarTask.date,
+      weekdays: RRule.fromString(calendarTask.rule).options.byweekday.map(
+        (w) => new Weekday(w),
+      ),
     };
   }, [calendarTask]);
 
@@ -118,6 +121,9 @@ export function EditEventDialog({
   );
   const [count, setCount] = useState<number | undefined>(
     defaultCalendarTask.count,
+  );
+  const [byweekdays, setByWeekDays] = useState<Weekday[] | undefined>(
+    defaultCalendarTask.weekdays,
   );
 
   const setStateToDefault = useCallback(() => {
@@ -291,6 +297,8 @@ export function EditEventDialog({
                 setUntil={setUntil}
                 count={count}
                 setCount={setCount}
+                weekdays={byweekdays}
+                setWeekdays={setByWeekDays}
               />
             </div>
             <Textarea

@@ -2,15 +2,14 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
 import { useCallback, useEffect, useState } from "react";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Check } from "lucide-react";
 import moment from "moment";
-import { RRule } from "rrule";
-import type { Frequency } from "rrule";
+import { Frequency, RRule, Weekday } from "rrule";
 
 import {
   AlertDialog,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -27,6 +26,7 @@ import {
   PopoverTrigger,
   RadioGroup,
   RadioGroupItem,
+  Toggle,
 } from "@kdx/ui";
 
 import { DatePicker } from "~/components/date-picker";
@@ -34,6 +34,15 @@ import { FrequencyToTxt } from "~/components/frequency-picker";
 import { tzOffsetText } from "~/helpers";
 
 const freqs = [RRule.DAILY, RRule.WEEKLY, RRule.MONTHLY, RRule.YEARLY];
+const allWeekdays: Weekday[] = [
+  new Weekday(0),
+  new Weekday(1),
+  new Weekday(2),
+  new Weekday(3),
+  new Weekday(4),
+  new Weekday(5),
+  new Weekday(6),
+];
 export function RecurrencePicker({
   open,
   setOpen,
@@ -45,6 +54,8 @@ export function RecurrencePicker({
   setUntil,
   count,
   setCount,
+  weekdays,
+  setWeekdays,
 }: {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -56,19 +67,22 @@ export function RecurrencePicker({
   setUntil: React.Dispatch<React.SetStateAction<moment.Moment | undefined>>;
   count: number | undefined;
   setCount: React.Dispatch<React.SetStateAction<number | undefined>>;
+  weekdays: Weekday[] | undefined;
+  setWeekdays: React.Dispatch<React.SetStateAction<Weekday[] | undefined>>;
 }) {
   const [draftInterval, setDraftInterval] = useState(interval);
   const [draftFrequency, setDraftFrequency] = useState(frequency);
   const [draftUntil, setDraftUntil] = useState(until);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [draftCount, setDraftCount] = useState(count);
-
+  const [draftWeekdays, setDraftWeekdays] = useState(weekdays);
   const discardDraft = useCallback(() => {
     setDraftInterval(interval);
     setDraftFrequency(frequency);
     setDraftUntil(until);
     setDraftCount(count);
-  }, [interval, frequency, until, count]);
+    setDraftWeekdays(weekdays);
+  }, [interval, frequency, until, count, weekdays]);
 
   useEffect(() => {
     discardDraft();
@@ -79,6 +93,7 @@ export function RecurrencePicker({
     setFrequency(draftFrequency);
     setUntil(draftUntil);
     setCount(undefined); // We don't have count yet in the UI so we just set it to undefined
+    setWeekdays(draftWeekdays);
   }
 
   function closeDialog(openOrClose: boolean, save: boolean) {
@@ -90,7 +105,10 @@ export function RecurrencePicker({
     freq: frequency,
     until: until ? until?.toDate() : undefined,
     interval: interval,
+    byweekday: weekdays,
   });
+
+  const [parent] = useAutoAnimate();
 
   return (
     <>
@@ -165,9 +183,9 @@ export function RecurrencePicker({
           <AlertDialogHeader>
             <AlertDialogTitle>Personalized Recurrence</AlertDialogTitle>
           </AlertDialogHeader>
-          <AlertDialogDescription>
+          <div>
             <div className="mt-4 flex flex-row gap-4">
-              <span className="font-medium">Repeat every:</span>
+              <p>Repeat every:</p>
               <Input
                 type="number"
                 min={1}
@@ -196,6 +214,8 @@ export function RecurrencePicker({
                           <CommandItem
                             key={i}
                             onSelect={() => {
+                              freq !== Frequency.WEEKLY &&
+                                setDraftWeekdays(weekdays);
                               setDraftFrequency(freq);
                             }}
                           >
@@ -216,13 +236,45 @@ export function RecurrencePicker({
                 </PopoverContent>
               </Popover>
             </div>
+
+            <div className="mt-2" ref={parent}>
+              {draftFrequency === Frequency.WEEKLY && (
+                <div className={"flex-col"}>
+                  <span className={cn("mt-4")}>Repeat:</span>
+                  <div className="mt-2 flex-row space-x-1">
+                    {allWeekdays.map((weekday) => (
+                      <Toggle
+                        size={"sm"}
+                        pressed={draftWeekdays?.includes(weekday)}
+                        aria-label="Toggle italic"
+                        key={JSON.stringify(weekday)}
+                        onPressedChange={(pressed) => {
+                          if (pressed) {
+                            setDraftWeekdays([
+                              ...(draftWeekdays ?? []),
+                              weekday,
+                            ]);
+                          } else {
+                            setDraftWeekdays(
+                              draftWeekdays?.filter((d) => d !== weekday),
+                            );
+                          }
+                        }}
+                      >
+                        {moment().weekday(weekday.getJsWeekday()).format("ddd")}
+                      </Toggle>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
             <div className="flex flex-row">
               <div className="flex flex-col">
                 <RadioGroup
                   className="mt-2 space-y-3"
                   defaultValue={draftUntil === undefined ? "1" : "0"}
                 >
-                  <span className="mt-4 font-medium">Ends:</span>
+                  <span className="mt-4">Ends:</span>
                   <div
                     className="flex items-center"
                     onClick={() => setDraftUntil(undefined)}
@@ -263,7 +315,7 @@ export function RecurrencePicker({
                 </RadioGroup>
               </div>
             </div>
-          </AlertDialogDescription>
+          </div>
           <AlertDialogFooter>
             <Button variant="ghost" onClick={() => closeDialog(false, false)}>
               Cancel

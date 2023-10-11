@@ -4,6 +4,7 @@ import { useState } from "react";
 import { format } from "date-fns";
 import { CalendarIcon, Loader2, Plus } from "lucide-react";
 import moment from "moment";
+import type { Weekday } from "rrule";
 import { RRule } from "rrule";
 
 import {
@@ -27,6 +28,7 @@ import {
 } from "@kdx/ui";
 
 import { api } from "~/trpc/react";
+import type { RouterInputs } from "~/trpc/shared";
 import { RecurrencePicker } from "./recurrence-picker";
 
 export function CreateEventDialogButton() {
@@ -79,6 +81,7 @@ export function CreateEventDialogButton() {
     interval: 1,
     until: undefined,
     count: 1,
+    byweekday: undefined,
   };
 
   const [title, setTitle] = useState(defaultState.title);
@@ -90,6 +93,7 @@ export function CreateEventDialogButton() {
     defaultState.until,
   );
   const [count, setCount] = useState<number | undefined>(defaultState.count);
+  const [weekdays, setWeekdays] = useState<Weekday[] | undefined>();
 
   function revertStateToDefault() {
     setTitle(defaultState.title);
@@ -104,7 +108,7 @@ export function CreateEventDialogButton() {
   function handleSubmitFormData(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     //We need to make sure that everything is the same as from, except for the date.
-    createEvent({
+    const input: RouterInputs["event"]["create"] = {
       title,
       description,
       from: from.add(-1, "M").toDate(), //IDK why we need to do this, but it works
@@ -112,7 +116,10 @@ export function CreateEventDialogButton() {
       frequency,
       interval,
       count,
-    });
+      weekdays: weekdays?.map((wd) => wd.weekday),
+    };
+
+    createEvent(input);
   }
 
   return (
@@ -212,6 +219,8 @@ export function CreateEventDialogButton() {
                   setUntil={setUntil}
                   count={count}
                   setCount={setCount}
+                  weekdays={weekdays}
+                  setWeekdays={setWeekdays}
                 />
               </div>
               <Textarea

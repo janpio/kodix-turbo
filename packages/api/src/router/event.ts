@@ -188,18 +188,25 @@ export const eventRouter = createTRPCRouter({
     }),
   create: protectedProcedure
     .input(
-      z.object({
-        title: z.string(),
-        description: z.string().optional(),
-        from: z.date(),
-        until: z
-          .date()
-          .transform((date) => moment(date).endOf("day").toDate())
-          .optional(),
-        frequency: z.nativeEnum(Frequency),
-        interval: z.number().optional(),
-        count: z.number().optional(),
-      }),
+      z
+        .object({
+          title: z.string(),
+          description: z.string().optional(),
+          from: z.date(),
+          until: z
+            .date()
+            .transform((date) => moment(date).endOf("day").toDate())
+            .optional(),
+          interval: z.number().optional(),
+          count: z.number().optional(),
+          frequency: z.nativeEnum(Frequency),
+          weekdays: z.number().array().optional(),
+        })
+        .refine((data) => {
+          if (data.weekdays && data.frequency !== Frequency.WEEKLY)
+            return false;
+          return true;
+        }),
     )
     .mutation(async ({ ctx, input }) => {
       const wsPrisma = ctx.prisma.$extends(
@@ -218,6 +225,7 @@ export const eventRouter = createTRPCRouter({
                   freq: input.frequency,
                   interval: input.interval,
                   count: input.count,
+                  byweekday: input.weekdays,
                 }).toString(),
                 workspaceId: ctx.session.user.activeWorkspaceId,
                 DateStart: input.from,

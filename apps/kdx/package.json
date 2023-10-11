@@ -14,6 +14,7 @@
     "setupLocalDB": "pnpm dlx tsx ./src/z-scripts/setupLocalDB.ts"
   },
   "dependencies": {
+    "@formkit/auto-animate": "^0.8.0",
     "@heroicons/react": "^2.0.18",
     "@internationalized/date": "^3.5.0",
     "@kdx/api": "^0.1.0",
