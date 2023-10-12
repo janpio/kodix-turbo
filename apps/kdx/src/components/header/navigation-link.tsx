@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 import { cn } from "@kdx/ui";
 
-export default function NavigationItem({
+export default function NavigationLink({
   href,
   title,
 }: {

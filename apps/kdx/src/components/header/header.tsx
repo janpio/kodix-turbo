@@ -5,7 +5,7 @@ import { cva } from "class-variance-authority";
 import { auth } from "@kdx/auth";
 import { cn } from "@kdx/ui";
 
-import NavigationItem from "./navigation-item";
+import NavigationLink from "./navigation-link";
 import { TeamSwitcher } from "./team-switcher";
 import { UserProfileButton } from "./user-profile-button";
 
@@ -89,7 +89,7 @@ async function MainNav({
       {navigation
         .filter((x) => x.shown)
         .map((item) => (
-          <NavigationItem key={item.href} href={item.href} title={item.title} />
+          <NavigationLink key={item.href} href={item.href} title={item.title} />
         ))}
     </nav>
   );
