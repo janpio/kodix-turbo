@@ -163,7 +163,6 @@ export function EditEventDialog({
     until !== defaultCalendarTask.until ||
     count !== defaultCalendarTask.count ||
     weekdays !== defaultCalendarTask.weekdays;
-
   function handleSubmitFormData(
     definition: "single" | "thisAndFuture" | "all",
   ) {
@@ -199,7 +198,9 @@ export function EditEventDialog({
       if (!from.isSame(defaultCalendarTask.from))
         input.from = from.format("HH:mm");
 
-      if (count !== defaultCalendarTask.count) input.count = count;
+      if (count !== defaultCalendarTask.count) {
+        input.count = count ?? null;
+      }
       if (interval !== defaultCalendarTask.interval) input.interval = interval;
       if (!until?.isSame(defaultCalendarTask.until))
         input.until = until?.toDate();
@@ -208,6 +209,7 @@ export function EditEventDialog({
       if (weekdays !== defaultCalendarTask.weekdays)
         input.weekdays = weekdays?.map((w) => w.weekday);
     }
+
     editEvent(input);
   }
 

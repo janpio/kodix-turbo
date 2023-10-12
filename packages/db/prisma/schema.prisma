@@ -129,8 +129,8 @@ model EventMaster {
   DateStart DateTime
   DateUntil DateTime?
 
-  eventInfo   EventInfo @relation(fields: [eventInfoId], references: [id])
-  eventInfoId String
+  title       String?
+  description String?
 
   EventExceptions    EventException[]
   EventCancellations EventCancellation[]
@@ -140,17 +140,6 @@ model EventMaster {
   workspaceId String
 
   @@index([workspaceId])
-  @@index([eventInfoId])
-}
-
-model EventInfo {
-  id          String  @id @default(cuid())
-  title       String?
-  description String?
-
-  EventException EventException[]
-  EventDone      EventDone[]
-  EventMaster    EventMaster[]
 }
 
 model EventException {
@@ -158,14 +147,13 @@ model EventException {
   originalDate DateTime
   newDate      DateTime
 
+  title       String?
+  description String?
+
   EventMaster   EventMaster @relation(fields: [eventMasterId], references: [id], onDelete: Cascade)
   eventMasterId String
 
-  EventInfo   EventInfo? @relation(fields: [eventInfoId], references: [id])
-  eventInfoId String?
-
   @@index([eventMasterId])
-  @@index([eventInfoId])
 }
 
 model EventCancellation {
@@ -191,12 +179,11 @@ model EventDone {
   EventMaster   EventMaster @relation(fields: [eventMasterId], references: [id])
   eventMasterId String
 
-  EventInfo   EventInfo @relation(fields: [eventInfoId], references: [id])
-  eventInfoId String
+  title       String?
+  description String?
 
   @@index([eventMasterId])
   @@index([userId])
-  @@index([eventInfoId])
 }
 
 model Post {

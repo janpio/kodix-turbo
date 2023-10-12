@@ -98,7 +98,6 @@ export function RecurrencePicker({
     setCount(undefined); // We don't have count yet in the UI so we just set it to undefined
     setWeekdays(draftWeekdays);
   }
-
   function closeDialog(openOrClose: boolean, save: boolean) {
     if (save) saveDraft();
     else discardDraft();

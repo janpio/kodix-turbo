@@ -36,9 +36,6 @@ export const eventRouter = createTRPCRouter({
             },
           ],
         },
-        include: {
-          eventInfo: true,
-        },
       });
 
       //Handling Exceptions and Cancelations
@@ -65,13 +62,7 @@ export const eventRouter = createTRPCRouter({
         include: {
           EventMaster: {
             select: {
-              eventInfo: true,
               rule: true,
-              id: true,
-            },
-          },
-          EventInfo: {
-            select: {
               title: true,
               description: true,
             },
@@ -103,10 +94,10 @@ export const eventRouter = createTRPCRouter({
         title: string | undefined;
         description: string | undefined;
         date: Date;
-        rule: string;
         eventMasterId: string;
         eventExceptionId: string | undefined;
         originaDate?: Date | undefined;
+        rule: string;
       }
       let calendarTasks: CalendarTask[] = [];
 
@@ -118,8 +109,8 @@ export const eventRouter = createTRPCRouter({
           calendarTasks.push({
             eventMasterId: eventMaster.id,
             eventExceptionId: undefined,
-            title: eventMaster.eventInfo.title ?? undefined,
-            description: eventMaster.eventInfo.description ?? undefined,
+            title: eventMaster.title ?? undefined,
+            description: eventMaster.description ?? undefined,
             date: date,
             rule: eventMaster.rule,
           });
@@ -128,15 +119,15 @@ export const eventRouter = createTRPCRouter({
 
       for (const eventException of eventExceptions) {
         calendarTasks.push({
-          eventMasterId: eventException.EventMaster.id,
+          eventMasterId: eventException.eventMasterId,
           eventExceptionId: eventException.id,
           title:
-            eventException.EventInfo?.title ??
-            eventException.EventMaster.eventInfo.title ??
+            eventException.title ??
+            eventException.EventMaster?.title ??
             undefined,
           description:
-            eventException.EventInfo?.description ??
-            eventException.EventMaster.eventInfo.description ??
+            eventException?.description ??
+            eventException.EventMaster?.description ??
             undefined,
           date: eventException.newDate,
           originaDate: eventException.originalDate,
@@ -212,31 +203,23 @@ export const eventRouter = createTRPCRouter({
       const wsPrisma = ctx.prisma.$extends(
         _wsPrisma(ctx.session.user.activeWorkspaceId),
       );
-      const eventMaster = await wsPrisma.$transaction(async (tx) => {
-        return await tx.eventInfo.create({
-          data: {
-            title: input.title,
-            description: input.description,
-            EventMaster: {
-              create: {
-                rule: new RRule({
-                  dtstart: input.from,
-                  until: input.until,
-                  freq: input.frequency,
-                  interval: input.interval,
-                  count: input.count,
-                  byweekday: input.weekdays,
-                }).toString(),
-                workspaceId: ctx.session.user.activeWorkspaceId,
-                DateStart: input.from,
-                DateUntil: input.until,
-              },
-            },
-          },
-        });
+      return await wsPrisma.eventMaster.create({
+        data: {
+          title: input.title,
+          description: input.description,
+          rule: new RRule({
+            dtstart: input.from,
+            until: input.until,
+            freq: input.frequency,
+            interval: input.interval,
+            count: input.count,
+            byweekday: input.weekdays,
+          }).toString(),
+          workspaceId: ctx.session.user.activeWorkspaceId,
+          DateStart: input.from,
+          DateUntil: input.until,
+        },
       });
-
-      return eventMaster;
     }),
 
   cancel: protectedProcedure
@@ -383,7 +366,7 @@ export const eventRouter = createTRPCRouter({
                 .transform((date) => moment(date).endOf("day").toDate())
                 .optional(),
               interval: z.number().optional(),
-              count: z.number().optional(),
+              count: z.number().nullish().optional(),
               from: z.date().optional(),
               weekdays: z.number().array().optional(),
 
@@ -396,7 +379,7 @@ export const eventRouter = createTRPCRouter({
                 .transform((date) => moment(date).endOf("day").toDate())
                 .optional(),
               interval: z.number().optional(),
-              count: z.number().optional(),
+              count: z.number().nullish().optional(),
               weekdays: z.number().array().optional(),
 
               from: z
@@ -440,22 +423,8 @@ export const eventRouter = createTRPCRouter({
             },
             data: {
               newDate: input.from,
-              EventInfo:
-                input.description !== undefined || input.title !== undefined //* Se o usuário não mandou nem title nem description, não fazemos nada com o EventInfo.
-                  ? {
-                      upsert: {
-                        //* Upsert é um update ou um create. Se não existir, cria. Se existir, atualiza.
-                        create: {
-                          description: input.description,
-                          title: input.title,
-                        },
-                        update: {
-                          description: input.description,
-                          title: input.title,
-                        },
-                      },
-                    }
-                  : undefined,
+              title: input.title,
+              description: input.description,
             },
           });
           //! END OF PROCEDURE
@@ -490,21 +459,17 @@ export const eventRouter = createTRPCRouter({
         //* Para fazer isso, temos que criar uma NOVA EXCEÇÃO.
         if (input.title !== undefined || input.description !== undefined) {
           //* Se tivermos title ou description, criamos um eventInfo e também uma exceção.
-          return await wsPrisma.eventInfo.create({
+          return await wsPrisma.eventException.create({
             data: {
-              description: input.description,
-              title: input.title,
-              EventException: {
-                create: {
-                  EventMaster: {
-                    connect: {
-                      id: eventMaster.id,
-                    },
-                  },
-                  originalDate: foundTimestamp,
-                  newDate: input.from ?? foundTimestamp,
+              EventMaster: {
+                connect: {
+                  id: eventMaster.id,
                 },
               },
+              description: input.description,
+              title: input.title,
+              originalDate: foundTimestamp,
+              newDate: input.from ?? foundTimestamp,
             },
           });
           //! END OF PROCEDURE
@@ -526,9 +491,17 @@ export const eventRouter = createTRPCRouter({
           //* Temos que procurar se temos uma exceção que bate com o selectedTimestamp.
           //* Se tivermos, temos que alterá-la.
 
-          if (input.eventExceptionId) {
-            //*Deletamos a exceção se exisitir.
-            const exception = await tx.eventException.deleteMany({
+          //*Deletamos as exceções seguintes, se tiver mudanã em timely info.
+          const shouldDeleteFutureExceptions = Boolean(
+            input.from ??
+              input.until ??
+              input.count ??
+              input.frequency ??
+              input.interval ??
+              input.weekdays,
+          );
+          if (shouldDeleteFutureExceptions)
+            await tx.eventException.deleteMany({
               where: {
                 EventMaster: {
                   workspaceId: ctx.session.user.activeWorkspaceId,
@@ -539,12 +512,6 @@ export const eventRouter = createTRPCRouter({
                 },
               },
             });
-            if (!exception.count)
-              throw new TRPCError({
-                code: "NOT_FOUND",
-                message: "Exception not found",
-              });
-          }
 
           //* Aqui, Vamos editar o eventMaster antigo.
           const oldMaster = await tx.eventMaster.findUniqueOrThrow({
@@ -554,12 +521,17 @@ export const eventRouter = createTRPCRouter({
             },
             select: {
               rule: true,
-              eventInfoId: true,
+              title: true,
+              description: true,
+              id: true,
             },
           });
           const oldRule = rrulestr(oldMaster.rule);
-          const lastOccurence = oldRule.before(input.selectedTimestamp, false);
-          if (!lastOccurence) {
+          const previousOccurence = oldRule.before(
+            input.selectedTimestamp,
+            false,
+          );
+          if (!previousOccurence) {
             //* It means that the selectedTimestamp
             //* is either the first occurence of the event or it is before the first occurence.
             //* If it is before the first occurence, we should have an exception.
@@ -569,41 +541,40 @@ export const eventRouter = createTRPCRouter({
                 code: "NOT_FOUND",
                 message: "Event not found",
               });
-            else
-              return await tx.eventMaster.update({
-                where: {
-                  id: input.eventMasterId,
-                  workspaceId: ctx.session.user.activeWorkspaceId,
-                },
-                data: {
-                  eventInfo:
-                    input.title !== undefined || input.description !== undefined
-                      ? {
-                          upsert: {
-                            create: {
-                              title: input.title,
-                              description: input.description,
-                            },
-                            update: {
-                              title: input.title,
-                              description: input.description,
-                            },
-                          },
-                        }
-                      : undefined,
-                  DateStart: input.from ?? input.selectedTimestamp,
-                  DateUntil: input.until ?? oldRule.options.until ?? undefined,
-                  rule: new RRule({
-                    dtstart: input.from ?? input.selectedTimestamp,
-                    until: input.until ?? oldRule.options.until ?? undefined,
-                    freq: input.frequency ?? oldRule.options.freq,
-                    interval: input.interval ?? oldRule.options.interval,
-                    count: input.count ?? oldRule.options.count ?? undefined,
-                    byweekday:
-                      input.weekdays ?? oldRule.options.byweekday ?? undefined,
-                  }).toString(),
-                },
-              });
+
+            //! NO SPLIT REQUIRED !!
+            return await tx.eventMaster.update({
+              where: {
+                id: input.eventMasterId,
+                workspaceId: ctx.session.user.activeWorkspaceId,
+              },
+              data: {
+                EventExceptions: shouldDeleteFutureExceptions
+                  ? undefined //if they're deleted, no need for update
+                  : {
+                      updateMany: {
+                        where: {},
+                        data: {
+                          title: input.title ? null : undefined,
+                          description: input.description ? null : undefined,
+                        },
+                      },
+                    },
+                title: input.title,
+                description: input.description,
+                DateStart: input.from ?? input.selectedTimestamp,
+                DateUntil: input.until ?? oldRule.options.until ?? undefined,
+                rule: new RRule({
+                  dtstart: input.from ?? input.selectedTimestamp,
+                  until: input.until ?? oldRule.options.until ?? undefined,
+                  freq: input.frequency ?? oldRule.options.freq,
+                  interval: input.interval ?? oldRule.options.interval,
+                  count: input.count ?? oldRule.options.count ?? undefined,
+                  byweekday:
+                    input.weekdays ?? oldRule.options.byweekday ?? undefined,
+                }).toString(),
+              },
+            });
           }
 
           const updatedOldMaster = await tx.eventMaster.update({
@@ -612,10 +583,10 @@ export const eventRouter = createTRPCRouter({
               workspaceId: ctx.session.user.activeWorkspaceId,
             },
             data: {
-              DateUntil: lastOccurence,
+              DateUntil: previousOccurence,
               rule: new RRule({
                 dtstart: oldRule.options.dtstart,
-                until: lastOccurence,
+                until: previousOccurence,
                 freq: oldRule.options.freq,
                 interval: oldRule.options.interval,
                 count: oldRule.options.count ?? undefined,
@@ -623,12 +594,8 @@ export const eventRouter = createTRPCRouter({
               }).toString(),
             },
             select: {
-              eventInfo: {
-                select: {
-                  title: true,
-                  description: true,
-                },
-              },
+              title: true,
+              description: true,
             },
           });
           if (!updatedOldMaster)
@@ -637,39 +604,49 @@ export const eventRouter = createTRPCRouter({
               message: "Could not update event master",
             });
 
-          const newMasterCreateData = {
-            workspaceId: ctx.session.user.activeWorkspaceId,
-            DateStart: input.from ?? input.selectedTimestamp,
-            DateUntil: input.until ?? oldRule.options.until ?? undefined,
-            rule: new RRule({
-              dtstart: input.from ?? input.selectedTimestamp,
-              until: input.until ?? oldRule.options.until ?? undefined,
-              freq: input.frequency ?? oldRule.options.freq,
-              interval: input.interval ?? oldRule.options.interval,
-              count: input.count ?? oldRule.options.count ?? undefined,
-              byweekday:
-                input.weekdays ?? oldRule.options.byweekday ?? undefined,
-            }).toString(),
-          };
+          const newMaster = await tx.eventMaster.create({
+            data: {
+              workspaceId: ctx.session.user.activeWorkspaceId,
+              DateStart: input.from ?? input.selectedTimestamp,
+              DateUntil: input.until ?? oldRule.options.until ?? undefined,
+              rule: new RRule({
+                dtstart: input.from ?? input.selectedTimestamp,
+                until: input.until ?? oldRule.options.until ?? undefined,
+                freq: input.frequency ?? oldRule.options.freq,
+                interval: input.interval ?? oldRule.options.interval,
+                count: input.count ?? oldRule.options.count ?? undefined,
+                byweekday:
+                  input.weekdays ?? oldRule.options.byweekday ?? undefined,
+              }).toString(),
+              title: input.title ?? updatedOldMaster.title,
+              description: input.description ?? updatedOldMaster.description,
+            },
+            select: {
+              id: true,
+            },
+          });
 
-          if (input.title !== undefined || input.description !== undefined)
-            await tx.eventInfo.create({
-              data: {
-                title: input.title ?? updatedOldMaster.eventInfo.title,
-                description:
-                  input.description ?? updatedOldMaster.eventInfo.description,
+          if (!shouldDeleteFutureExceptions) {
+            //We should connect the oldMaster's exceptions to the new one.
+            await tx.eventException.updateMany({
+              where: {
                 EventMaster: {
-                  create: newMasterCreateData,
+                  id: oldMaster.id,
+                  workspaceId: ctx.session.user.activeWorkspaceId,
+                },
+                newDate: {
+                  gte: input.selectedTimestamp,
                 },
               },
-            });
-          else
-            await tx.eventMaster.create({
               data: {
-                ...newMasterCreateData,
-                eventInfoId: oldMaster.eventInfoId,
+                title: input.title ? null : undefined,
+                description: input.description ? null : undefined,
+                eventMasterId: newMaster.id,
               },
             });
+          }
+
+          return;
         });
       } else if (input.editDefinition === "all") {
         //* Se ele alterou o title ou description, Devemos verificar se ele alterou os dois.
@@ -680,129 +657,96 @@ export const eventRouter = createTRPCRouter({
 
         //*Temos que pegar a nova regra se alterou o input.frequency ?? input.interval ?? input.count ?? input.until ou se alterou o input.from
 
-        return await wsPrisma.$transaction(async (tx) => {
-          const newRule = await (async () => {
-            const shouldUpdateRule = Boolean(
-              input.frequency ??
-                input.interval ??
-                input.count ??
-                input.until ??
-                input.from ??
-                input.weekdays,
-            );
-            if (!shouldUpdateRule) return undefined;
+        return await wsPrisma.$transaction(
+          async (tx) => {
+            const newRule = await (async () => {
+              const shouldUpdateRule = Boolean(
+                input.frequency ??
+                  input.interval ??
+                  input.count !== undefined ??
+                  input.until ??
+                  input.from ??
+                  input.weekdays,
+              );
+              if (!shouldUpdateRule) return undefined;
 
-            const oldRule = rrulestr(
-              (
-                await tx.eventMaster.findUniqueOrThrow({
-                  where: {
-                    id: input.eventMasterId,
-                    workspaceId: ctx.session.user.activeWorkspaceId,
-                  },
-                  select: {
-                    rule: true,
-                  },
-                })
-              ).rule,
-            );
+              const oldRule = rrulestr(
+                (
+                  await tx.eventMaster.findUniqueOrThrow({
+                    where: {
+                      id: input.eventMasterId,
+                      workspaceId: ctx.session.user.activeWorkspaceId,
+                    },
+                    select: {
+                      rule: true,
+                    },
+                  })
+                ).rule,
+              );
 
-            const newStartDate = input.from
-              ? moment(oldRule.options.dtstart)
-                  .hours(moment(input.from, "HH:mm").hours())
-                  .minutes(moment(input.from, "HH:mm").minutes())
-                  .toDate()
-              : oldRule.options.dtstart;
+              const newStartDate = input.from
+                ? moment(oldRule.options.dtstart)
+                    .hours(moment(input.from, "HH:mm").hours())
+                    .minutes(moment(input.from, "HH:mm").minutes())
+                    .toDate()
+                : oldRule.options.dtstart;
 
-            return new RRule({
-              dtstart: newStartDate,
-              until: input.until ?? oldRule.options.until ?? undefined,
-              freq: input.frequency ?? oldRule.options.freq,
-              interval: input.interval ?? oldRule.options.interval,
-              count: input.count ?? oldRule.options.count ?? undefined,
-              byweekday:
-                input.weekdays ?? oldRule.options.byweekday ?? undefined,
-            }).toString();
-          })();
-          const eventInfoCreateOrUpdateData = {
-            title: input.title,
-            description: input.description,
-          };
-
-          const updatedMaster = await tx.eventMaster.update({
-            where: {
-              id: input.eventMasterId,
-              workspaceId: ctx.session.user.activeWorkspaceId,
-            },
-            data: {
-              EventExceptions:
-                input.from ?? input.until
-                  ? {
-                      deleteMany: input.from
+              return new RRule({
+                dtstart: newStartDate,
+                until: input.until ?? oldRule.options.until ?? undefined,
+                freq: input.frequency ?? oldRule.options.freq,
+                interval: input.interval ?? oldRule.options.interval,
+                count:
+                  input.count !== undefined
+                    ? input.count
+                    : oldRule.options.count ?? undefined,
+                byweekday:
+                  input.weekdays ?? oldRule.options.byweekday ?? undefined,
+              }).toString();
+            })();
+            return await tx.eventMaster.update({
+              where: {
+                id: input.eventMasterId,
+                workspaceId: ctx.session.user.activeWorkspaceId,
+              },
+              data: {
+                EventExceptions: {
+                  deleteMany:
+                    input.from ?? input.until
+                      ? input.from
                         ? {} //Delete all exceptions if from is changed.
                         : {
                             newDate: {
                               gt: input.until, //Else, delete only the exceptions that are after or equal to the new until.
                             },
-                          },
-                    }
-                  : undefined,
+                          }
+                      : undefined,
 
-              eventInfo:
-                input.title !== undefined || input.description !== undefined
-                  ? {
-                      upsert: {
-                        create: eventInfoCreateOrUpdateData,
-                        update: eventInfoCreateOrUpdateData,
-                        where: {
-                          EventMaster: {
-                            some: {
-                              id: input.eventMasterId,
-                            },
-                          },
-                        },
-                      },
-                    }
-                  : undefined,
-              DateStart: newRule
-                ? rrulestr(newRule).options.dtstart
-                : undefined,
-              DateUntil: input.until,
-              rule: newRule,
-            },
-          });
-
-          //* Now, let's handle eventInfo of exceptions.
-          if (input.title !== undefined && input.description !== undefined) {
-            await tx.eventInfo.deleteMany({
-              where: {
-                EventException: {
-                  some: {
-                    EventMaster: {
-                      id: input.eventMasterId,
+                  updateMany: {
+                    where: {},
+                    data: {
+                      title: input.title !== undefined ? null : undefined,
+                      description:
+                        input.description !== undefined ? null : undefined,
                     },
                   },
                 },
+
+                title: input.title,
+                description: input.description,
+                DateStart: newRule
+                  ? rrulestr(newRule).options.dtstart
+                  : undefined,
+                DateUntil: input.until,
+                rule: newRule,
               },
             });
-          } else if (
-            input.title !== undefined ||
-            input.description !== undefined
-          ) {
-            await tx.eventInfo.updateMany({
-              where: {
-                EventException: {
-                  some: {
-                    EventMaster: {
-                      id: input.eventMasterId,
-                    },
-                  },
-                },
-              },
-              data: eventInfoCreateOrUpdateData,
-            });
-          }
-          return updatedMaster;
-        });
+          },
+          {
+            timeout: 10000,
+            maxWait: 10000,
+          },
+        );
       }
     }),
   nuke: protectedProcedure.mutation(async ({ ctx }) => {
@@ -821,26 +765,6 @@ export const eventRouter = createTRPCRouter({
     await wsPrisma.$transaction([
       wsPrisma.eventMaster.deleteMany({
         where: { workspaceId: ctx.session.user.activeWorkspaceId },
-      }),
-      wsPrisma.eventInfo.deleteMany({
-        where: {
-          OR: [
-            {
-              EventMaster: {
-                some: {
-                  workspaceId: ctx.session.user.activeWorkspaceId,
-                },
-              },
-              EventException: {
-                some: {
-                  EventMaster: {
-                    workspaceId: ctx.session.user.activeWorkspaceId,
-                  },
-                },
-              },
-            },
-          ],
-        },
       }),
     ]);
   }),
