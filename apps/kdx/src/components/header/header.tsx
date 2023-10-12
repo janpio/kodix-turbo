@@ -5,6 +5,7 @@ import { cva } from "class-variance-authority";
 import { auth } from "@kdx/auth";
 import { cn } from "@kdx/ui";
 
+import NavigationItem from "./navigation-item";
 import { TeamSwitcher } from "./team-switcher";
 import { UserProfileButton } from "./user-profile-button";
 
@@ -68,7 +69,6 @@ async function MainNav({
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
   const session = await auth();
-  const pathname = "usePathname();";
   const navigation = [
     {
       href: "/marketplace",
@@ -89,16 +89,7 @@ async function MainNav({
       {navigation
         .filter((x) => x.shown)
         .map((item) => (
-          <Link
-            href={item.href}
-            key={item.href}
-            className={cn(
-              "hover:text-primary text-sm font-medium transition-colors",
-              pathname !== item.href ? "text-muted-foreground" : null,
-            )}
-          >
-            {item.title}
-          </Link>
+          <NavigationItem key={item.href} href={item.href} title={item.title} />
         ))}
     </nav>
   );
