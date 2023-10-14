@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { UserCircleIcon } from "@heroicons/react/24/outline";
 import { format } from "date-fns";
 import { Plus, X } from "lucide-react";
+import { HiUserCircle } from "react-icons/hi";
 
 import type { Status } from "@kdx/db";
 import {
@@ -119,14 +119,14 @@ export function CreateTaskDialogButton() {
                         alt={user.name ?? "" + " avatar"}
                       />
                       <AvatarFallback>
-                        <UserCircleIcon />
+                        <HiUserCircle />
                       </AvatarFallback>
                     </Avatar>
                     {user.name}
                   </>
                 ) : (
                   <>
-                    <UserCircleIcon className="mr-2 h-4 w-4" />
+                    <HiUserCircle className="mr-2 h-4 w-4" />
                     Assignee
                   </>
                 )}

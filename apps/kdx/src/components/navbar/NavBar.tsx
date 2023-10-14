@@ -3,8 +3,8 @@
 import { Fragment, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeftOnRectangleIcon } from "@heroicons/react/24/outline";
 import { signOut, useSession } from "next-auth/react";
+import { HiArrowLeftOnRectangle } from "react-icons/hi2";
 
 import {
   Button,
@@ -19,7 +19,7 @@ import { api } from "~/trpc/react";
 
 const callsToActionProfilePic = [
   //{ name: 'Settings', href: '#', icon: Cog6ToothIcon },
-  { name: "Log Out", href: "#", icon: ArrowLeftOnRectangleIcon },
+  { name: "Log Out", href: "#", icon: HiArrowLeftOnRectangle },
 ];
 
 export function NavBar() {

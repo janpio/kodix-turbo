@@ -1,7 +1,5 @@
-"use client";
-
 import { useState } from "react";
-import { UserCircleIcon } from "@heroicons/react/24/outline";
+import { HiUserCircle } from "react-icons/hi";
 
 import type { User } from "@kdx/db";
 import {
@@ -58,7 +56,7 @@ export function AssigneePopover({
           </div>
         ) : (
           <div>
-            <UserCircleIcon className="text-foreground/70 h-6 w-6" />
+            <HiUserCircle className="text-foreground/70 h-6 w-6" />
           </div>
         )}
       </PopoverTrigger>
@@ -77,7 +75,7 @@ export function AssigneePopover({
                   setOpen(false);
                 }}
               >
-                <UserCircleIcon className="mr-2 h-4 w-4" />
+                <HiUserCircle className="mr-2 h-4 w-4" />
                 Unassigned
               </CommandItem>
               {users.map((user) => (
@@ -95,7 +93,7 @@ export function AssigneePopover({
                       alt={user.image ?? "" + " avatar"}
                     />
                     <AvatarFallback>
-                      <UserCircleIcon />
+                      <HiUserCircle />
                     </AvatarFallback>
                   </Avatar>
                   {user.name}
