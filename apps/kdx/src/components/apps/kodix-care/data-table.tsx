@@ -198,20 +198,20 @@ export function DataTable({
 
       <div className="mt-4 rounded-md border">
         {calendarTask && (
-          <EditEventDialog
-            calendarTask={calendarTask}
-            open={openEditDialog}
-            setOpen={setOpenEditDialog}
-          />
-        )}
-        {calendarTask && (
-          <CancelationDialog
-            open={openCancelDialog}
-            setOpen={setOpenCancelDialog}
-            eventMasterId={calendarTask.eventMasterId}
-            eventExceptionId={calendarTask.eventExceptionId}
-            date={calendarTask.date}
-          />
+          <>
+            <EditEventDialog
+              calendarTask={calendarTask}
+              open={openEditDialog}
+              setOpen={setOpenEditDialog}
+            />
+            <CancelationDialog
+              open={openCancelDialog}
+              setOpen={setOpenCancelDialog}
+              eventMasterId={calendarTask.eventMasterId}
+              eventExceptionId={calendarTask.eventExceptionId}
+              date={calendarTask.date}
+            />
+          </>
         )}
         <Table>
           <TableHeader>
