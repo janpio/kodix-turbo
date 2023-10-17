@@ -14,3 +14,5 @@ export default async function Home() {
 
   return <HomePage initialData={initialData} />;
 }
+
+export const dynamic = "force-dynamic"; //TODO: remove this. Temporary fix https://github.com/t3-oss/create-t3-app/issues/1599
