@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import Router from "next/router";
+import { useRouter } from "next/navigation";
 import { Check, ChevronsUpDown, Loader2, PlusCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
 
@@ -47,9 +47,10 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
     name: "",
   });
 
-  const { mutateAsync: mutate } = api.user.switchActiveWorkspace.useMutation({
+  const router = useRouter();
+  const { mutate } = api.user.switchActiveWorkspace.useMutation({
     onSuccess: () => {
-      Router.reload();
+      router.refresh();
     },
   });
 

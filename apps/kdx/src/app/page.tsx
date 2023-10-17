@@ -1,17 +1,15 @@
 import type { RouterOutputs } from "@kdx/api";
-import { appRouter } from "@kdx/api";
 import { auth } from "@kdx/auth";
-import { prisma } from "@kdx/db";
 
+import { api } from "~/trpc/server";
 import { HomePage } from "./_home";
 
 export default async function Home() {
   const session = await auth();
 
   let initialData: RouterOutputs["workspace"]["getActiveWorkspace"] | undefined;
-  if (session !== null) {
-    const caller = appRouter.workspace.createCaller({ session, prisma });
-    initialData = await caller.getActiveWorkspace();
+  if (session) {
+    initialData = await api.workspace.getActiveWorkspace.query();
   }
 
   return <HomePage initialData={initialData} />;
