@@ -1,10 +1,11 @@
 import { H1, Lead } from "@kdx/ui";
 
 import { KodixApp } from "~/components/app/kodix-app";
-import { api } from "~/trpc/server";
+import { createCaller } from "~/trpc/server";
 
 export default async function Apps() {
-  const apps = await api.app.getAll.query();
+  const caller = await createCaller();
+  const apps = await caller.app.getAll();
 
   return (
     <div className="p-4">
