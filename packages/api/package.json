@@ -13,7 +13,7 @@
   "dependencies": {
     "@kdx/auth": "^0.1.0",
     "@kdx/db": "^0.1.0",
-    "@trpc/client": "^10.38.3",
+    "@trpc/client": "^10.40.0",
     "@trpc/server": "^10.40.0",
     "moment": "^2.29.4",
     "rrule": "^2.7.2",
