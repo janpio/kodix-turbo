@@ -112,7 +112,9 @@ export const {
 
       return session;
     },
-
+    redirect: async ({ url, baseUrl }) => {
+      return Promise.resolve(url);
+    },
     // @TODO - if you wanna have auth on the edge
     // jwt: ({ token, profile }) => {
     //   if (profile?.id) {

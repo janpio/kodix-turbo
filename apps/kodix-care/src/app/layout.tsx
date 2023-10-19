@@ -4,7 +4,7 @@ import "@/styles/globals.css";
 
 import { Inter as FontSans } from "next/font/google";
 import { headers } from "next/headers";
-import { NextThemeProvider } from "@/components/providers";
+import { AuthProvider, NextThemeProvider } from "@/components/providers";
 import { TRPCReactProvider } from "@/trpc/react";
 
 import { cn } from "@kdx/ui";
@@ -40,9 +40,11 @@ export default function Layout(props: { children: React.ReactNode }) {
         )}
       >
         <TRPCReactProvider headers={headers()}>
-          <NextThemeProvider>
-            <div className="p-8">{props.children}</div>
-          </NextThemeProvider>
+          <AuthProvider>
+            <NextThemeProvider>
+              <div className="p-8">{props.children}</div>
+            </NextThemeProvider>
+          </AuthProvider>
         </TRPCReactProvider>
       </body>
     </html>

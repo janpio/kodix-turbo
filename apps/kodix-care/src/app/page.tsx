@@ -1,7 +1,12 @@
-export default function Page() {
+import Link from "next/link";
+import { api } from "@/trpc/server";
+
+export default async function Page() {
+  const apps = await api.app.getAll.query();
   return (
     <div>
-      <h1>asd</h1>
+      <Link href="/loggedOrNot">Logged or not?</Link>
+      <h1>{JSON.stringify(apps)}</h1>
     </div>
   );
 }
