@@ -4,16 +4,17 @@ import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ReactQueryStreamedHydration } from "@tanstack/react-query-next-experimental";
-import { loggerLink, unstable_httpBatchStreamLink } from "@trpc/client";
-import superjson from "superjson";
+import {
+  createTRPCReact,
+  loggerLink,
+  unstable_httpBatchStreamLink,
+} from "@trpc/react-query";
 
-import { api } from "~/utils/api";
+import type { AppRouter } from "@kdx/api";
 
-const getBaseUrl = () => {
-  if (process.env.NODE_ENV === "production") return `https://www.kodix.com.br`; // SSR in production should use vercel url
-  if (typeof window !== "undefined") return `http://localhost:3000`; // browser should use localhost:3000
-  return `http://localhost:3000`; // dev SSR should use localhost
-};
+import { getBaseUrl, transformer } from "./shared";
+
+export const api = createTRPCReact<AppRouter>();
 
 export function TRPCReactProvider(props: {
   children: React.ReactNode;
@@ -32,7 +33,7 @@ export function TRPCReactProvider(props: {
 
   const [trpcClient] = useState(() =>
     api.createClient({
-      transformer: superjson,
+      transformer,
       links: [
         loggerLink({
           enabled: (opts) =>
@@ -54,7 +55,7 @@ export function TRPCReactProvider(props: {
   return (
     <api.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        <ReactQueryStreamedHydration transformer={superjson}>
+        <ReactQueryStreamedHydration transformer={transformer}>
           {props.children}
         </ReactQueryStreamedHydration>
         <ReactQueryDevtools initialIsOpen={false} />

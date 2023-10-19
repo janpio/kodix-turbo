@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { api } from "@/trpc/react";
 
-import { api } from "~/utils/api";
-import type { RouterOutputs } from "~/utils/api";
+import type { RouterOutputs } from "@kdx/api";
 
 export function CreatePostForm() {
-  const context = api.useContext();
+  const ctx = api.useContext();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -15,7 +15,7 @@ export function CreatePostForm() {
     async onSuccess() {
       setTitle("");
       setContent("");
-      await context.post.all.invalidate();
+      await ctx.post.all.invalidate();
     },
   });
 
@@ -30,7 +30,7 @@ export function CreatePostForm() {
         });
         setTitle("");
         setContent("");
-        await context.post.all.invalidate();
+        await ctx.post.all.invalidate();
       }}
     >
       <input
