@@ -199,6 +199,9 @@ importers:
       '@kdx/tailwind-config':
         specifier: ^0.1.0
         version: link:../../packages/config/tailwind
+      '@kdx/ui':
+        specifier: ^0.1.0
+        version: link:../../packages/ui
       '@types/node':
         specifier: ^18.18.3
         version: 18.18.3
