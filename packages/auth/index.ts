@@ -112,9 +112,9 @@ export const {
 
       return session;
     },
-    redirect: async ({ url }) => {
-      return Promise.resolve(url);
-    },
+    // redirect: async ({ url }) => {
+    //   return Promise.resolve(url);
+    // },
     // @TODO - if you wanna have auth on the edge
     // jwt: ({ token, profile }) => {
     //   if (profile?.id) {
@@ -159,7 +159,7 @@ export const {
 
   secret: env.NEXTAUTH_SECRET,
   pages: {
-    signIn: "/auth/signIn",
+    signIn: "/signIn",
     //signOut: '/auth/signout',
     //error: '/auth/error', // Error code passed in query string as ?error=
     //verifyRequest: '/auth/verify-request', // (used for check email message)

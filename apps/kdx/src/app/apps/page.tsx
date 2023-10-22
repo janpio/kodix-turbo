@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 import { auth } from "@kdx/auth";
 import { prisma } from "@kdx/db";
 import { H1, Lead } from "@kdx/ui";
@@ -6,6 +8,7 @@ import { KodixApp } from "~/components/app/kodix-app";
 
 export default async function Apps() {
   const session = await auth();
+  if (!session) return redirect("/api/auth/signin?callbackUrl=/apps");
   const apps = await prisma.app.findMany({
     include: {
       activeWorkspaces: {
