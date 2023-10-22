@@ -112,7 +112,7 @@ export const {
 
       return session;
     },
-    redirect: async ({ url, baseUrl }) => {
+    redirect: async ({ url }) => {
       return Promise.resolve(url);
     },
     // @TODO - if you wanna have auth on the edge
