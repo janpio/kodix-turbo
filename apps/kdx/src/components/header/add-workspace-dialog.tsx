@@ -33,7 +33,7 @@ export function AddWorkspaceDialog({
   onOpenChange: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [loading, setLoading] = React.useState(false);
-  const ctx = api.useContext();
+  const ctx = api.useUtils();
   const { toast } = useToast();
   const { mutate: switchActiveWorkspace } =
     api.user.switchActiveWorkspace.useMutation({

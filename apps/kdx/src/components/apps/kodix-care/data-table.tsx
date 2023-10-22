@@ -69,7 +69,7 @@ export function DataTable({
 
   const session = useSession();
 
-  const ctx = api.useContext();
+  const ctx = api.useUtils();
   const result = api.event.getAll.useQuery(
     {
       dateStart: moment(selectedDay).startOf("day").toDate(),

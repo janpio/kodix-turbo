@@ -38,7 +38,7 @@ export function CancelationDialog({
   >("single");
 
   const [buttonLoading, setButtonLoading] = useState(false);
-  const ctx = api.useContext();
+  const ctx = api.useUtils();
   const { mutate: cancelEvent } = api.event.cancel.useMutation({
     onMutate: () => {
       setButtonLoading(true);

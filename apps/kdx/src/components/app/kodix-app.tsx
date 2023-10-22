@@ -47,7 +47,7 @@ export function KodixApp({
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  const ctx = api.useContext();
+  const ctx = api.useUtils();
   const { mutate } = api.workspace.installApp.useMutation({
     onSuccess: () => {
       void ctx.app.getAll.invalidate();

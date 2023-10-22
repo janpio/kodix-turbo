@@ -51,7 +51,7 @@ export function EditEventDialog({
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const ctx = api.useContext();
+  const ctx = api.useUtils();
   const { toast } = useToast();
   const { mutate: editEvent } = api.event.edit.useMutation({
     onMutate: () => {

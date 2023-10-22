@@ -64,7 +64,7 @@ function LoginOrUserProfile() {
     },
   );
 
-  const ctx = api.useContext();
+  const ctx = api.useUtils();
   const { mutateAsync } = api.user.switchActiveWorkspace.useMutation({
     onSuccess: () => {
       void ctx.workspace.getAllForLoggedUser.invalidate();

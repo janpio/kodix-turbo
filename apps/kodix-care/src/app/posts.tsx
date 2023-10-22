@@ -6,7 +6,7 @@ import { api } from "@/trpc/react";
 import type { RouterOutputs } from "@kdx/api";
 
 export function CreatePostForm() {
-  const ctx = api.useContext();
+  const ctx = api.useUtils();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -83,7 +83,7 @@ export function PostList() {
 }
 
 function PostCard(props: { post: RouterOutputs["post"]["all"][number] }) {
-  const context = api.useContext();
+  const context = api.useUtils();
   const deletePost = api.post.delete.useMutation();
 
   return (

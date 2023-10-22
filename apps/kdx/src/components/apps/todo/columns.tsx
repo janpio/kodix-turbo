@@ -62,7 +62,7 @@ export const columns = [
         if (value) setPriority(value);
       }, [value]);
 
-      const ctx = api.useContext();
+      const ctx = api.useUtils();
       const { mutate: updateTodo } = api.todo.update.useMutation({
         async onMutate(newData) {
           if (!newData.priority) return;
@@ -119,7 +119,7 @@ export const columns = [
         if (value) setStatus(value);
       }, [value]);
 
-      const ctx = api.useContext();
+      const ctx = api.useUtils();
       const { mutate: updateTodo } = api.todo.update.useMutation({
         async onMutate(newData) {
           if (!newData.status) return;
@@ -176,7 +176,7 @@ export const columns = [
         if (value) setDueDate(value);
       }, [value]);
 
-      const ctx = api.useContext();
+      const ctx = api.useUtils();
       const { mutate: updateTodo } = api.todo.update.useMutation({
         async onMutate(newData) {
           // Cancel outgoing fetches (so they don't overwrite our optimistic update)
@@ -219,7 +219,7 @@ export const columns = [
         if (value) setAssignedToUserId(value.id);
       }, [value]);
 
-      const ctx = api.useContext();
+      const ctx = api.useUtils();
       const { mutate: updateTodo } = api.todo.update.useMutation({
         async onMutate(newData) {
           // Cancel outgoing fetches (so they don't overwrite our optimistic update)
