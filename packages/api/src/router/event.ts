@@ -146,25 +146,25 @@ export const eventRouter = createTRPCRouter({
               moment(input.dateEnd).isBefore(calendarTask.date)
             )
               return null;
-          } else {
-            //Cuidar de cancelamentos -> deletar os advindos do master
-            const foundCancelation = eventCancelations.some(
-              (x) =>
-                x.eventMasterId === calendarTask.eventMasterId &&
-                moment(x.originalDate).isSame(calendarTask.date),
-            );
-            if (foundCancelation) return null;
-
-            //For a calendarTask that came from master,
-            //Delete it if it has an exception associated with it. (originalDate === calendartask date)
-            const foundException = calendarTasks.some(
-              (x) =>
-                x.eventExceptionId &&
-                x.eventMasterId === calendarTask.eventMasterId &&
-                moment(calendarTask.date).isSame(x.originaDate),
-            );
-            if (foundException) return null;
+            return calendarTask;
           }
+          //Cuidar de cancelamentos -> deletar os advindos do master
+          const foundCancelation = eventCancelations.some(
+            (x) =>
+              x.eventMasterId === calendarTask.eventMasterId &&
+              moment(x.originalDate).isSame(calendarTask.date),
+          );
+          if (foundCancelation) return null;
+
+          //For a calendarTask that came from master,
+          //Delete it if it has an exception associated with it. (originalDate === calendartask date)
+          const foundException = calendarTasks.some(
+            (x) =>
+              x.eventExceptionId &&
+              x.eventMasterId === calendarTask.eventMasterId &&
+              moment(calendarTask.date).isSame(x.originaDate, "day"),
+          );
+          if (foundException) return null;
 
           return calendarTask;
         })
@@ -528,7 +528,7 @@ export const eventRouter = createTRPCRouter({
           });
           const oldRule = rrulestr(oldMaster.rule);
           const previousOccurence = oldRule.before(
-            input.selectedTimestamp,
+            moment(input.selectedTimestamp).startOf("day").toDate(),
             false,
           );
           if (!previousOccurence) {
