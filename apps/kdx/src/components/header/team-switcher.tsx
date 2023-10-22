@@ -48,8 +48,10 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
   });
 
   const router = useRouter();
+  const utils = api.useUtils();
   const { mutate } = api.user.switchActiveWorkspace.useMutation({
     onSuccess: () => {
+      void utils.workspace.getActiveWorkspace.invalidate();
       router.refresh();
     },
   });

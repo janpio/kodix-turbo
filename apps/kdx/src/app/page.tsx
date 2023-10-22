@@ -11,11 +11,17 @@ export default async function Home() {
 
   let initialData: RouterOutputs["workspace"]["getActiveWorkspace"] | undefined;
   if (session) {
-    const getActiveWorkspace = unstable_cache(async () => {
-      const caller = await createCaller();
-      const data = await caller.workspace.getActiveWorkspace();
-      return data;
-    }, ["activeWorkspaces"])();
+    const getActiveWorkspace = unstable_cache(
+      async () => {
+        const caller = await createCaller();
+        const data = await caller.workspace.getActiveWorkspace();
+        return data;
+      },
+      ["activeWorkspace"],
+      {
+        tags: ["activeWorkspace"],
+      },
+    )();
 
     initialData = await getActiveWorkspace;
   }
