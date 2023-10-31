@@ -1,8 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-"use client";
-
 import { Blockquote, H1, H2, H3, P, UL } from "@kdx/ui";
 
+export const dynamic = "force-static";
 export default function TypographyDemo() {
   return (
     <div className="p-10">

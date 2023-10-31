@@ -9,10 +9,10 @@ import { cn, Toaster } from "@kdx/ui";
 
 import { Footer } from "~/components/footer/footer";
 import { Header } from "~/components/header/header";
+import { NextAuthProvider, NextThemeProvider } from "~/components/providers";
 import { TailwindIndicator } from "~/components/tailwind-indicator";
 import { ThemeSwitcher } from "~/components/theme-switcher";
 import { TRPCReactProvider } from "~/trpc/react";
-import { NextAuthProvider, NextThemeProvider } from "../components/providers";
 
 const fontSans = FontSans({
   subsets: ["latin"],
