@@ -31,9 +31,6 @@ const config = {
       },
     ];
   },
-  experimental: {
-    ppr: true,
-  },
 };
 
 export default config;
