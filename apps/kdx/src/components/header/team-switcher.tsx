@@ -1,12 +1,12 @@
 "use client";
 
 import * as React from "react";
+import { revalidatePath } from "next/cache";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Check, ChevronsUpDown, Loader2, PlusCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
 
-import type { Workspace as PrismaWorkspace } from "@kdx/db";
 import {
   Avatar,
   AvatarFallback,
@@ -37,45 +37,26 @@ type PopoverTriggerProps = React.ComponentPropsWithoutRef<
 
 type TeamSwitcherProps = PopoverTriggerProps;
 
-type Workspace = Pick<PrismaWorkspace, "id" | "name">;
-
 export function TeamSwitcher({ className }: TeamSwitcherProps) {
-  const { data: session } = useSession();
+  const session = useSession();
 
-  const [selectedWS, setSelectedWS] = React.useState<Workspace>({
-    id: session?.user?.activeWorkspaceId ?? "",
-    name: "",
-  });
-
-  const router = useRouter();
   const utils = api.useUtils();
-  const { mutate } = api.user.switchActiveWorkspace.useMutation({
-    onSuccess: () => {
-      void utils.workspace.getActiveWorkspace.invalidate();
-      router.refresh();
-    },
-  });
+  const {
+    isPending,
+    mutate: switchActiveWorkspace,
+    isSuccess,
+  } = api.user.switchActiveWorkspace.useMutation();
 
-  const { data: workspaces } = api.workspace.getAllForLoggedUser.useQuery(
-    undefined,
-    {
-      enabled: session?.user !== undefined,
-      onSuccess: (workspace) => {
-        const newSelectedWS = workspace.find((ws) => ws.id === selectedWS.id);
-        if (newSelectedWS === undefined) return;
-        setSelectedWS({
-          id: newSelectedWS.id,
-          name: newSelectedWS.name,
-        });
-      },
-      refetchOnWindowFocus: false,
-    },
-  );
+  if (isSuccess) utils.workspace.getAllForLoggedUser.invalidate();
+
+  const { data } = api.workspace.getAllForLoggedUser.useQuery();
 
   const [open, setOpen] = React.useState(false);
   const [showNewWorkspaceDialog, setShowNewWorkspaceDialog] =
     React.useState(false);
-  const [reloading, setReloading] = React.useState(false);
+
+  if (!session.data) return null;
+  if (!data) return null;
 
   return (
     <AddWorkspaceDialog
@@ -85,14 +66,14 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
       <Popover open={open} onOpenChange={setOpen}>
         <div className="center border-border flex justify-center rounded-lg border">
           <Link
-            href={reloading ? "#" : `/workspace/${selectedWS.name}`}
+            href={isPending ? "#" : `/workspace/${data?.activeWorkspaceName}`}
             className={cn(
               buttonVariants({ variant: "ghost", size: "sm" }),
               "w-[175px] justify-start",
               className,
             )}
           >
-            {reloading ? (
+            {isPending ? (
               <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 <Skeleton className="mx-3 h-3 w-full" />
@@ -101,20 +82,20 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
               <>
                 <Avatar className="mr-2 h-5 w-5">
                   <AvatarImage
-                    src={`https://avatar.vercel.sh/${selectedWS.id}kdx.png`}
-                    alt={selectedWS.name}
+                    src={`https://avatar.vercel.sh/${data?.activeWorkspaceId}kdx.png`}
+                    alt={data?.activeWorkspaceName}
                   />
                   <AvatarFallback>
-                    {selectedWS.name
+                    {data?.activeWorkspaceName
                       .split(" ")
                       .map((n) => n[0])
                       .join("")}
                   </AvatarFallback>
                 </Avatar>
-                {selectedWS.name.length > 19 ? (
-                  <span className="text-xs">{selectedWS.name}</span>
+                {data?.activeWorkspaceName.length > 19 ? (
+                  <span className="text-xs">{data?.activeWorkspaceName}</span>
                 ) : (
-                  selectedWS.name
+                  data?.activeWorkspaceName
                 )}
               </>
             )}
@@ -126,7 +107,7 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
               role="combobox"
               aria-expanded={open}
               aria-label="Select a workspace"
-              disabled={reloading}
+              disabled={isPending}
             >
               <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
             </Button>
@@ -138,20 +119,13 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
               <CommandInput placeholder="Search team..." />
               <CommandEmpty>No workspace found.</CommandEmpty>
               <CommandGroup>
-                {workspaces?.map((ws) => (
+                {data.workspaces.map((ws) => (
                   <CommandItem
                     key={ws.name}
                     value={ws.name + ws.id} //
-                    onSelect={(value) => {
-                      setSelectedWS({
-                        id: ws.id,
-                        name: ws.name,
-                      });
+                    onSelect={() => {
                       setOpen(false);
-                      value !== selectedWS.id
-                        ? void mutate({ workspaceId: ws.id })
-                        : null;
-                      setReloading(true);
+                      void switchActiveWorkspace({ workspaceId: ws.id });
                     }}
                     className="text-sm"
                   >
@@ -161,8 +135,8 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
                         alt={ws.name}
                       />
                       <AvatarFallback>
-                        {session?.user.name
-                          ? session?.user?.name
+                        {ws.name
+                          ? ws?.name
                               .split(" ")
                               .map((n) => n[0])
                               .join("")
@@ -173,7 +147,9 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
                     <Check
                       className={cn(
                         "ml-auto h-4 w-4",
-                        selectedWS.id === ws.id ? "opacity-100" : "opacity-0",
+                        data?.activeWorkspaceId === ws.id
+                          ? "opacity-100"
+                          : "opacity-0",
                       )}
                     />
                   </CommandItem>

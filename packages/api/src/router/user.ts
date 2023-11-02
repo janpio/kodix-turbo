@@ -2,6 +2,8 @@ import { revalidateTag } from "next/cache";
 import { TRPCError } from "@trpc/server";
 import { string, z } from "zod";
 
+import { auth } from "@kdx/auth";
+
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const userRouter = createTRPCRouter({
@@ -35,6 +37,7 @@ export const userRouter = createTRPCRouter({
     .input(z.object({ workspaceId: string().cuid() }))
     .mutation(async ({ ctx, input }) => {
       revalidateTag("activeWorkspace"); //THIS WORKS!!
+
       return await ctx.prisma.user.update({
         where: {
           id: ctx.session.user.id,

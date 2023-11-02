@@ -15,7 +15,11 @@ export const workspaceRouter = createTRPCRouter({
       },
     });
 
-    return workspaces;
+    return {
+      workspaces: workspaces,
+      activeWorkspaceId: ctx.session.user.activeWorkspaceId,
+      activeWorkspaceName: ctx.session.user.activeWorkspaceName,
+    };
   }),
   create: protectedProcedure
     .input(z.object({ userId: z.string().cuid(), workspaceName: z.string() }))

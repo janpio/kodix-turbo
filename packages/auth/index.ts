@@ -107,6 +107,7 @@ export const {
       });
       session.user.activeWorkspaceName = activeWs.name;
       session.user.activeWorkspaceId = (user as User).activeWorkspaceId;
+      session.user.id = user.id;
 
       return session;
     },
