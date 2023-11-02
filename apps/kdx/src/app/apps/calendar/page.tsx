@@ -4,12 +4,12 @@ import moment from "moment";
 import { auth } from "@kdx/auth";
 import { H1, Separator } from "@kdx/ui";
 
-import { columns } from "~/components/apps/kodix-care/columns";
-import { CreateEventDialogButton } from "~/components/apps/kodix-care/create-event-dialog";
-import { DataTable } from "~/components/apps/kodix-care/data-table";
+import { columns } from "~/components/apps/calendar/columns";
+import { CreateEventDialogButton } from "~/components/apps/calendar/create-event-dialog";
+import { DataTable } from "~/components/apps/calendar/data-table";
 import { createCaller } from "~/trpc/server";
 
-export default async function KodixCare() {
+export default async function Calendar() {
   const session = await auth();
   if (!session) return redirect("/");
   const caller = await createCaller();
@@ -23,7 +23,7 @@ export default async function KodixCare() {
 
   return (
     <>
-      <H1>Kodix Care</H1>
+      <H1>Calendar</H1>
       <Separator className="my-4" />
       <CreateEventDialogButton />
       <DataTable columns={columns} data={data} />

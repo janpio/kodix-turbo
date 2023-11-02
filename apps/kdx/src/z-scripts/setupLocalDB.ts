@@ -26,6 +26,14 @@ const prisma = new PrismaClient();
       urlApp: "/todo",
     },
     {
+      id: "clohjphbm000008ju6oywfy4i",
+      name: "Calendar",
+      description: "Calendar app",
+      subscriptionCost: 0,
+      devPartnerId: kdxPartnerId,
+      urlApp: "/calendar",
+    },
+    {
       id: "clj2117860009skyp5e613fih",
       name: "Kodix Care",
       description: "Kodix Care app",
