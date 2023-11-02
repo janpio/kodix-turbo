@@ -68,7 +68,6 @@ export function CreateEventDialogButton() {
     title: "",
     description: "",
     from: moment(new Date())
-      .add(1, "M") //IDK why we need to do this...
       .startOf("hour")
       .hours(
         moment().utc().minutes() < 30
@@ -111,7 +110,7 @@ export function CreateEventDialogButton() {
     const input: RouterInputs["event"]["create"] = {
       title,
       description,
-      from: from.add(-1, "M").toDate(), //IDK why we need to do this, but it works
+      from: from.toDate(),
       until: until?.toDate(),
       frequency,
       interval,
