@@ -5,7 +5,7 @@ import { Configuration, OpenAIApi } from "openai-edge";
 import { env } from "~/env.mjs";
 import { CorsOptions } from "../_enableCors";
 
-export const runtime = "edge";
+//export const runtime = "edge";
 
 const config = new Configuration({
   apiKey: env.STAYS_OPENAI_API_KEY,
