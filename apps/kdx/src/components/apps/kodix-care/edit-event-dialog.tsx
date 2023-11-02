@@ -153,6 +153,8 @@ export function EditEventDialog({
       defaultCalendarTask.from.format("YYYY-MM-DD")
     ),
   };
+  console.log(defaultCalendarTask.count);
+  console.log(count);
 
   const isFormChanged =
     title !== defaultCalendarTask.title ||
@@ -184,7 +186,9 @@ export function EditEventDialog({
     if (input.editDefinition === "thisAndFuture") {
       if (!from.isSame(defaultCalendarTask.from)) input.from = from.toDate();
 
-      if (count !== defaultCalendarTask.count) input.count = count;
+      if (count !== defaultCalendarTask.count) {
+        input.count = count ?? null;
+      }
       if (interval !== defaultCalendarTask.interval) input.interval = interval;
       if (!until?.isSame(defaultCalendarTask.until))
         input.until = until?.toDate();
