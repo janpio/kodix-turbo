@@ -77,7 +77,7 @@ async function MainNav({
     {
       href: "/apps",
       title: "Apps",
-      shown: session?.user.id !== undefined,
+      shown: !!session,
     },
   ].map((item) => ({ ...item, shown: item.shown ?? true })); // defaults shown to true if not defined
 
@@ -100,8 +100,8 @@ export async function UserNav() {
 
   return (
     <>
-      {session?.user.id && <UserProfileButton />}
-      {!session?.user.id && (
+      {!!session && <UserProfileButton />}
+      {!session && (
         <div className="mr-5 space-x-2">
           <Link href="/signIn" className={buttonVariants({ variant: "ghost" })}>
             Sign In

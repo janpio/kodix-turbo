@@ -1,9 +1,10 @@
 import type { Adapter } from "@auth/core/adapters";
+import EmailProvider from "@auth/core/providers/email";
+// import EmailProvider from "next-auth/providers/email";
+import Google from "@auth/core/providers/google";
 import type { DefaultSession } from "@auth/core/types";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth from "next-auth";
-// import EmailProvider from "next-auth/providers/email";
-import GoogleProvider from "next-auth/providers/google";
 
 import type { PrismaClient, User } from "@kdx/db";
 import { prisma } from "@kdx/db";
@@ -11,10 +12,6 @@ import { prisma } from "@kdx/db";
 import { env } from "./env.mjs";
 
 export type { Session } from "next-auth";
-
-// Update this whenever adding new providers so that the client can
-export const providers = ["google", "email"] as const;
-export type OAuthProviders = (typeof providers)[number];
 
 declare module "next-auth" {
   interface Session {
@@ -65,33 +62,34 @@ function CustomPrismaAdapter(p: PrismaClient): Adapter {
 export const {
   handlers: { GET, POST },
   auth,
-  CSRF_experimental,
+  signIn,
+  signOut,
 } = NextAuth({
   adapter: {
     ...CustomPrismaAdapter(prisma),
   },
   providers: [
-    GoogleProvider({
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
+    Google({
+      clientId: env.AUTH_GOOGLE_CLIENT_ID,
+      clientSecret: env.AUTH_GOOGLE_CLIENT_SECRET,
     }),
-    // EmailProvider({
-    //   server: {
-    //     host: env.EMAIL_SERVER_HOST,
-    //     port: env.EMAIL_SERVER_PORT,
-    //     auth: {
-    //       user: env.EMAIL_SERVER_USER,
-    //       pass: env.EMAIL_SERVER_PASSWORD,
-    //     },
-    //   },
-    //   from: env.EMAIL_FROM,
-    //   type: "email",
-    //   sendVerificationRequest: () => {
-    //     throw new Error("Not implemented");
-    //   },
-    //   id: "",
-    //   name: "",
-    // }),
+    EmailProvider({
+      server: {
+        host: env.AUTH_EMAIL_SERVER_HOST,
+        port: env.AUTH_EMAIL_SERVER_PORT,
+        auth: {
+          user: env.AUTH_EMAIL_SERVER_USER,
+          pass: env.AUTH_EMAIL_SERVER_PASSWORD,
+        },
+      },
+      from: env.AUTH_EMAIL_FROM,
+      type: "email",
+      sendVerificationRequest: () => {
+        throw new Error("Not implemented");
+      },
+      id: "",
+      name: "",
+    }),
   ],
   callbacks: {
     async session({ session, user }) {
@@ -115,19 +113,6 @@ export const {
     // redirect: async ({ url }) => {
     //   return Promise.resolve(url);
     // },
-    // @TODO - if you wanna have auth on the edge
-    // jwt: ({ token, profile }) => {
-    //   if (profile?.id) {
-    //     token.id = profile.id;
-    //     token.image = profile.picture;
-    //   }
-    //   return token;
-    // },
-
-    // @TODO
-    // authorized({ request, auth }) {
-    //   return !!auth?.user
-    // }
   },
 
   events: {
@@ -156,8 +141,6 @@ export const {
     //   });
     // },
   },
-
-  secret: env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/signIn",
     //signOut: '/auth/signout',

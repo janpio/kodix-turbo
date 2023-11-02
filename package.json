@@ -26,5 +26,10 @@
     "prettier-plugin-tailwindcss": "^0.4.1",
     "turbo": "^1.10.16",
     "typescript": "^5.2.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "@auth/core": "0.18.0"
+    }
   }
 }
