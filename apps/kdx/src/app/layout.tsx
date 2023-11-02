@@ -57,10 +57,8 @@ export default function Layout(props: { children: React.ReactNode }) {
 
           {/* UI Design Helpers */}
           {process.env.NODE_ENV !== "production" && (
-            <div className="fixed bottom-1 left-20 z-50 flex flex-row items-center space-x-1">
-              <div className="flex">
-                <ThemeSwitcher />
-              </div>
+            <div className="fixed bottom-1 z-50 flex flex-row items-center space-x-1">
+              <ThemeSwitcher />
               <TailwindIndicator />
             </div>
           )}
