@@ -1,5 +1,8 @@
+import crypto from "crypto";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+
+import { PrismaClient } from "@kdx/db";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
@@ -24,16 +27,29 @@ export const workspaceRouter = createTRPCRouter({
   create: protectedProcedure
     .input(z.object({ userId: z.string().cuid(), workspaceName: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const workspace = await ctx.prisma.workspace.create({
-        data: {
-          name: input.workspaceName,
-          users: {
-            connect: [{ id: input.userId }],
-          },
+      let url = input.workspaceName.split(" ").join("-");
+
+      const workspaces = await ctx.prisma.workspace.findMany({
+        where: {
+          url,
         },
       });
 
-      return workspace;
+      if (workspaces.length > 0) {
+        url = `${input.workspaceName}-${crypto.randomBytes(6).toString("hex")}`;
+      }
+
+      return await ctx.prisma.workspace.create({
+        data: {
+          name: input.workspaceName,
+          url,
+          users: input.userId
+            ? {
+                connect: [{ id: input.userId }],
+              }
+            : undefined,
+        },
+      });
     }),
   getOne: protectedProcedure
     .input(z.object({ workspaceId: z.string().cuid() }))
@@ -54,18 +70,35 @@ export const workspaceRouter = createTRPCRouter({
     }),
   update: protectedProcedure
     .input(
-      z.object({ workspaceId: z.string().cuid(), workspaceName: z.string() }),
+      z.object({
+        workspaceId: z.string().cuid(),
+        workspaceName: z.string(),
+        url: z.string(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
-      const workspace = await ctx.prisma.workspace.update({
+      const workspacesWithSameUrl = await ctx.prisma.workspace.findMany({
+        where: {
+          url: input.url,
+        },
+      });
+
+      if (workspacesWithSameUrl.length > 0)
+        throw new TRPCError({
+          message:
+            "Workspace with same url already exists. Please choose another url",
+          code: "CONFLICT",
+        });
+
+      return await ctx.prisma.workspace.update({
         where: {
           id: input.workspaceId,
         },
         data: {
+          url: input.url,
           name: input.workspaceName,
         },
       });
-      return workspace;
     }),
   getActiveWorkspace: protectedProcedure.query(async ({ ctx }) => {
     const workspace = await ctx.prisma.workspace.findUnique({

@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import type { Adapter } from "@auth/core/adapters";
 import EmailProvider from "@auth/core/providers/email";
 // import EmailProvider from "next-auth/providers/email";
@@ -30,25 +31,37 @@ function CustomPrismaAdapter(p: PrismaClient): Adapter {
     ...PrismaAdapter(p),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async createUser(data): Promise<any> {
+      //TODO: is it possible to do this with less DB calls?
+      let url = `${data.name!.split(" ").join("-")}`;
+
+      const workspaces = await p.workspace.findMany({
+        where: {
+          url,
+        },
+      });
+
+      if (workspaces.length > 0) {
+        url = `${url}-${crypto.randomBytes(6).toString("hex")}`;
+      }
+
+      const workspace = await p.workspace.create({
+        data: {
+          name: `${data.name!}'s Workspace`,
+          url,
+        },
+      });
+
       const user = await p.user.create({
         data: {
           ...data,
           activeWorkspace: {
-            create: {
-              name: `${data.name ?? ""}'s Workspace`,
+            connect: {
+              id: workspace.id,
             },
           },
-        },
-      });
-
-      await p.workspace.update({
-        where: {
-          id: user.activeWorkspaceId,
-        },
-        data: {
-          users: {
+          workspaces: {
             connect: {
-              id: user.id,
+              id: workspace.id,
             },
           },
         },
