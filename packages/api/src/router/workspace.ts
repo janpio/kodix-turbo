@@ -36,7 +36,7 @@ export const workspaceRouter = createTRPCRouter({
       });
 
       if (workspaces.length > 0) {
-        url = `${input.workspaceName}-${crypto.randomBytes(6).toString("hex")}`;
+        url = `${input.workspaceName}-${crypto.randomBytes(4).toString("hex")}`;
       }
 
       return await ctx.prisma.workspace.create({

@@ -41,7 +41,7 @@ function CustomPrismaAdapter(p: PrismaClient): Adapter {
       });
 
       if (workspaces.length > 0) {
-        url = `${url}-${crypto.randomBytes(6).toString("hex")}`;
+        url = `${url}-${crypto.randomBytes(4).toString("hex")}`;
       }
 
       const workspace = await p.workspace.create({
