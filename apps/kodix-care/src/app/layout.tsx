@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import "@/styles/globals.css";
 
 import { Inter as FontSans } from "next/font/google";
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
 import { AuthProvider, NextThemeProvider } from "@/components/providers";
 import { TRPCReactProvider } from "@/trpc/react";
 
@@ -39,7 +39,7 @@ export default function Layout(props: { children: React.ReactNode }) {
           fontSans.variable,
         )}
       >
-        <TRPCReactProvider headers={headers()}>
+        <TRPCReactProvider cookies={cookies().toString()}>
           <AuthProvider>
             <NextThemeProvider>
               <div className="p-8">{props.children}</div>

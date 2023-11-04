@@ -45,7 +45,7 @@ export const AuthProvider = (props: { children: ReactNode }) => {
   );
 };
 
-export function NextThemeProvider({ children }: { children: React.ReactNode }) {
+export function NextThemeProvider({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       {children}
