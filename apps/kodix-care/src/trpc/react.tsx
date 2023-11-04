@@ -18,7 +18,7 @@ export const api = createTRPCReact<AppRouter>();
 
 export function TRPCReactProvider(props: {
   children: React.ReactNode;
-  headers?: Headers;
+  cookies: string;
 }) {
   const [queryClient] = useState(
     () =>
@@ -43,9 +43,10 @@ export function TRPCReactProvider(props: {
         unstable_httpBatchStreamLink({
           url: `${getBaseUrl()}/api/trpc`,
           headers() {
-            const headers = new Map(props.headers);
-            headers.set("x-trpc-source", "nextjs-react");
-            return Object.fromEntries(headers);
+            return {
+              cookie: props.cookies,
+              "x-trpc-source": "react",
+            };
           },
         }),
       ],

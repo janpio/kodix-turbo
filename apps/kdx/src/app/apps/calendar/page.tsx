@@ -7,16 +7,15 @@ import { H1, Separator } from "@kdx/ui";
 import { columns } from "~/components/apps/calendar/columns";
 import { CreateEventDialogButton } from "~/components/apps/calendar/create-event-dialog";
 import { DataTable } from "~/components/apps/calendar/data-table";
-import { createCaller } from "~/trpc/server";
+import { api } from "~/trpc/server";
 
 export default async function Calendar() {
   const session = await auth();
   if (!session) return redirect("/");
-  const caller = await createCaller();
 
   //date Start should be the beginninig of the day
   //date End should be the end of the day
-  const data = await caller.event.getAll({
+  const data = await api.event.getAll.query({
     dateStart: moment().utc().startOf("day").toDate(),
     dateEnd: moment().utc().endOf("day").toDate(),
   });
