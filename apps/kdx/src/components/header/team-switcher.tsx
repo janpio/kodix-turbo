@@ -1,7 +1,10 @@
 "use client";
 
 import * as React from "react";
+import { revalidatePath } from "next/cache";
+import { PathnameContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { Check, ChevronsUpDown, Loader2, PlusCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
 
@@ -37,15 +40,11 @@ type TeamSwitcherProps = PopoverTriggerProps;
 
 export function TeamSwitcher({ className }: TeamSwitcherProps) {
   const session = useSession();
-
   const utils = api.useUtils();
-  const {
-    isPending,
-    mutate: switchActiveWorkspace,
-    isSuccess,
-  } = api.user.switchActiveWorkspace.useMutation();
-
-  if (isSuccess) void utils.workspace.getAllForLoggedUser.invalidate();
+  const router = useRouter();
+  const pathName = usePathname();
+  const { isPending, mutateAsync: switchActiveWorkspace } =
+    api.user.switchActiveWorkspace.useMutation();
 
   const { data } = api.workspace.getAllForLoggedUser.useQuery();
 
@@ -64,7 +63,11 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
       <Popover open={open} onOpenChange={setOpen}>
         <div className="center flex justify-center rounded-lg">
           <Link
-            href={isPending ? "#" : `/workspace/${data?.workspaceUrl}/settings`}
+            href={
+              isPending
+                ? "#"
+                : `/workspace/${data?.activeWorkspaceUrl}/settings`
+            }
             className={cn(
               buttonVariants({ variant: "ghost", size: "sm" }),
               "w-[175px] justify-start hover:bg-inherit",
@@ -122,9 +125,20 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
                   <CommandItem
                     key={ws.name}
                     value={ws.name + ws.id} //
-                    onSelect={() => {
+                    onSelect={async () => {
                       setOpen(false);
-                      void switchActiveWorkspace({ workspaceId: ws.id });
+                      const newActiveWorkspace = await switchActiveWorkspace({
+                        workspaceId: ws.id,
+                      });
+                      void utils.workspace.getAllForLoggedUser.invalidate();
+
+                      //find in string where old data.url is, and replace it with new url
+                      const newUrl = pathName.replace(
+                        data.activeWorkspaceUrl,
+                        newActiveWorkspace.url,
+                      );
+                      router.push(newUrl);
+                      router.refresh();
                     }}
                     className="text-sm"
                   >

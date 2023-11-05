@@ -20,9 +20,9 @@ export const workspaceRouter = createTRPCRouter({
       workspaces: workspaces,
       activeWorkspaceId: ctx.session.user.activeWorkspaceId,
       activeWorkspaceName: ctx.session.user.activeWorkspaceName,
-      workspaceUrl: workspaces.find(
-        (x) => x.id === ctx.session.user.activeWorkspaceId,
-      )?.url,
+      activeWorkspaceUrl:
+        workspaces.find((x) => x.id === ctx.session.user.activeWorkspaceId)
+          ?.url ?? "",
     };
   }),
   create: protectedProcedure
@@ -73,30 +73,32 @@ export const workspaceRouter = createTRPCRouter({
     .input(
       z.object({
         workspaceId: z.string().cuid(),
-        workspaceName: z.string(),
-        url: z.string(),
+        workspaceName: z.string().optional(),
+        workspaceUrl: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const workspacesWithSameUrl = await ctx.prisma.workspace.findMany({
-        where: {
-          url: input.url,
-        },
-      });
-
-      if (workspacesWithSameUrl.length > 0)
-        throw new TRPCError({
-          message:
-            "Workspace with same url already exists. Please choose another url",
-          code: "CONFLICT",
+      if (input.workspaceUrl) {
+        const workspacesWithSameUrl = await ctx.prisma.workspace.findMany({
+          where: {
+            url: input.workspaceUrl,
+          },
         });
+
+        if (workspacesWithSameUrl.length > 0)
+          throw new TRPCError({
+            message:
+              "Workspace with same url already exists. Please choose another url",
+            code: "CONFLICT",
+          });
+      }
 
       return await ctx.prisma.workspace.update({
         where: {
           id: input.workspaceId,
         },
         data: {
-          url: input.url,
+          url: input.workspaceUrl,
           name: input.workspaceName,
         },
       });

@@ -38,14 +38,32 @@ export const userRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       revalidateTag("activeWorkspace"); //THIS WORKS!!
 
-      return await ctx.prisma.user.update({
+      const user = await ctx.prisma.user.update({
         where: {
           id: ctx.session.user.id,
         },
         data: {
           activeWorkspaceId: input.workspaceId,
         },
+        select: {
+          workspaces: {
+            where: {
+              id: input.workspaceId,
+            },
+            select: {
+              url: true,
+            },
+          },
+        },
       });
+
+      if (!user.workspaces[0])
+        throw new TRPCError({
+          message: "No Workspace Found",
+          code: "INTERNAL_SERVER_ERROR",
+        });
+
+      return user.workspaces[0];
     }),
   installApp: protectedProcedure
     .input(z.object({ appId: string().cuid() }))

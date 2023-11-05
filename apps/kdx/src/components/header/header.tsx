@@ -4,6 +4,7 @@ import Link from "next/link";
 import { auth } from "@kdx/auth";
 import {
   buttonVariants,
+  cn,
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
@@ -71,7 +72,9 @@ async function MainNav() {
           <NavigationMenuList key={item.href}>
             <NavigationMenuItem>
               <Link href={item.href} legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                <NavigationMenuLink
+                  className={cn(navigationMenuTriggerStyle())}
+                >
                   {item.title}
                 </NavigationMenuLink>
               </Link>

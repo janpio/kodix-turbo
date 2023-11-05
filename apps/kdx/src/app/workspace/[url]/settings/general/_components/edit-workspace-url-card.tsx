@@ -1,9 +1,9 @@
 import { auth } from "@kdx/auth";
 import { prisma } from "@kdx/db";
 
-import { EditWorkspaceNameCardClient } from "./edit-workspace-name-card-client";
+import { EditWorkspaceUrlCardClient } from "./edit-workspace-url-card-client";
 
-export async function EditWorkspaceNameCard() {
+export async function EditWorkspaceUrlCard() {
   const session = await auth();
   if (!session) return null;
   const workspace = await prisma.workspace.findUniqueOrThrow({
@@ -12,14 +12,14 @@ export async function EditWorkspaceNameCard() {
     },
     select: {
       id: true,
-      name: true,
+      url: true,
     },
   });
 
   return (
-    <EditWorkspaceNameCardClient
+    <EditWorkspaceUrlCardClient
       workspaceId={workspace.id}
-      workspaceName={workspace.name}
+      workspaceUrl={workspace.url}
     />
   );
 }
