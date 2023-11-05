@@ -29,7 +29,7 @@ export function HomePage(props: {
   );
 
   return (
-    <main className="h-144 bg-background flex flex-col items-center justify-center gap-12 px-4 py-16">
+    <div className="h-144 bg-background flex flex-col items-center justify-center gap-12 px-4 py-16">
       <h1 className="scroll-m-20 text-6xl font-extrabold tracking-tight lg:text-8xl">
         Welcome to Kodix
       </h1>
@@ -69,6 +69,6 @@ export function HomePage(props: {
           )}
         </div>
       </div>
-    </main>
+    </div>
   );
 }

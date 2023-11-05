@@ -20,6 +20,9 @@ export const workspaceRouter = createTRPCRouter({
       workspaces: workspaces,
       activeWorkspaceId: ctx.session.user.activeWorkspaceId,
       activeWorkspaceName: ctx.session.user.activeWorkspaceName,
+      workspaceUrl: workspaces.find(
+        (x) => x.id === ctx.session.user.activeWorkspaceId,
+      )?.url,
     };
   }),
   create: protectedProcedure

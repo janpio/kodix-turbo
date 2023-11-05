@@ -1,9 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { revalidatePath } from "next/cache";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
 import { Check, ChevronsUpDown, Loader2, PlusCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
 
@@ -47,7 +45,7 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
     isSuccess,
   } = api.user.switchActiveWorkspace.useMutation();
 
-  if (isSuccess) utils.workspace.getAllForLoggedUser.invalidate();
+  if (isSuccess) void utils.workspace.getAllForLoggedUser.invalidate();
 
   const { data } = api.workspace.getAllForLoggedUser.useQuery();
 
@@ -64,12 +62,12 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
       onOpenChange={setShowNewWorkspaceDialog}
     >
       <Popover open={open} onOpenChange={setOpen}>
-        <div className="center border-border flex justify-center rounded-lg border">
+        <div className="center flex justify-center rounded-lg">
           <Link
-            href={isPending ? "#" : `/workspace/${data?.activeWorkspaceName}`}
+            href={isPending ? "#" : `/workspace/${data?.workspaceUrl}/settings`}
             className={cn(
               buttonVariants({ variant: "ghost", size: "sm" }),
-              "w-[175px] justify-start",
+              "w-[175px] justify-start hover:bg-inherit",
               className,
             )}
           >
@@ -108,8 +106,9 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
               aria-expanded={open}
               aria-label="Select a workspace"
               disabled={isPending}
+              className="w-8"
             >
-              <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
+              <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
         </div>

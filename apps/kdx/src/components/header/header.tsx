@@ -2,10 +2,16 @@ import React from "react";
 import Link from "next/link";
 
 import { auth } from "@kdx/auth";
-import { buttonVariants, cn } from "@kdx/ui";
+import {
+  buttonVariants,
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  navigationMenuTriggerStyle,
+} from "@kdx/ui";
 
 import HeaderFooterRemover from "../header-footer-remover";
-import NavigationLink from "./navigation-link";
 import { TeamSwitcher } from "./team-switcher";
 import { UserProfileButton } from "./user-profile-button";
 
@@ -14,8 +20,8 @@ export async function Header() {
 
   return (
     <HeaderFooterRemover>
-      <header className="border-b">
-        <div className="flex h-16 items-center px-4 ">
+      <header className="border-b pb-2">
+        <div className="mx-auto flex h-16 max-w-screen-2xl items-center px-4">
           {!session && (
             <Link
               href="/"
@@ -26,44 +32,53 @@ export async function Header() {
           )}
           {!!session && <TeamSwitcher />}
 
-          <MainNav className="mx-6" />
           <div className="ml-auto flex items-center space-x-4">
             <UserNav />
           </div>
+        </div>
+        <div className="mx-auto flex h-8 max-w-screen-2xl items-center px-4">
+          <MainNav />
         </div>
       </header>
     </HeaderFooterRemover>
   );
 }
 
-async function MainNav({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLElement>) {
+async function MainNav() {
   const session = await auth();
-  const navigation = [
+  const navigation: {
+    href: string;
+    title: string;
+    shown: boolean;
+  }[] = [
     {
       href: "/marketplace",
       title: "Marketplace",
+      shown: true,
     },
     {
       href: "/apps",
       title: "Apps",
       shown: !!session,
     },
-  ].map((item) => ({ ...item, shown: item.shown ?? true })); // defaults shown to true if not defined
+  ];
 
   return (
-    <nav
-      className={cn("flex items-center space-x-4 lg:space-x-6", className)}
-      {...props}
-    >
+    <NavigationMenu className="space-x-1">
       {navigation
         .filter((x) => x.shown)
         .map((item) => (
-          <NavigationLink key={item.href} href={item.href} title={item.title} />
+          <NavigationMenuList key={item.href}>
+            <NavigationMenuItem>
+              <Link href={item.href} legacyBehavior passHref>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  {item.title}
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+          </NavigationMenuList>
         ))}
-    </nav>
+    </NavigationMenu>
   );
 }
 

@@ -49,7 +49,7 @@ export default function Layout(props: { children: React.ReactNode }) {
               disableTransitionOnChange
             >
               <Header />
-              <div className="p-8">{props.children}</div>
+              <main className="p-8">{props.children}</main>
 
               <Footer />
               <Toaster />
