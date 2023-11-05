@@ -2,8 +2,6 @@ import crypto from "crypto";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { PrismaClient } from "@kdx/db";
-
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const workspaceRouter = createTRPCRouter({
@@ -27,7 +25,7 @@ export const workspaceRouter = createTRPCRouter({
   create: protectedProcedure
     .input(z.object({ userId: z.string().cuid(), workspaceName: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      let url = input.workspaceName.split(" ").join("-");
+      let url = input.workspaceName.toLowerCase().split(" ").join("-");
 
       const workspaces = await ctx.prisma.workspace.findMany({
         where: {

@@ -32,7 +32,7 @@ function CustomPrismaAdapter(p: PrismaClient): Adapter {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async createUser(data): Promise<any> {
       //TODO: is it possible to do this with less DB calls?
-      let url = `${data.name!.split(" ").join("-")}`;
+      let url = `${data.name?.toLowerCase()!.split(" ").join("-")}`;
 
       const workspaces = await p.workspace.findMany({
         where: {
