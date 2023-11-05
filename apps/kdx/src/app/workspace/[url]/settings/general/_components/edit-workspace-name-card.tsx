@@ -49,7 +49,7 @@ export default async function EditWorkspaceNameCard() {
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="name">Name</Label>
-              <Input id="name" name="name" value={workspace.name} />
+              <Input id="name" name="name" defaultValue={workspace.name} />
             </div>
           </div>
         </CardContent>
