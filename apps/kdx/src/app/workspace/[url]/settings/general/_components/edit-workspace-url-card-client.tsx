@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { revalidatePath } from "next/cache";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import {
   Button,

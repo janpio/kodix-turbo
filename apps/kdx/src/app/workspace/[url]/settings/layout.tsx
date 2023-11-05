@@ -1,9 +1,8 @@
-import Link from "next/link";
-
-import { buttonVariants, cn } from "@kdx/ui";
+import { cn } from "@kdx/ui";
 
 import MaxWidthWrapper from "~/components/max-width-wrapper";
 import { SettingsNav } from "./_components/settings-nav";
+import { ShouldRender } from "./general/_components/client-should-render";
 
 export default function Layout({
   params,
@@ -19,7 +18,9 @@ export default function Layout({
       </div>
       <div className="flex flex-row">
         <SettingsNav url={params.url} />
-        <div className={cn("w-full text-center md:block")}>{children}</div>
+        <ShouldRender>
+          <div className={cn("w-full text-center md:block")}>{children}</div>
+        </ShouldRender>
       </div>
     </MaxWidthWrapper>
   );
