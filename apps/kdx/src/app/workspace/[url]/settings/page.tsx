@@ -1,9 +1,5 @@
-import { Textarea } from "@kdx/ui";
+import GeneralSettings from "./general/page";
 
-export default function Workspace({ params }: { params: { url: string } }) {
-  return (
-    <div>
-      <Textarea></Textarea>
-    </div>
-  );
+export default function Settings({ params }: { params: { url: string } }) {
+  return <GeneralSettings params={params} />;
 }

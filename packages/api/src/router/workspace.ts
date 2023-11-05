@@ -102,7 +102,7 @@ export const workspaceRouter = createTRPCRouter({
       });
     }),
   getActiveWorkspace: protectedProcedure.query(async ({ ctx }) => {
-    const workspace = await ctx.prisma.workspace.findUnique({
+    const workspace = await ctx.prisma.workspace.findUniqueOrThrow({
       where: {
         id: ctx.session.user.activeWorkspaceId,
       },
@@ -110,11 +110,7 @@ export const workspaceRouter = createTRPCRouter({
         users: true,
       },
     });
-    if (!workspace)
-      throw new TRPCError({
-        message: "No Workspace Found",
-        code: "NOT_FOUND",
-      });
+
     return workspace;
   }),
   installApp: protectedProcedure
