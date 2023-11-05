@@ -8,6 +8,7 @@ import { cookies } from "next/headers";
 import { cn, Toaster } from "@kdx/ui";
 
 import { Footer } from "~/components/footer/footer";
+import HeaderFooterRemover from "~/components/header-footer-remover";
 import { Header } from "~/components/header/header";
 import { NextAuthProvider, NextThemeProvider } from "~/components/providers";
 import { TailwindIndicator } from "~/components/tailwind-indicator";

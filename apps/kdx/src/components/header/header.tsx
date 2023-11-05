@@ -4,6 +4,7 @@ import Link from "next/link";
 import { auth } from "@kdx/auth";
 import { buttonVariants, cn } from "@kdx/ui";
 
+import HeaderFooterRemover from "../header-footer-remover";
 import NavigationLink from "./navigation-link";
 import { TeamSwitcher } from "./team-switcher";
 import { UserProfileButton } from "./user-profile-button";
@@ -12,24 +13,26 @@ export async function Header() {
   const session = await auth();
 
   return (
-    <header className="border-b">
-      <div className="flex h-16 items-center px-4 ">
-        {!session && (
-          <Link
-            href="/"
-            className="text-bold text-primary mx-5 text-xl font-medium"
-          >
-            Kodix
-          </Link>
-        )}
-        {!!session && <TeamSwitcher />}
+    <HeaderFooterRemover>
+      <header className="border-b">
+        <div className="flex h-16 items-center px-4 ">
+          {!session && (
+            <Link
+              href="/"
+              className="text-bold text-primary mx-5 text-xl font-medium"
+            >
+              Kodix
+            </Link>
+          )}
+          {!!session && <TeamSwitcher />}
 
-        <MainNav className="mx-6" />
-        <div className="ml-auto flex items-center space-x-4">
-          <UserNav />
+          <MainNav className="mx-6" />
+          <div className="ml-auto flex items-center space-x-4">
+            <UserNav />
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+    </HeaderFooterRemover>
   );
 }
 
