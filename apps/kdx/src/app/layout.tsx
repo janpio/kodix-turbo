@@ -31,9 +31,6 @@ export const metadata: Metadata = {
 };
 
 export default function Layout(props: { children: React.ReactNode }) {
-  // const routesLayoutNotNeeded = ["/signIn", "/newUser"];
-  // const isLayoutNotNeeded = true;
-
   return (
     <html lang="en">
       <body
@@ -44,24 +41,26 @@ export default function Layout(props: { children: React.ReactNode }) {
       >
         <TRPCReactProvider cookies={cookies().toString()}>
           <NextAuthProvider>
-            <NextThemeProvider>
+            <NextThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
               <Header />
-              {/* {isLayoutNotNeeded && <Header />} */}
               <div className="p-8">{props.children}</div>
 
-              {/* {isLayoutNotNeeded && <Footer />} */}
               <Footer />
               <Toaster />
+              {/* UI Design Helpers */}
+              {process.env.NODE_ENV !== "production" && (
+                <div className="fixed bottom-1 z-50 flex flex-row items-center space-x-1">
+                  <ThemeSwitcher />
+                  <TailwindIndicator />
+                </div>
+              )}
             </NextThemeProvider>
           </NextAuthProvider>
-
-          {/* UI Design Helpers */}
-          {process.env.NODE_ENV !== "production" && (
-            <div className="fixed bottom-1 z-50 flex flex-row items-center space-x-1">
-              <ThemeSwitcher />
-              <TailwindIndicator />
-            </div>
-          )}
         </TRPCReactProvider>
       </body>
     </html>
