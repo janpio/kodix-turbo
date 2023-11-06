@@ -29,7 +29,6 @@
     "@trpc/next": "next",
     "@trpc/react-query": "next",
     "@trpc/server": "next",
-    "@upstash/redis": "^1.24.3",
     "ai": "^2.2.12",
     "lucide-react": "^0.263.1",
     "next": "^14.0.1",
