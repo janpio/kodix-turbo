@@ -3,7 +3,11 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { updateWorkspaceSchema } from "../shared";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  userLimitedProcedure,
+} from "../trpc";
 
 export const workspaceRouter = createTRPCRouter({
   getAllForLoggedUser: protectedProcedure.query(async ({ ctx }) => {
@@ -70,7 +74,7 @@ export const workspaceRouter = createTRPCRouter({
 
       return workspace;
     }),
-  update: protectedProcedure
+  update: userLimitedProcedure
     .input(updateWorkspaceSchema)
     .mutation(async ({ ctx, input }) => {
       if (input.workspaceUrl) {

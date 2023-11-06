@@ -7,6 +7,8 @@
  * The pieces you will need to use are documented accordingly near the end
  */
 import { initTRPC, TRPCError } from "@trpc/server";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
@@ -120,6 +122,31 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   });
 });
 
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(5, "1 h"), //5 Requests per 1 hour
+  analytics: true,
+});
+/**
+ * Reusable middleware that limits by id
+ */
+export const rateLimitByUserId = enforceUserIsAuthed.unstable_pipe(
+  async ({ ctx, next }) => {
+    const { success, reset } = await ratelimit.limit(ctx.session.user.id);
+    if (!success)
+      throw new TRPCError({
+        code: "TOO_MANY_REQUESTS",
+        message: `Too many requests. Please try again at ${new Date(
+          reset,
+        ).toString()}`,
+      });
+
+    return next({
+      ctx,
+    });
+  },
+);
+
 /**
  * Protected (authed) procedure
  *
@@ -130,3 +157,8 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+
+/**
+ * Reusable middleware that limits by id
+ */
+export const userLimitedProcedure = t.procedure.use(rateLimitByUserId);
