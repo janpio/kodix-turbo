@@ -41,6 +41,15 @@ export const userRouter = createTRPCRouter({
       const user = await ctx.prisma.user.update({
         where: {
           id: ctx.session.user.id,
+          workspaces: {
+            some: {
+              activeUsers: {
+                some: {
+                  id: ctx.session.user.id,
+                },
+              },
+            },
+          },
         },
         data: {
           activeWorkspaceId: input.workspaceId,
