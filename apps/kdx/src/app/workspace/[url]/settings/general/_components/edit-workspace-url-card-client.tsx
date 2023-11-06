@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import {
   Button,
@@ -28,7 +28,7 @@ export function EditWorkspaceUrlCardClient({
 
   const [newUrl, setNewUrl] = useState(workspaceUrl);
   const router = useRouter();
-
+  const pathname = usePathname();
   return (
     <Card className="w-full text-left">
       <CardHeader>
@@ -59,7 +59,12 @@ export function EditWorkspaceUrlCardClient({
               workspaceId,
               workspaceUrl: newUrl,
             });
-            router.push(`/workspace/${workspace.url}/settings`);
+            const lastSegment = pathname.split("/").at(-1);
+            router.push(
+              `/workspace/${workspace.url}/settings${
+                lastSegment !== "settings" ? `/${lastSegment}` : ""
+              }`,
+            );
           }}
         >
           Save
