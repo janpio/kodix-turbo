@@ -1,16 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
 
 import type { RouterOutputs } from "@kdx/api";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  buttonVariants,
-  Skeleton,
-} from "@kdx/ui";
+import { Avatar, AvatarFallback, AvatarImage } from "@kdx/ui";
 
 import { api } from "~/trpc/react";
 
@@ -27,10 +21,11 @@ export function HomePage(props: {
       initialData: props.initialData,
     },
   );
+  const { theme } = useTheme();
 
   return (
-    <div className="h-144 bg-background flex flex-col items-center justify-center gap-12 px-4 py-16">
-      <h1 className="scroll-m-20 text-6xl font-extrabold tracking-tight lg:text-8xl">
+    <div className="h-144 flex flex-col items-center justify-center gap-12 px-4 py-16">
+      <h1 className="text-primary scroll-m-20 text-6xl font-extrabold tracking-tight lg:text-8xl">
         Welcome to Kodix
       </h1>
       {sessionData.data && (
@@ -53,22 +48,11 @@ export function HomePage(props: {
           </div>
         </div>
       )}
-
-      <div className="flex flex-col items-center">
-        <div className="flex flex-col items-center justify-center gap-4">
-          {sessionData.status === "loading" ? (
-            <Skeleton className="h-12 w-32" />
-          ) : (
-            <Link
-              href={sessionData.data ? "" : "/signIn"}
-              onClick={sessionData.data ? () => void signOut() : () => null}
-              className={buttonVariants({ variant: "default", size: "lg" })}
-            >
-              {sessionData.data ? "Sign out" : "Sign in"}
-            </Link>
-          )}
-        </div>
-      </div>
+      {theme === "light" ? (
+        <div className="bg-foreground absolute inset-0 -z-10 h-full w-full [background:radial-gradient(125%_125%_at_50%_10%,#fff_40%,#63e_100%)]"></div>
+      ) : (
+        <div className="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]" />
+      )}
     </div>
   );
 }
