@@ -22,18 +22,40 @@ export async function Header() {
 
   return (
     <HeaderFooterRemover>
-      <header className="border-b pb-2">
+      <header className="border-b pb-4">
         <MaxWidthWrapper>
           <div className="mx-auto flex h-16 max-w-screen-2xl items-center">
-            {!session && (
-              <Link
-                href="/"
-                className="text-bold text-primary mx-5 text-xl font-medium"
-              >
+            <Link
+              href="/"
+              className="text-bold text-primary mx-5 text-xl font-medium"
+            >
+              <span className="hidden bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text font-extrabold tracking-tight text-transparent md:block">
                 Kodix
-              </Link>
+              </span>
+              <span className="block bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text font-extrabold tracking-tight text-transparent md:hidden">
+                Kdx
+              </span>
+            </Link>
+            {session && (
+              //Slash icon
+              <>
+                <svg
+                  className="text-[#eaeaea] dark:text-[#333]"
+                  data-testid="geist-icon"
+                  fill="none"
+                  height="24"
+                  shapeRendering="geometricPrecision"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="1.5"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M16.88 3.549L7.12 20.451"></path>
+                </svg>
+                <TeamSwitcher />
+              </>
             )}
-            {!!session && <TeamSwitcher />}
 
             <div className="ml-auto flex items-center space-x-4">
               <UserNav />

@@ -68,7 +68,7 @@ export function KodixApp({
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="">{appName} </CardTitle>
 
-          {session && installed && (
+          {installed && (
             <Dialog open={open} onOpenChange={onOpenChange}>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -93,7 +93,7 @@ export function KodixApp({
                   <DialogTitle>Confirm</DialogTitle>
                   <DialogDescription className="py-4">
                     Are you sure you would like to uninstall {appName} from
-                    {" " + session.user.activeWorkspaceName}?
+                    {" " + session?.user.activeWorkspaceName}?
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>

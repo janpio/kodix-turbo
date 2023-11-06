@@ -1,8 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { revalidatePath } from "next/cache";
-import { PathnameContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Check, ChevronsUpDown, Loader2, PlusCircle } from "lucide-react";
@@ -30,6 +28,7 @@ import {
 } from "@kdx/ui";
 
 import { api } from "~/trpc/react";
+import { getBaseUrl } from "~/trpc/shared";
 import { AddWorkspaceDialog } from "./add-workspace-dialog";
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
@@ -70,7 +69,7 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
             }
             className={cn(
               buttonVariants({ variant: "ghost", size: "sm" }),
-              "w-[175px] justify-start hover:bg-inherit",
+              "justify-start hover:bg-inherit",
               className,
             )}
           >
@@ -83,15 +82,9 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
               <>
                 <Avatar className="mr-2 h-5 w-5">
                   <AvatarImage
-                    src={`https://avatar.vercel.sh/${data?.activeWorkspaceId}kdx.png`}
+                    src={`${getBaseUrl()}/api/avatar/${data?.activeWorkspaceName}`}
                     alt={data?.activeWorkspaceName}
                   />
-                  <AvatarFallback>
-                    {data?.activeWorkspaceName
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </AvatarFallback>
                 </Avatar>
                 {data?.activeWorkspaceName.length > 19 ? (
                   <span className="text-xs">{data?.activeWorkspaceName}</span>
@@ -133,28 +126,20 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
                       void utils.workspace.getAllForLoggedUser.invalidate();
 
                       //find in string where old data.url is, and replace it with new url
-                      const newUrl = pathName.replace(
+                      const newUrl = pathName?.replace(
                         data.activeWorkspaceUrl,
                         newActiveWorkspace.url,
                       );
-                      router.push(newUrl);
+                      router.push(newUrl || "/");
                       router.refresh();
                     }}
                     className="text-sm"
                   >
                     <Avatar className="mr-2 h-5 w-5">
                       <AvatarImage
-                        src={`https://avatar.vercel.sh/${ws.id}kdx.png`}
+                        src={`${getBaseUrl()}/api/avatar/${ws.name}`}
                         alt={ws.name}
                       />
-                      <AvatarFallback>
-                        {ws.name
-                          ? ws?.name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")
-                          : ""}
-                      </AvatarFallback>
                     </Avatar>
                     {ws.name}
                     <Check
