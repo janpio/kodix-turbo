@@ -47,7 +47,7 @@ export default function Layout(props: { children: React.ReactNode }) {
               enableSystem
               disableTransitionOnChange
             >
-              <Toaster closeButton />
+              <Toaster richColors closeButton />
 
               <Header />
               <main className="p-8">{props.children}</main>
