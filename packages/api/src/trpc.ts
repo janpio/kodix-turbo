@@ -130,9 +130,11 @@ const ratelimit = new Ratelimit({
 /**
  * Reusable middleware that limits by id
  */
-export const rateLimitByUserId = enforceUserIsAuthed.unstable_pipe(
+export const rateLimitByUserIdAndWs = enforceUserIsAuthed.unstable_pipe(
   async ({ ctx, next }) => {
-    const { success, reset } = await ratelimit.limit(ctx.session.user.id);
+    const { success, reset } = await ratelimit.limit(
+      `userId:${ctx.session.user.id} wsId:${ctx.session.user.activeWorkspaceId}`,
+    );
     if (!success)
       throw new TRPCError({
         code: "TOO_MANY_REQUESTS",
@@ -159,6 +161,12 @@ export const rateLimitByUserId = enforceUserIsAuthed.unstable_pipe(
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
 
 /**
- * Reusable middleware that limits by id
+ * Protected (authed) procedure that limits by id and current active workspace
+ *
+ * This is the same as protectedProcedure, but it also rate limits per user and
+ * current active workspaceId. This is using a shared cache, so it will rate
+ * limit across all instances that use this same procedure.
  */
-export const userLimitedProcedure = t.procedure.use(rateLimitByUserId);
+export const userAndWsLimitedProcedure = t.procedure.use(
+  rateLimitByUserIdAndWs,
+);

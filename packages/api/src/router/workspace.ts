@@ -6,7 +6,7 @@ import { updateWorkspaceSchema } from "../shared";
 import {
   createTRPCRouter,
   protectedProcedure,
-  userLimitedProcedure,
+  userAndWsLimitedProcedure,
 } from "../trpc";
 
 export const workspaceRouter = createTRPCRouter({
@@ -74,7 +74,7 @@ export const workspaceRouter = createTRPCRouter({
 
       return workspace;
     }),
-  update: userLimitedProcedure
+  update: userAndWsLimitedProcedure
     .input(updateWorkspaceSchema)
     .mutation(async ({ ctx, input }) => {
       if (input.workspaceUrl) {
