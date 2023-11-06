@@ -2,9 +2,7 @@ import { NextResponse } from "next/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
-export const config = {
-  runtime: "edge",
-};
+export const runtime = "edge";
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
