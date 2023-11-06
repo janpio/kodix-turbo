@@ -14,13 +14,16 @@ export function useMediaQuery({ query }: { query: "md" | "lg" }) {
       break;
   }
 
-  const [matches, setMatches] = React.useState(false);
+  const [matches, setMatches] = React.useState(true); //Tested changing it to true
   React.useEffect(() => {
     const matchQueryList = window.matchMedia(widthText);
-    function handleChange(e: MediaQueryListEvent) {
+    const handleChange = (e: MediaQueryListEvent) => {
       setMatches(e.matches);
-    }
+    };
     matchQueryList.addEventListener("change", handleChange);
+
+    setMatches(matchQueryList.matches);
+
     return () => {
       matchQueryList.removeEventListener("change", handleChange);
     };
