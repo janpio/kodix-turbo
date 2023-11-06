@@ -1,4 +1,5 @@
 export * from "./lib/utils";
+export * from "./lib/use-media-query";
 
 // Components export
 export * from "./components/alert-dialog";

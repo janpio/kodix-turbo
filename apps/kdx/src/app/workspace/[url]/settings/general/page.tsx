@@ -10,7 +10,7 @@ export default function GeneralSettings({
   params: { url: string };
 }) {
   return (
-    <div className="space-y-8">
+    <div className="mt-8 space-y-8 md:mt-0">
       <Suspense fallback={<EditWorkspaceNameCardSkeleton />}>
         <EditWorkspaceNameCard />
       </Suspense>

@@ -2,11 +2,10 @@ import { notFound, redirect } from "next/navigation";
 
 import { auth } from "@kdx/auth";
 import { prisma } from "@kdx/db";
-import { cn } from "@kdx/ui";
 
 import MaxWidthWrapper from "~/components/max-width-wrapper";
 import { api } from "~/trpc/server";
-import { SettingsNav } from "./_components/settings-nav";
+import { SettingsNavigation } from "./_components/settings-nav";
 import { ShouldRender } from "./general/_components/client-should-render";
 
 export default async function Layout({
@@ -44,9 +43,7 @@ export default async function Layout({
     (x) => x.url === params.url,
   );
 
-  if (!searchedWs || !workspaceIsFromUser)
-    //Workspace is not from user, or workspace does not exist
-    notFound();
+  if (!searchedWs || !workspaceIsFromUser) notFound();
 
   const searchedWorkspaceIsActiveWs =
     searchedWs?.id === session?.user.activeWorkspaceId;
@@ -59,14 +56,12 @@ export default async function Layout({
 
   return (
     <MaxWidthWrapper>
-      <div className="h-28">
+      <div className="flex flex-col justify-center border-b pb-8">
         <h1 className="text-4xl font-bold">Settings</h1>
       </div>
-      <div className="flex flex-row">
-        <SettingsNav url={params.url} />
-        <ShouldRender>
-          <div className={cn("w-full text-center md:block")}>{children}</div>
-        </ShouldRender>
+      <div className="mt-8 flex flex-col md:flex-row md:space-x-6">
+        <SettingsNavigation url={params.url} />
+        <ShouldRender>{children}</ShouldRender>
       </div>
     </MaxWidthWrapper>
   );

@@ -2,8 +2,6 @@ import { revalidateTag } from "next/cache";
 import { TRPCError } from "@trpc/server";
 import { string, z } from "zod";
 
-import { auth } from "@kdx/auth";
-
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const userRouter = createTRPCRouter({
