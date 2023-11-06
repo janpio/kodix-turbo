@@ -24,7 +24,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   Textarea,
-  useToast,
+  toast,
 } from "@kdx/ui";
 
 import { api } from "~/trpc/react";
@@ -34,7 +34,6 @@ import { RecurrencePicker } from "./recurrence-picker";
 export function CreateEventDialogButton() {
   const [open, setOpen] = useState(false);
   const ctx = api.useUtils();
-  const { toast } = useToast();
   const { mutate: createEvent } = api.event.create.useMutation({
     onMutate: () => {
       setButtonLoading(true);
@@ -50,14 +49,12 @@ export function CreateEventDialogButton() {
     onError: (e) => {
       const zodContentErrors = e.data?.zodError?.fieldErrors.content;
       const zodFormErrors = e.data?.zodError?.formErrors;
-      toast({
-        title:
-          zodContentErrors?.[0] ??
+      toast.error(
+        zodContentErrors?.[0] ??
           zodFormErrors?.[0] ??
           e.message ??
           "Something went wrong, please try again later.",
-        variant: "destructive",
-      });
+      );
     },
   });
   const [buttonLoading, setButtonLoading] = useState(false);

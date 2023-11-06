@@ -31,11 +31,11 @@ import {
   RadioGroup,
   RadioGroupItem,
   Textarea,
+  toast,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-  useToast,
 } from "@kdx/ui";
 
 import { api } from "~/trpc/react";
@@ -52,7 +52,6 @@ export function EditEventDialog({
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const ctx = api.useUtils();
-  const { toast } = useToast();
   const { mutate: editEvent } = api.event.edit.useMutation({
     onMutate: () => {
       setButtonLoading(true);
@@ -67,14 +66,12 @@ export function EditEventDialog({
     onError: (e) => {
       const zodContentErrors = e.data?.zodError?.fieldErrors.content;
       const zodFormErrors = e.data?.zodError?.formErrors;
-      toast({
-        title:
-          zodContentErrors?.[0] ??
+      toast.error(
+        zodContentErrors?.[0] ??
           zodFormErrors?.[0] ??
           e.message ??
           "Something went wrong, please try again later.",
-        variant: "destructive",
-      });
+      );
     },
   });
   const [buttonLoading, setButtonLoading] = useState(false);

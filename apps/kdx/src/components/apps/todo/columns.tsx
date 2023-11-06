@@ -6,7 +6,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 
 import type { RouterOutputs } from "@kdx/api";
 import type { Status } from "@kdx/db";
-import { Button, Checkbox, toast, useToast } from "@kdx/ui";
+import { Button, Checkbox, toast } from "@kdx/ui";
 
 import { DatePickerWithPresets } from "~/components/date-picker-with-presets";
 import { api } from "~/trpc/react";
@@ -55,7 +55,6 @@ export const columns = [
   columnHelper.accessor("priority", {
     cell: function Cell(info) {
       const [priority, setPriority] = useState<Priority>(0); //added "0" Just to make TS happy
-      const { toast } = useToast();
 
       const value = info.getValue() as Priority;
       useEffect(() => {
@@ -79,9 +78,7 @@ export const columns = [
         onError(err, newTodo, ctx) {
           if (!ctx?.prevData) return;
 
-          toast({
-            variant: "destructive",
-            title: `Failed to update priority`,
+          toast.error("Failed to update priority", {
             description: "Please try again later",
           });
           // If the mutation fails, use the context-value from onMutate
@@ -112,7 +109,6 @@ export const columns = [
   columnHelper.accessor("status", {
     cell: function Cell(info) {
       const [status, setStatus] = useState<Status>("TODO"); //added "TODO" Just to make TS happy
-      const { toast } = useToast();
 
       const value = info.getValue();
       useEffect(() => {
@@ -136,9 +132,7 @@ export const columns = [
         onError(err, newTodo, ctx) {
           if (!ctx?.prevData) return;
 
-          toast({
-            variant: "destructive",
-            title: `Failed to update status`,
+          toast.error("Failed to update priority", {
             description: "Please try again later",
           });
           // If the mutation fails, use the context-value from onMutate
@@ -169,7 +163,6 @@ export const columns = [
   columnHelper.accessor("dueDate", {
     cell: function Cell(info) {
       const [dueDate, setDueDate] = useState<Date>();
-      const { toast } = useToast();
 
       const value = info.getValue();
       useEffect(() => {
@@ -189,9 +182,7 @@ export const columns = [
           return { prevData };
         },
         onError(err, newTodo, ctx) {
-          toast({
-            variant: "destructive",
-            title: `Failed to update due date`,
+          toast.error("Failed to update priority", {
             description: "Please try again later",
           });
           // If the mutation fails, use the context-value from onMutate
@@ -234,9 +225,7 @@ export const columns = [
         onError(err, newTodo, ctx) {
           if (!ctx?.prevData) return;
 
-          toast({
-            variant: "destructive",
-            title: `Failed to update assigned user`,
+          toast.error("Failed to update priority", {
             description: "Please try again later",
           });
           // If the mutation fails, use the context-value from onMutate

@@ -8,7 +8,6 @@ import { cookies } from "next/headers";
 import { cn, Toaster } from "@kdx/ui";
 
 import { Footer } from "~/components/footer/footer";
-import HeaderFooterRemover from "~/components/header-footer-remover";
 import { Header } from "~/components/header/header";
 import { NextAuthProvider, NextThemeProvider } from "~/components/providers";
 import { TailwindIndicator } from "~/components/tailwind-indicator";
@@ -48,11 +47,12 @@ export default function Layout(props: { children: React.ReactNode }) {
               enableSystem
               disableTransitionOnChange
             >
+              <Toaster closeButton />
+
               <Header />
               <main className="p-8">{props.children}</main>
-
               <Footer />
-              <Toaster />
+
               {/* UI Design Helpers */}
               {process.env.NODE_ENV !== "production" && (
                 <div className="fixed bottom-1 z-50 flex flex-row items-center space-x-1">

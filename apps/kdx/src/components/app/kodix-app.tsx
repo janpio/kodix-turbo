@@ -24,7 +24,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  useToast,
+  toast,
 } from "@kdx/ui";
 
 import { api } from "~/trpc/react";
@@ -45,16 +45,12 @@ export function KodixApp({
   const { data: session } = useSession();
   const [open, onOpenChange] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
 
   const ctx = api.useUtils();
   const { mutate } = api.workspace.installApp.useMutation({
     onSuccess: () => {
       void ctx.app.getAll.invalidate();
-      toast({
-        variant: "default",
-        title: `App ${appName} installed`,
-      });
+      toast(`App ${appName} installed`);
     },
   });
   const { mutate: uninstall } = api.workspace.uninstallApp.useMutation({
@@ -62,10 +58,7 @@ export function KodixApp({
       onOpenChange(false);
       void ctx.app.getAll.invalidate();
       setLoading(false);
-      toast({
-        variant: "default",
-        title: `App ${appName} uninstalled`,
-      });
+      toast(`App ${appName} uninstalled`);
     },
   });
 

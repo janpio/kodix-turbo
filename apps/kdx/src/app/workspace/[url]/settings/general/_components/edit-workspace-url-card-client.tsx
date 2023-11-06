@@ -15,7 +15,7 @@ import {
   CardTitle,
   Input,
   Label,
-  useToast,
+  toast,
 } from "@kdx/ui";
 
 import { api } from "~/trpc/react";
@@ -37,28 +37,19 @@ export function EditWorkspaceUrlCardClient({
           lastSegment !== "settings" ? `/${lastSegment}` : ""
         }`,
       );
-      toast({
-        variant: "success",
-        title: "Workspace URL updated successfully",
-      });
+      toast.success("Workspace URL updated successfully");
     },
     onError: (error) => {
       const errorMessage = error.data?.zodError?.fieldErrors;
       if (errorMessage?.workspaceUrl)
-        return toast({
-          title: errorMessage?.workspaceUrl?.[0],
-          variant: "destructive",
-        });
+        return toast.error(errorMessage?.workspaceUrl?.[0]);
 
-      toast({
-        title:
-          error.message || "Oops, something went wrong. Please try again later",
-        variant: "destructive",
-      });
+      toast.error(
+        error.message || "Oops, something went wrong. Please try again later",
+      );
     },
   });
 
-  const { toast } = useToast();
   const router = useRouter();
   const pathname = usePathname();
   return (
@@ -96,10 +87,7 @@ export function EditWorkspaceUrlCardClient({
             };
             const parsed = updateWorkspaceSchema.safeParse(values);
             if (!parsed.success) {
-              return toast({
-                title: parsed.error.errors[0]?.message,
-                variant: "destructive",
-              });
+              return toast.error(parsed.error.errors[0]?.message);
             }
             mutate(values);
           }}

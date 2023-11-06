@@ -27,9 +27,12 @@ export * from "./components/skeleton";
 export * from "./components/table";
 export * from "./components/tabs";
 export * from "./components/textarea";
-export * from "./components/toast";
 export * from "./components/toaster";
 export * from "./components/toggle";
 export * from "./components/tooltip";
 export * from "./components/typography";
-export * from "./components/use-toast";
+
+//export * from "./components/toast";
+//export * from "./components/use-toast";
+
+export { Toaster, toast } from "sonner";

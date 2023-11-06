@@ -13,8 +13,7 @@ import {
   DialogTitle,
   Input,
   Label,
-  ToastAction,
-  useToast,
+  toast,
 } from "@kdx/ui";
 
 import { api } from "~/trpc/react";
@@ -34,7 +33,6 @@ export function AddWorkspaceDialog({
 }) {
   const [loading, setLoading] = React.useState(false);
   const ctx = api.useUtils();
-  const { toast } = useToast();
   const { mutate: switchActiveWorkspace } =
     api.user.switchActiveWorkspace.useMutation({
       onSuccess: () => {
@@ -47,15 +45,8 @@ export function AddWorkspaceDialog({
       onOpenChange(false);
       setLoading(false);
 
-      toast({
-        variant: "default",
-        title: `Workspace ${workspace.name} created`,
+      toast(`Workspace ${workspace.name} created`, {
         description: "Successfully created a new workspace.",
-        action: (
-          <ToastAction disabled altText="Goto schedule to undo">
-            Undo
-          </ToastAction>
-        ),
       });
       void ctx.workspace.getAllForLoggedUser.invalidate();
     },
