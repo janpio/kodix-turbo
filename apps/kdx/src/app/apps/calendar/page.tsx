@@ -7,6 +7,7 @@ import { H1, Separator } from "@kdx/ui";
 import { columns } from "~/components/apps/calendar/columns";
 import { CreateEventDialogButton } from "~/components/apps/calendar/create-event-dialog";
 import { DataTable } from "~/components/apps/calendar/data-table";
+import MaxWidthWrapper from "~/components/max-width-wrapper";
 import { api } from "~/trpc/server";
 
 export default async function Calendar() {
@@ -21,11 +22,11 @@ export default async function Calendar() {
   });
 
   return (
-    <>
+    <MaxWidthWrapper>
       <H1>Calendar</H1>
       <Separator className="my-4" />
       <CreateEventDialogButton />
       <DataTable columns={columns} data={data} />
-    </>
+    </MaxWidthWrapper>
   );
 }
