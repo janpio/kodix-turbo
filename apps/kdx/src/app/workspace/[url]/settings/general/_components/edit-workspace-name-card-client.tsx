@@ -29,9 +29,6 @@ export function EditWorkspaceNameCardClient({
   const { toast } = useToast();
   const utils = api.useUtils();
   const { mutate, isPending } = api.workspace.update.useMutation({
-    onMutate(variables) {
-      updateWorkspaceSchema.parse(variables);
-    },
     onSuccess: () => {
       void utils.workspace.getAllForLoggedUser.invalidate();
       toast({
@@ -84,10 +81,18 @@ export function EditWorkspaceNameCardClient({
         <Button
           disabled={isPending}
           onClick={() => {
-            mutate({
+            const values = {
               workspaceId,
               workspaceName: newName,
-            });
+            };
+            const parsed = updateWorkspaceSchema.safeParse(values);
+            if (!parsed.success) {
+              return toast({
+                title: parsed.error.errors[0]?.message,
+                variant: "destructive",
+              });
+            }
+            mutate(values);
           }}
         >
           {isPending ? (
