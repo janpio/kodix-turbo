@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
+import { updateWorkspaceSchema } from "@kdx/api/src/shared";
 import {
   Button,
   Card,
@@ -12,6 +14,7 @@ import {
   CardTitle,
   Input,
   Label,
+  useToast,
 } from "@kdx/ui";
 
 import { api } from "~/trpc/react";
@@ -23,8 +26,33 @@ export function EditWorkspaceNameCardClient({
   workspaceId: string;
   workspaceName: string;
 }) {
+  const { toast } = useToast();
   const utils = api.useUtils();
-  const { mutateAsync } = api.workspace.update.useMutation();
+  const { mutate, isPending } = api.workspace.update.useMutation({
+    onMutate(variables) {
+      updateWorkspaceSchema.parse(variables);
+    },
+    onSuccess: () => {
+      void utils.workspace.getAllForLoggedUser.invalidate();
+      toast({
+        variant: "success",
+        title: "Workspace name updated successfully",
+      });
+    },
+    onError: (error) => {
+      const errorMessage = error.data?.zodError?.fieldErrors;
+      if (errorMessage?.workspaceName)
+        return toast({
+          title: errorMessage?.workspaceName[0],
+          variant: "destructive",
+        });
+      toast({
+        title:
+          error.message || "Oops, something went wrong. Please try again later",
+        variant: "destructive",
+      });
+    },
+  });
 
   const [newName, setNewName] = useState(workspaceName);
 
@@ -44,7 +72,9 @@ export function EditWorkspaceNameCardClient({
               id="name"
               name="name"
               value={newName}
-              onChange={(e) => setNewName(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value.length <= 32) setNewName(e.target.value);
+              }}
             />
           </div>
         </div>
@@ -52,15 +82,21 @@ export function EditWorkspaceNameCardClient({
       <CardFooter className="flex justify-between border-t px-6 py-4">
         <p className="">Please use 32 characters at maximum.</p>
         <Button
-          onClick={async () => {
-            await mutateAsync({
+          disabled={isPending}
+          onClick={() => {
+            mutate({
               workspaceId,
               workspaceName: newName,
             });
-            void utils.workspace.getAllForLoggedUser.invalidate();
           }}
         >
-          Save
+          {isPending ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving
+            </>
+          ) : (
+            <>Save</>
+          )}
         </Button>
       </CardFooter>
     </Card>

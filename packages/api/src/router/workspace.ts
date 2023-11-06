@@ -2,6 +2,7 @@ import crypto from "crypto";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import { updateWorkspaceSchema } from "../shared";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const workspaceRouter = createTRPCRouter({
@@ -70,13 +71,7 @@ export const workspaceRouter = createTRPCRouter({
       return workspace;
     }),
   update: protectedProcedure
-    .input(
-      z.object({
-        workspaceId: z.string().cuid(),
-        workspaceName: z.string().optional(),
-        workspaceUrl: z.string().optional(),
-      }),
-    )
+    .input(updateWorkspaceSchema)
     .mutation(async ({ ctx, input }) => {
       if (input.workspaceUrl) {
         const workspacesWithSameUrl = await ctx.prisma.workspace.findMany({
