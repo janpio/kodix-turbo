@@ -1,0 +1,3 @@
+export function WorkspaceInvite() {
+  return <></>;
+}
