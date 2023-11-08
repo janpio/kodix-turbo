@@ -2,6 +2,8 @@ import crypto from "crypto";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import sendEmail from "../internal/email/email";
+import { WorkspaceInvite } from "../internal/email/templates/workspace-invite";
 import { updateWorkspaceSchema } from "../shared";
 import {
   createTRPCRouter,
@@ -181,42 +183,51 @@ export const workspaceRouter = createTRPCRouter({
       return uninstalledApp;
     }),
   inviteUser: protectedProcedure
-    .input(z.object({}))
+    .input(
+      z.object({
+        workspaceId: z.string().cuid(),
+        to: z
+          .string()
+          .or(z.string().array())
+          .transform((value) => {
+            if (Array.isArray(value)) {
+              return value;
+            } else {
+              return [value];
+            }
+          }),
+      }),
+    )
+    //.use(enforceUserHasWorkspace) // TODO: make this a middleware
     .mutation(async ({ ctx, input }) => {
-      // const workspace = await ctx.prisma.workspace.findUnique({
-      //   where: {
-      //     id: ctx.session.user.activeWorkspaceId,
-      //   },
-      // });
-      // if (!workspace)
-      //   throw new TRPCError({
-      //     message: "No Workspace Found",
-      //     code: "NOT_FOUND",
-      //   });
-      // const user = await ctx.prisma.user.findUnique({
-      //   where: {
-      //     email: ctx.session.user.email,
-      //   },
-      // });
-      // if (!user)
-      //   throw new TRPCError({
-      //     message: "No User Found",
-      //     code: "NOT_FOUND",
-      //   });
-      // const invite = await ctx.prisma.invite.create({
-      //   data: {
-      //     workspace: {
-      //       connect: {
-      //         id: workspace.id,
-      //       },
-      //     },
-      //     user: {
-      //       connect: {
-      //         id: user.id,
-      //       },
-      //     },
-      //   },
-      // });
-      // return invite;
+      const workspace = await ctx.prisma.workspace.findUniqueOrThrow({
+        where: {
+          id: input.workspaceId,
+          users: {
+            some: {
+              id: ctx.session.user.id,
+            },
+          },
+        },
+      });
+
+      const result = await sendEmail({
+        to: input.to,
+        subject: "You have been invited to join a workspace",
+        react: WorkspaceInvite(),
+      });
+
+      if (result.error)
+        throw new TRPCError({
+          message: result.error.message,
+          code: "INTERNAL_SERVER_ERROR",
+        });
+
+      await ctx.prisma.invitation.createMany({
+        data: input.to.map((x) => ({
+          workspaceId: workspace.id,
+          email: x,
+        })),
+      });
     }),
 });
