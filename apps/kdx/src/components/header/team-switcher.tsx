@@ -7,9 +7,7 @@ import { Check, ChevronsUpDown, Loader2, PlusCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
+  AvatarWrapper,
   Button,
   buttonVariants,
   cn,
@@ -80,12 +78,12 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
               </>
             ) : (
               <>
-                <Avatar className="mr-2 h-5 w-5">
-                  <AvatarImage
-                    src={`${getBaseUrl()}/api/avatar/${data?.activeWorkspaceName}`}
-                    alt={data?.activeWorkspaceName}
-                  />
-                </Avatar>
+                <AvatarWrapper
+                  className="mr-2 h-5 w-5"
+                  src={`${getBaseUrl()}/api/avatar/${data?.activeWorkspaceName}`}
+                  alt={data?.activeWorkspaceName}
+                  fallback={data?.activeWorkspaceName}
+                />
                 {data?.activeWorkspaceName.length > 19 ? (
                   <span className="text-xs">{data?.activeWorkspaceName}</span>
                 ) : (
@@ -135,12 +133,11 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
                     }}
                     className="text-sm"
                   >
-                    <Avatar className="mr-2 h-5 w-5">
-                      <AvatarImage
-                        src={`${getBaseUrl()}/api/avatar/${ws.name}`}
-                        alt={ws.name}
-                      />
-                    </Avatar>
+                    <AvatarWrapper
+                      className="mr-2 h-5 w-5"
+                      src={`${getBaseUrl()}/api/avatar/${ws.name}`}
+                      alt={ws.name}
+                    />
                     {ws.name}
                     <Check
                       className={cn(

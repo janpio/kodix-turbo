@@ -3,7 +3,8 @@ export * from "./lib/use-media-query";
 
 // Components export
 export * from "./components/alert-dialog";
-export * from "./components/avatar";
+//export * from "./components/avatar/avatar"; //? Excluded on purpose! use wrapper for now
+export * from "./components/avatar/avatar-wrapper";
 export * from "./components/badge";
 export * from "./components/button";
 export * from "./components/calendar";
@@ -32,7 +33,7 @@ export * from "./components/toggle";
 export * from "./components/tooltip";
 export * from "./components/typography";
 
-//export * from "./components/toast";
+//export * from "./components/toast"; //? Excluded on purpose! use sonner.
 //export * from "./components/use-toast";
 
 export { Toaster, toast } from "sonner";

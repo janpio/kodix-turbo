@@ -12,7 +12,7 @@ export function ShouldRender({ children }: { children: React.ReactNode }) {
     <div
       className={cn(
         "hidden w-full text-center md:block",
-        !pathname.endsWith("/settings") && "block",
+        pathname && !pathname.endsWith("/settings") && "block",
       )}
     >
       {children}

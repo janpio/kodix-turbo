@@ -5,9 +5,7 @@ import { HiUserCircle } from "react-icons/hi";
 
 import type { Status } from "@kdx/db";
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
+  AvatarWrapper,
   Button,
   Dialog,
   DialogContent,
@@ -113,15 +111,12 @@ export function CreateTaskDialogButton() {
 
                 {user ? (
                   <>
-                    <Avatar className="mr-2 h-4 w-4">
-                      <AvatarImage
-                        src={user.image ?? ""}
-                        alt={user.name ?? "" + " avatar"}
-                      />
-                      <AvatarFallback>
-                        <HiUserCircle />
-                      </AvatarFallback>
-                    </Avatar>
+                    <AvatarWrapper
+                      className="mr-2 h-4 w-4"
+                      src={user.image ?? ""}
+                      alt={user.name ?? "" + " avatar"}
+                      fallback={<HiUserCircle />}
+                    />
                     {user.name}
                   </>
                 ) : (

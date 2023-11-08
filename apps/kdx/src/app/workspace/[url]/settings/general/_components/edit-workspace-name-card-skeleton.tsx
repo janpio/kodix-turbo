@@ -8,7 +8,7 @@ import {
   Skeleton,
 } from "@kdx/ui";
 
-export default function EditWorkspaceNameCardSkeleton() {
+export default function SettingsEditCardSkeleton() {
   return (
     <Card className="w-full text-left">
       <CardHeader>

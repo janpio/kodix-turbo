@@ -5,9 +5,7 @@ import { CreditCard, LogOut, PlusCircle, Settings, User } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
+  AvatarWrapper,
   Button,
   DialogTrigger,
   DropdownMenu,
@@ -35,17 +33,11 @@ export function UserProfileButton() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={session.user.image ?? ""} alt="Avatar image" />
-              <AvatarFallback>
-                {session.user.name
-                  ? session?.user?.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")
-                  : ""}
-              </AvatarFallback>
-            </Avatar>
+            <AvatarWrapper
+              className="h-8 w-8"
+              src={session.user.image ?? ""}
+              fallback={session.user.name}
+            />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end" forceMount>

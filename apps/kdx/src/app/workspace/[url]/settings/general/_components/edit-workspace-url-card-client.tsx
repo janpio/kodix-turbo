@@ -31,7 +31,7 @@ export function EditWorkspaceUrlCardClient({
 
   const { mutate, isPending } = api.workspace.update.useMutation({
     onSuccess: (result) => {
-      const lastSegment = pathname.split("/").at(-1);
+      const lastSegment = pathname ? pathname.split("/").at(-1) : "";
       router.push(
         `/workspace/${result.url}/settings${
           lastSegment !== "settings" ? `/${lastSegment}` : ""

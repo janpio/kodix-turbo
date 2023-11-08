@@ -3,9 +3,7 @@ import { HiUserCircle } from "react-icons/hi";
 
 import type { User } from "@kdx/db";
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
+  AvatarWrapper,
   Command,
   CommandGroup,
   CommandInput,
@@ -41,18 +39,12 @@ export function AssigneePopover({
           children
         ) : user ? (
           <div>
-            <Avatar className="h-6 w-6">
-              <AvatarImage
-                src={user?.image ?? undefined}
-                alt={user?.name ? user.name + " avatar" : ""}
-              />
-              <AvatarFallback>
-                {user?.name
-                  ?.split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </AvatarFallback>
-            </Avatar>
+            <AvatarWrapper
+              className="h-6 w-6"
+              alt={user?.name ? user.name + " avatar" : ""}
+              src={user?.image ?? undefined}
+              fallback={user.name}
+            />
           </div>
         ) : (
           <div>
@@ -87,15 +79,12 @@ export function AssigneePopover({
                   }}
                   value={user.id}
                 >
-                  <Avatar className="mr-2 h-4 w-4">
-                    <AvatarImage
-                      src={user.image ?? ""}
-                      alt={user.image ?? "" + " avatar"}
-                    />
-                    <AvatarFallback>
-                      <HiUserCircle />
-                    </AvatarFallback>
-                  </Avatar>
+                  <AvatarWrapper
+                    className="mr-2 h-4 w-4"
+                    src={user.image ?? ""}
+                    alt={user.image ?? "" + " avatar"}
+                    fallback={<HiUserCircle className="mr-2 h-4 w-4" />}
+                  />
                   {user.name}
                 </CommandItem>
               ))}
