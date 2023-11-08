@@ -56,8 +56,21 @@ model Workspace {
   activeApps  App[]         @relation("AppWorkspace")
   Todo        Todo[]
   EventMaster EventMaster[]
+  Invitations Invitation[]
 
   workspaceConfigs AppWorkspaceConfig[] @relation("WorkspaceConfig")
+}
+
+model Invitation {
+  id          String    @id @default(cuid())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+  email       String
+  accepted    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([workspaceId])
 }
 
 model App {
