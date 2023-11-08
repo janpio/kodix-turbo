@@ -180,4 +180,43 @@ export const workspaceRouter = createTRPCRouter({
 
       return uninstalledApp;
     }),
+  inviteUser: protectedProcedure
+    .input(z.object({}))
+    .mutation(async ({ ctx, input }) => {
+      // const workspace = await ctx.prisma.workspace.findUnique({
+      //   where: {
+      //     id: ctx.session.user.activeWorkspaceId,
+      //   },
+      // });
+      // if (!workspace)
+      //   throw new TRPCError({
+      //     message: "No Workspace Found",
+      //     code: "NOT_FOUND",
+      //   });
+      // const user = await ctx.prisma.user.findUnique({
+      //   where: {
+      //     email: ctx.session.user.email,
+      //   },
+      // });
+      // if (!user)
+      //   throw new TRPCError({
+      //     message: "No User Found",
+      //     code: "NOT_FOUND",
+      //   });
+      // const invite = await ctx.prisma.invite.create({
+      //   data: {
+      //     workspace: {
+      //       connect: {
+      //         id: workspace.id,
+      //       },
+      //     },
+      //     user: {
+      //       connect: {
+      //         id: user.id,
+      //       },
+      //     },
+      //   },
+      // });
+      // return invite;
+    }),
 });
