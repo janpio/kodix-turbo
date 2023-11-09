@@ -55,11 +55,11 @@ jobs:
       - name: Generate Prisma Client
         run: pnpm turbo db:generate
 
-      - name: Upload schema
-        run: cd packages/api && pnpm trpc upload -vv && cd ../.. # optional: -vv for verbose output
-        env:
-          API_KEY: ${{ secrets.DRIFT_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Upload schema
+      #   run: cd packages/api && pnpm trpc upload -vv && cd ../.. # optional: -vv for verbose output
+      #   env:
+      #     API_KEY: ${{ secrets.DRIFT_API_KEY }}
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build, lint and type-check
         run: pnpm turbo build lint type-check --filter=\!@kdx/stays-ai --filter=\!@kdx/nextjs --filter=\!@kdx/kodix-care #TODO: REMOVE filters!!
