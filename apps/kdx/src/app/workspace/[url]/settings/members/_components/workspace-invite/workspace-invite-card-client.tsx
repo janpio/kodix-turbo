@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Link, Loader2, MinusCircle, PlusCircle } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 import {
   Button,
@@ -11,8 +12,8 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  cn,
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -26,13 +27,19 @@ import {
 
 import { api } from "~/trpc/react";
 
-export default function WorkspaceInviteCard() {
+export default function WorkspaceInviteCardClient({
+  invites,
+}: {
+  invites: { id: string; email: string }[];
+}) {
   const [email, setEmail] = useState("");
 
-  const { mutate, isPending } = api.workspace.inviteUser.useMutation({});
+  const { mutate, isPending } = api.workspace.inviteUser.useMutation();
 
   const [emails, setEmails] = useState([""]);
   const [parent] = useAutoAnimate();
+  const session = useSession();
+  if (!session.data) return null;
 
   return (
     <Card className="w-full text-left">
@@ -108,28 +115,44 @@ export default function WorkspaceInviteCard() {
         </div>
       </CardContent>
       <CardFooter className="flex justify-end border-t px-6 py-4">
-        <Button
-          disabled={isPending}
-          onClick={() => {
-            // const values = {
-            //   workspaceId,
-            //   workspaceUrl: email,
-            // };
-            // const parsed = updateWorkspaceSchema.safeParse(values);
-            // if (!parsed.success) {
-            //   return toast.error(parsed.error.errors[0]?.message);
-            // }
-            // mutate(values);
-          }}
-        >
-          {isPending ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Inviting
-            </>
-          ) : (
-            <>Invite</>
-          )}
-        </Button>
+        <Dialog>
+          <DialogTrigger>
+            <Button disabled={isPending}>
+              {isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Inviting
+                </>
+              ) : (
+                <>Invite</>
+              )}
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Invite to Workspace</DialogTitle>
+              <DialogDescription>
+                This action cannot be undone. This will permanently delete your
+                account and remove your data from our servers.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="flex flex-row">
+              <DialogClose asChild>
+                <Button variant={"outline"}>Cancel</Button>
+              </DialogClose>
+              <Button
+                className="mx-auto"
+                onClick={() => {
+                  mutate({
+                    workspaceId: session.data?.user.activeWorkspaceId,
+                    to: emails,
+                  });
+                }}
+              >
+                Confirm
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </CardFooter>
     </Card>
   );

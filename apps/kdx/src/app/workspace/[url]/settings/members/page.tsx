@@ -2,7 +2,7 @@ import { Suspense } from "react";
 
 import SettingsEditCardSkeleton from "../general/_components/edit-workspace-name-card-skeleton";
 import { EditWorkspaceMemberCard } from "./_components/edit-workspace-members/edit-workspace-members.table";
-import WorkspaceInviteCard from "./_components/workspace-invite-card";
+import WorkspaceInviteCard from "./_components/workspace-invite/workspace-invite-card";
 
 export default function Members({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

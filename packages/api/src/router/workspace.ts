@@ -188,13 +188,11 @@ export const workspaceRouter = createTRPCRouter({
         workspaceId: z.string().cuid(),
         to: z
           .string()
-          .or(z.string().array())
+          .email()
+          .or(z.string().email().array())
           .transform((value) => {
-            if (Array.isArray(value)) {
-              return value;
-            } else {
-              return [value];
-            }
+            if (Array.isArray(value)) return value;
+            else return [value];
           }),
       }),
     )
