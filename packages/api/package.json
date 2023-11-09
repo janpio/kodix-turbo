@@ -15,19 +15,21 @@
     "@kdx/db": "^0.1.0",
     "@react-email/button": "0.0.11",
     "@react-email/html": "0.0.6",
-    "@trpc/client": "next",
-    "@trpc/server": "next",
+    "@trpc/client": "^10.41.0",
+    "@trpc/server": "^10.41.0",
     "@upstash/ratelimit": "^0.4.4",
     "@upstash/redis": "^1.24.3",
     "moment": "^2.29.4",
     "resend": "^2.0.0",
     "rrule": "^2.7.2",
     "superjson": "1.9.1",
+    "trpc-openapi": "^1.2.0",
     "zod": "^3.22.2"
   },
   "devDependencies": {
     "@kdx/eslint-config": "^0.2.0",
     "eslint": "^8.49.0",
+    "trpc-tools": "^0.12.0",
     "typescript": "^5.2.2"
   },
   "eslintConfig": {
