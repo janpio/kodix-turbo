@@ -14,7 +14,6 @@ export const eventRouter = createTRPCRouter({
       z.object({
         dateStart: z.date(),
         dateEnd: z.date(),
-        banana: z.string().optional(),
       }),
     )
     .query(async ({ ctx, input }) => {
