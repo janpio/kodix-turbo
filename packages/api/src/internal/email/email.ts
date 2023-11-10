@@ -12,7 +12,7 @@ export default async function sendEmail({
   react: React.JSX.Element;
 }) {
   return await resend.emails.send({
-    from: "Acme <onboarding@resend.dev>",
+    from: "invitation@kodix.com.br",
     to,
     subject: subject,
     react: react,

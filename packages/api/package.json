@@ -13,8 +13,7 @@
   "dependencies": {
     "@kdx/auth": "^0.1.0",
     "@kdx/db": "^0.1.0",
-    "@react-email/button": "0.0.11",
-    "@react-email/html": "0.0.6",
+    "@react-email/components": "^0.0.11",
     "@trpc/client": "next",
     "@trpc/server": "next",
     "@upstash/ratelimit": "^0.4.4",

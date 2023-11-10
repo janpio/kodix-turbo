@@ -29,3 +29,24 @@ export const updateWorkspaceSchema = z.object({
     .transform((value) => value.toLowerCase())
     .optional(),
 });
+
+export const inviteUserSchema = z.object({
+  workspaceId: z.string().cuid(),
+  to: z
+    .string()
+    .email()
+    .min(1, { message: "At least one email is required in the 'to' field" })
+    .or(
+      z
+        .string()
+        .email()
+        .array()
+        .min(1, {
+          message: "At least one email is required in the 'to' field",
+        }),
+    )
+    .transform((value) => {
+      if (Array.isArray(value)) return value;
+      else return [value];
+    }),
+});

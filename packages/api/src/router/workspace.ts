@@ -3,8 +3,8 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import sendEmail from "../internal/email/email";
-import { WorkspaceInvite } from "../internal/email/templates/workspace-invite";
-import { updateWorkspaceSchema } from "../shared";
+import VercelInviteUserEmail from "../internal/email/templates/workspace-invite";
+import { inviteUserSchema, updateWorkspaceSchema } from "../shared";
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -183,19 +183,7 @@ export const workspaceRouter = createTRPCRouter({
       return uninstalledApp;
     }),
   inviteUser: protectedProcedure
-    .input(
-      z.object({
-        workspaceId: z.string().cuid(),
-        to: z
-          .string()
-          .email()
-          .or(z.string().email().array())
-          .transform((value) => {
-            if (Array.isArray(value)) return value;
-            else return [value];
-          }),
-      }),
-    )
+    .input(inviteUserSchema)
     //.use(enforceUserHasWorkspace) // TODO: make this a middleware
     .mutation(async ({ ctx, input }) => {
       const workspace = await ctx.prisma.workspace.findUniqueOrThrow({
@@ -211,13 +199,23 @@ export const workspaceRouter = createTRPCRouter({
 
       const result = await sendEmail({
         to: input.to,
-        subject: "You have been invited to join a workspace",
-        react: WorkspaceInvite(),
+        subject: "You have been invited to join a workspace on Kodix.com.br",
+        react: VercelInviteUserEmail({
+          username: "someone",
+          userImage: "string",
+          invitedByUsername: "string",
+          invitedByEmail: "string",
+          teamName: "string",
+          teamImage: "string",
+          inviteLink: "string",
+          inviteFromIp: "string",
+          inviteFromLocation: "string",
+        }),
       });
 
       if (result.error)
         throw new TRPCError({
-          message: result.error.message,
+          message: "Could not send email",
           code: "INTERNAL_SERVER_ERROR",
         });
 
