@@ -27,8 +27,10 @@ export const appsRouter = createTRPCRouter({
           ),
         };
       })
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .map(({ activeWorkspaces, ...rest }) => rest); // remove activeWorkspaces field
+      .map(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        ({ activeWorkspaces, devPartnerId, subscriptionCost, ...rest }) => rest,
+      ); // remove some fields
 
     return appsWithInstalled;
   }),
