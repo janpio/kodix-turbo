@@ -197,32 +197,36 @@ export const workspaceRouter = createTRPCRouter({
         },
       });
 
-      const result = await sendEmail({
-        to: input.to,
-        subject: "You have been invited to join a workspace on Kodix.com.br",
-        react: VercelInviteUserEmail({
-          username: "someone",
-          userImage: "string",
-          invitedByUsername: "string",
-          invitedByEmail: "string",
-          teamName: "string",
-          teamImage: "string",
-          inviteLink: "string",
-          inviteFromIp: "string",
-          inviteFromLocation: "string",
+      await Promise.all(
+        input.to.map(async (email) => {
+          const result = await sendEmail({
+            to: email,
+            subject:
+              "You have been invited to join a workspace on Kodix.com.br",
+            react: VercelInviteUserEmail({
+              username: "someone",
+              userImage: "string",
+              invitedByUsername: "string",
+              invitedByEmail: "string",
+              teamName: "string",
+              teamImage: "string",
+              inviteLink: "string",
+              inviteFromIp: "string",
+              inviteFromLocation: "string",
+            }),
+          });
+          if (result.error)
+            throw new TRPCError({
+              message: "Could not send email",
+              code: "INTERNAL_SERVER_ERROR",
+            });
         }),
-      });
-
-      if (result.error)
-        throw new TRPCError({
-          message: "Could not send email",
-          code: "INTERNAL_SERVER_ERROR",
-        });
+      );
 
       await ctx.prisma.invitation.createMany({
-        data: input.to.map((x) => ({
+        data: input.to.map((email) => ({
           workspaceId: workspace.id,
-          email: x,
+          email,
         })),
       });
     }),
