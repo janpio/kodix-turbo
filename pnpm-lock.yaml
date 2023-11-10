@@ -482,8 +482,8 @@ importers:
         specifier: ^8.49.0
         version: 8.49.0
       trpc-tools:
-        specifier: ^0.12.0
-        version: 0.12.0(@trpc/server@11.0.0-alpha-next-2023-11-09-13-31-03.98)(typanion@3.14.0)(typescript@5.2.2)(zod@3.22.2)
+        specifier: 0.12.1-canary.2dfb1delosg
+        version: 0.12.1-canary.2dfb1delosg(@trpc/server@11.0.0-alpha-next-2023-11-09-13-31-03.98)(typanion@3.14.0)(typescript@5.2.2)(zod@3.22.2)
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
@@ -9266,8 +9266,8 @@ packages:
       zod-to-json-schema: 3.21.4(zod@3.22.2)
     dev: false
 
-  /trpc-tools@0.12.0(@trpc/server@11.0.0-alpha-next-2023-11-09-13-31-03.98)(typanion@3.14.0)(typescript@5.2.2)(zod@3.22.2):
-    resolution: {integrity: sha512-Zn21JotBHNM64hgvljZ3yjPEsGfFMD86Oa+oGbYVaOLAW5NVVm80UM2H5w5cPh+z8VFSvY8DMflH7maBb/iexg==}
+  /trpc-tools@0.12.1-canary.2dfb1delosg(@trpc/server@11.0.0-alpha-next-2023-11-09-13-31-03.98)(typanion@3.14.0)(typescript@5.2.2)(zod@3.22.2):
+    resolution: {integrity: sha512-XLVrTeYmH0zGhDiuSBnfbuwCQN2jOqMh6hVZ5dO45eVm7gLPUk2yA/pxtnU/fOjro7YKhcQvLDhOc6F+diOiRg==}
     hasBin: true
     peerDependencies:
       '@trpc/server': ^10.0.0
