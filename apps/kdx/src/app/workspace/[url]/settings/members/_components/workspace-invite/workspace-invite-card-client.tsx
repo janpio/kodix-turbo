@@ -174,7 +174,7 @@ export default function WorkspaceInviteCardClient() {
                   onClick={() => {
                     const values = {
                       workspaceId: session.data?.user.activeWorkspaceId,
-                      to: emails,
+                      to: emails.filter((x) => Boolean(x)),
                     };
                     const parsed = inviteUserSchema.safeParse(values);
                     if (!parsed.success) {
