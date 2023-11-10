@@ -100,11 +100,6 @@ model DevPartner {
   App        App[]
 }
 
-model Technology {
-  id   String @id @default(cuid())
-  name String
-}
-
 enum Status {
   TODO
   INPROGRESS
