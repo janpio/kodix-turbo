@@ -1,11 +1,15 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "@kdx/tsconfig/base.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"]
     },
-    "plugins": [{ "name": "next" }],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "strict": true
   },
   "exclude": [],
@@ -15,6 +19,6 @@
     "*.ts",
     "*.mjs",
     ".next/types/**/*.ts",
-    "custom.d.ts" // custom.d.ts is a file I created to add custom types
+    "custom.d.ts"
   ]
 }
