@@ -11,7 +11,7 @@ import type { PrismaClient } from "@kdx/db";
 import { prisma } from "@kdx/db";
 
 import { env } from "./env.mjs";
-import { sendVerificationRequest } from "./send-verification-request";
+import { sendVerificationRequest } from "./src/email/send-verification-request";
 
 export type { Session } from "next-auth";
 

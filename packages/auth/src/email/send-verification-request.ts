@@ -1,6 +1,8 @@
 import type { SendVerificationRequestParams } from "next-auth/providers";
 import { Resend } from "resend";
 
+import VerificationRequestEmail from "./templates/verification-request";
+
 export const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendVerificationRequest = async (
@@ -11,7 +13,9 @@ export const sendVerificationRequest = async (
       from: "login@kodix.com.br",
       to: params.identifier,
       subject: "Kodix login verification",
-      html: `<a href="${params.url}">Here's your magic link. Click to sign in.</a>`,
+      react: VerificationRequestEmail({
+        magicLink: params.url,
+      }),
     });
   } catch (error) {
     console.log({ error });
