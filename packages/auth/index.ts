@@ -14,8 +14,6 @@ import { env } from "./env.mjs";
 
 export type { Session } from "next-auth";
 
-
-
 declare module "next-auth" {
   interface Session {
     user: {
@@ -30,11 +28,11 @@ const customUserInclude = {
   include: {
     activeWorkspace: {
       select: {
-        name: true
-      }
-    }
-  }
-}
+        name: true,
+      },
+    },
+  },
+};
 
 function CustomPrismaAdapter(p: PrismaClient): Adapter {
   return {
@@ -85,28 +83,36 @@ function CustomPrismaAdapter(p: PrismaClient): Adapter {
         where: {
           id,
         },
-        ...customUserInclude
+        ...customUserInclude,
       });
       if (!user) return null;
-      return {...user, activeWorkspaceName: user.activeWorkspace.name};
+      return { ...user, activeWorkspaceName: user.activeWorkspace.name };
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async getUserByEmail(email): Promise<any> {
-      const user = await p.user.findUnique({ where: { email }, ...customUserInclude })
-      if (!user) return null
-      return {...user, activeWorkspaceName: user.activeWorkspace.name}
+      const user = await p.user.findUnique({
+        where: { email },
+        ...customUserInclude,
+      });
+      if (!user) return null;
+      return { ...user, activeWorkspaceName: user.activeWorkspace.name };
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async getSessionAndUser(sessionToken): Promise<any> {
       const userAndSession = await p.session.findUnique({
         where: { sessionToken },
-        include: { user: {
-          ...customUserInclude
-        } },
-      })
-      if (!userAndSession) return null
-      const { user, ...session } = userAndSession
-      return { user: {...user, activeWorkspaceName: user.activeWorkspace.name}, session }
+        include: {
+          user: {
+            ...customUserInclude,
+          },
+        },
+      });
+      if (!userAndSession) return null;
+      const { user, ...session } = userAndSession;
+      return {
+        user: { ...user, activeWorkspaceName: user.activeWorkspace.name },
+        session,
+      };
     },
   };
 }
@@ -149,8 +155,12 @@ export const {
     session: ({ session, user }) => {
       session.user.id = user.id;
 
-      session.user.activeWorkspaceName = (user as typeof user & { activeWorkspaceName: string }).activeWorkspaceName;
-      session.user.activeWorkspaceId = (user as typeof user & { activeWorkspaceId: string }).activeWorkspaceId;
+      session.user.activeWorkspaceName = (
+        user as typeof user & { activeWorkspaceName: string }
+      ).activeWorkspaceName;
+      session.user.activeWorkspaceId = (
+        user as typeof user & { activeWorkspaceId: string }
+      ).activeWorkspaceId;
       return session;
     },
   },

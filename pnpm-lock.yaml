@@ -181,9 +181,9 @@ importers:
       eslint:
         specifier: ^8.53.0
         version: 8.53.0
-      postcss:
-        specifier: ^8.4.31
-        version: 8.4.31
+      prettier:
+        specifier: ^3.0.3
+        version: 3.0.3
       tailwindcss:
         specifier: ^3.3.5
         version: 3.3.5
@@ -269,9 +269,9 @@ importers:
       eslint:
         specifier: ^8.53.0
         version: 8.53.0
-      postcss:
-        specifier: ^8.4.31
-        version: 8.4.31
+      prettier:
+        specifier: ^3.0.3
+        version: 3.0.3
       tailwindcss:
         specifier: ^3.3.5
         version: 3.3.5
@@ -381,9 +381,9 @@ importers:
       eslint:
         specifier: ^8.53.0
         version: 8.53.0
-      postcss:
-        specifier: ^8.4.31
-        version: 8.4.31
+      prettier:
+        specifier: ^3.0.3
+        version: 3.0.3
       tailwindcss:
         specifier: ^3.3.5
         version: 3.3.5
