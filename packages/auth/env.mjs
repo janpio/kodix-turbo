@@ -16,11 +16,6 @@ export const env = createEnv({
     ),
     AUTH_GOOGLE_CLIENT_ID: z.string(),
     AUTH_GOOGLE_CLIENT_SECRET: z.string(),
-    AUTH_EMAIL_SERVER_USER: z.string(),
-    AUTH_EMAIL_SERVER_PASSWORD: z.string(),
-    AUTH_EMAIL_SERVER_HOST: z.string(),
-    AUTH_EMAIL_SERVER_PORT: z.string(),
-    AUTH_EMAIL_FROM: z.string(),
   },
   client: {},
   runtimeEnv: {
@@ -28,11 +23,6 @@ export const env = createEnv({
     AUTH_SECRET: process.env.AUTH_SECRET,
     AUTH_GOOGLE_CLIENT_ID: process.env.AUTH_GOOGLE_CLIENT_ID,
     AUTH_GOOGLE_CLIENT_SECRET: process.env.AUTH_GOOGLE_CLIENT_SECRET,
-    AUTH_EMAIL_SERVER_USER: process.env.AUTH_EMAIL_SERVER_USER,
-    AUTH_EMAIL_SERVER_PASSWORD: process.env.AUTH_EMAIL_SERVER_PASSWORD,
-    AUTH_EMAIL_SERVER_HOST: process.env.AUTH_EMAIL_SERVER_HOST,
-    AUTH_EMAIL_SERVER_PORT: process.env.AUTH_EMAIL_SERVER_PORT,
-    AUTH_EMAIL_FROM: process.env.AUTH_EMAIL_FROM,
   },
   skipValidation: !!process.env.CI || !!process.env.SKIP_ENV_VALIDATION,
 });

@@ -11,6 +11,7 @@ import type { PrismaClient } from "@kdx/db";
 import { prisma } from "@kdx/db";
 
 import { env } from "./env.mjs";
+import { sendVerificationRequest } from "./send-verification-request";
 
 export type { Session } from "next-auth";
 
@@ -134,21 +135,10 @@ export const {
       clientSecret: env.AUTH_GOOGLE_CLIENT_SECRET,
     }),
     EmailProvider({
-      server: {
-        host: env.AUTH_EMAIL_SERVER_HOST,
-        port: env.AUTH_EMAIL_SERVER_PORT,
-        auth: {
-          user: env.AUTH_EMAIL_SERVER_USER,
-          pass: env.AUTH_EMAIL_SERVER_PASSWORD,
-        },
-      },
-      from: env.AUTH_EMAIL_FROM,
-      type: "email",
-      sendVerificationRequest: () => {
-        throw new Error("Not implemented");
-      },
-      id: "",
-      name: "",
+      name: "email",
+      server: "",
+      from: "invitation@kodix.com.br",
+      sendVerificationRequest,
     }),
   ],
   callbacks: {
