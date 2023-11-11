@@ -47,10 +47,10 @@ export function TeamSwitcher({ className }: TeamSwitcherProps) {
 
   const [open, setOpen] = React.useState(false);
   const [showNewWorkspaceDialog, setShowNewWorkspaceDialog] =
-    React.useState(false);
-
+  React.useState(false);
   if (!session.data) return null;
   if (!data) return null;
+  console.log(session)
 
   return (
     <AddWorkspaceDialog
