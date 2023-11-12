@@ -197,6 +197,21 @@ export const workspaceRouter = createTRPCRouter({
         },
       });
 
+      const invitations = await ctx.prisma.invitation.findMany({
+        where: {
+          workspaceId: workspace.id,
+          email: {
+            in: input.to,
+          },
+        },
+      });
+
+      if (invitations[0])
+        throw new TRPCError({
+          message: `Invitation already sent to ${invitations[0].email}`,
+          code: "CONFLICT",
+        });
+
       await Promise.all(
         input.to.map(async (email) => {
           const result = await sendEmail({

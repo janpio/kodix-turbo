@@ -1,10 +1,10 @@
 //? Not a ShadCN file. I added this to simplify the fallback
 
 import React from "react";
-import * as AvatarPrimitive from "@radix-ui/react-avatar";
 
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 
+// eslint-disable-next-line react/display-name
 export const AvatarWrapper = React.forwardRef<
   React.ElementRef<typeof Avatar>,
   React.ComponentProps<typeof AvatarImage> & { fallback?: React.ReactNode }
@@ -25,4 +25,3 @@ export const AvatarWrapper = React.forwardRef<
     )}
   </Avatar>
 ));
-AvatarWrapper.displayName = AvatarPrimitive.Root.displayName;

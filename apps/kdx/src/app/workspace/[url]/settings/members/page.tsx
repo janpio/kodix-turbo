@@ -1,22 +1,15 @@
 import { Suspense } from "react";
 
 import SettingsEditCardSkeleton from "../general/_components/edit-workspace-name-card-skeleton";
-import { EditWorkspaceMemberCard } from "./_components/edit-workspace-members/edit-workspace-members.table";
-import WorkspaceInviteCard from "./_components/workspace-invite/workspace-invite-card";
+import { EditWSMembersAndInvitesCard } from "./_components/edit-workspace-members/edit-ws-members-and-invites-card";
+import WorkspaceInviteCard from "./_components/invite/workspace-invite-card";
 
-export default function Members({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  params,
-}: {
-  params: { url: string };
-}) {
+export default function Members() {
   return (
     <div className="mt-8 space-y-8 md:mt-0">
+      <WorkspaceInviteCard />
       <Suspense fallback={<SettingsEditCardSkeleton />}>
-        <WorkspaceInviteCard />
-      </Suspense>
-      <Suspense fallback={<SettingsEditCardSkeleton />}>
-        <EditWorkspaceMemberCard />
+        <EditWSMembersAndInvitesCard />
       </Suspense>
     </div>
   );

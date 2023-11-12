@@ -13,15 +13,12 @@ import {
   DropdownMenuTrigger,
 } from "@kdx/ui";
 
-const columnHelper = createColumnHelper<{
-  id: string;
-  email: string | null;
-  name: string | null;
-  image: string | null;
-}>();
+import type { Invite } from "../edit-ws-members-and-invites-card";
 
-export const columns = [
-  columnHelper.accessor("name", {
+const columnHelper = createColumnHelper<Invite>();
+
+export const inviteColumns = [
+  columnHelper.accessor("inviteEmail", {
     header: ({ table }) => (
       <div className="flex items-center space-x-8">
         <Checkbox
@@ -42,17 +39,13 @@ export const columns = [
           />
         </div>
         <div className="flex flex-col">
-          <AvatarWrapper
-            className="h-8 w-8"
-            src={info.cell.row.original.image ?? ""}
-            fallback={info.getValue()}
-          />
+          <AvatarWrapper className="h-8 w-8" fallback={info.getValue()} />
         </div>
         <div className="flex flex-col items-start">
-          <span className="font-bold">{info.cell.row.original.name}</span>
-          <span className="text-muted-foreground">
-            {info.cell.row.original.email}
+          <span className="font-bold">
+            {info.cell.row.original.inviteEmail}
           </span>
+          <span className="text-muted-foreground">{info.getValue()}</span>
         </div>
       </div>
     ),
@@ -73,8 +66,11 @@ export const columns = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem className="text-destructive">
-                Leave Workspace
+              <DropdownMenuItem
+                className="text-destructive"
+                onSelect={() => {}}
+              >
+                Remove
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
