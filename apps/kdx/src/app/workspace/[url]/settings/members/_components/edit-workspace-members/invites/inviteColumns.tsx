@@ -1,5 +1,6 @@
 "use client";
 
+import type { RowData } from "@tanstack/react-table";
 import { createColumnHelper } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
@@ -16,6 +17,13 @@ import {
 import type { Invite } from "../edit-ws-members-and-invites-card";
 
 const columnHelper = createColumnHelper<Invite>();
+
+declare module "@tanstack/react-table" {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface AsdMeta<TData extends RowData> {
+    hello: "world";
+  }
+}
 
 export const inviteColumns = [
   columnHelper.accessor("inviteEmail", {

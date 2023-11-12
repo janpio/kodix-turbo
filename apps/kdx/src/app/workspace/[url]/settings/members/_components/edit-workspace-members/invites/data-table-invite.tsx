@@ -32,6 +32,11 @@ export function DataTable<TData, TValue>({
     defaultColumn: {
       size: 1,
     },
+    meta: {
+      removeInvite: (id: string) => {
+        return id;
+      },
+    },
   });
 
   return (
