@@ -58,7 +58,8 @@
   "eslintConfig": {
     "root": true,
     "extends": [
-      "@kdx/eslint-config/base"
+      "@kdx/eslint-config/base",
+      "@kdx/eslint-config/react"
     ]
   },
   "prettier": "@kdx/prettier-config"
