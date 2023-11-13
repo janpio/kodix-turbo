@@ -16,7 +16,7 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   const session = await auth();
-  if (!session) return redirect("/signIn");
+  if (!session) return redirect("/signin");
   const searchedWs = await prisma.workspace.findFirst({
     where: {
       url: params.url,

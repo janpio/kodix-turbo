@@ -118,11 +118,11 @@ export async function UserNav() {
       {!!session && <UserProfileButton />}
       {!session && (
         <div className="mr-5 space-x-2">
-          <Link href="/signIn" className={buttonVariants({ variant: "ghost" })}>
+          <Link href="/signin" className={buttonVariants({ variant: "ghost" })}>
             Sign In
           </Link>
           <Link
-            href="/signIn"
+            href="/signin"
             className={buttonVariants({ variant: "default" })}
           >
             Sign Up

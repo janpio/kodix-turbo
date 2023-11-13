@@ -30,6 +30,7 @@
     "@trpc/react-query": "next",
     "@trpc/server": "next",
     "ai": "^2.2.22",
+    "cuid": "^3.0.0",
     "lucide-react": "^0.263.1",
     "next": "^14.0.2",
     "next-themes": "^0.2.1",

@@ -122,7 +122,7 @@ export function KodixApp({
           <div className="flex w-full flex-col">
             {!session ? (
               <Link
-                href="/signIn"
+                href="/signin"
                 className={buttonVariants({ variant: "default" })}
               >
                 Install

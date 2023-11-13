@@ -8,7 +8,7 @@ export default function HeaderFooterRemover({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const blockedPaths = ["/signIn"];
+  const blockedPaths = ["/signin"];
 
   if (blockedPaths.includes(pathname!)) {
     return null;

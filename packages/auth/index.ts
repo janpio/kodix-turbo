@@ -153,9 +153,16 @@ export const {
       ).activeWorkspaceId;
       return session;
     },
+    redirect({ url, baseUrl }) {
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
+    },
   },
   pages: {
-    signIn: "/signIn",
+    signIn: "/signin",
     //signOut: '/auth/signout',
     //error: '/auth/error', // Error code passed in query string as ?error=
     //verifyRequest: '/auth/verify-request', // (used for check email message)

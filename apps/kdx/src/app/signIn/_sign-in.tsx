@@ -16,10 +16,9 @@ import {
   Label,
 } from "@kdx/ui";
 
-export function _SignIn() {
+export function _SignIn({ callbackUrl = "/" }: { callbackUrl?: string }) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-
   return (
     <section>
       <div className="mx-auto flex h-screen flex-col items-center justify-center px-6 py-8 lg:py-0">
@@ -52,7 +51,10 @@ export function _SignIn() {
                     <Button
                       variant="default"
                       onClick={() => {
-                        void signIn("email", { email, callbackUrl: "/" });
+                        void signIn("email", {
+                          email,
+                          callbackUrl,
+                        });
                         setLoading(true);
                       }}
                       className="mt-4"
@@ -79,7 +81,9 @@ export function _SignIn() {
                     <Button
                       variant="outline"
                       onClick={() => {
-                        void signIn("google");
+                        void signIn("google", {
+                          callbackUrl,
+                        });
                         setLoading(true);
                       }}
                       disabled={loading}

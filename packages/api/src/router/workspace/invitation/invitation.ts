@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import cuid from "cuid";
 import { z } from "zod";
 
 import sendEmail from "../../../internal/email/email";
@@ -33,6 +34,7 @@ export const invitationRouter = createTRPCRouter({
           },
         },
         select: {
+          name: true,
           id: true,
           users: {
             select: {
@@ -65,22 +67,37 @@ export const invitationRouter = createTRPCRouter({
           code: "CONFLICT",
         });
 
+      const invitations = input.to.map((email) => ({
+        id: cuid(),
+        workspaceId: workspace.id,
+        email,
+      }));
+      await ctx.prisma.invitation.createMany({
+        data: invitations,
+      });
+
+      const getBaseUrl = () => {
+        if (typeof window !== "undefined") return "";
+        if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+        return `http://localhost:${process.env.PORT ?? 3000}`;
+      }; //TODO: Create one source of truth for all of KDX server packages ?
+
       await Promise.all(
-        input.to.map(async (email) => {
+        invitations.map(async (invite) => {
           const result = await sendEmail({
-            to: email,
+            to: invite.email,
             subject:
-              "You have been invited to join a workspace on Kodix.com.br",
+              "You have been invited to join a workspace on kodix.com.br",
             react: VercelInviteUserEmail({
               username: "someone",
-              userImage: "string",
-              invitedByUsername: "string",
-              invitedByEmail: "string",
-              teamName: "string",
-              teamImage: "string",
-              inviteLink: "string",
+              userImage: ctx.session.user.image ?? "",
+              invitedByUsername: ctx.session.user.name ?? "",
+              invitedByEmail: ctx.session.user.email ?? "",
+              teamName: workspace.name,
+              teamImage: `${getBaseUrl()}/api/avatar/${workspace.name}`,
+              inviteLink: `${getBaseUrl()}/workspace/invite/${invite.id}`,
               inviteFromIp: "string",
-              inviteFromLocation: "string",
+              inviteFromLocation: "Sao paulo",
             }),
           });
           if (result.error)
@@ -90,14 +107,63 @@ export const invitationRouter = createTRPCRouter({
             });
         }),
       );
-
-      await ctx.prisma.invitation.createMany({
-        data: input.to.map((email) => ({
-          workspaceId: workspace.id,
-          email,
-        })),
-      });
     }),
+  accept: protectedProcedure
+    .input(
+      z.object({
+        invitationId: z.string().cuid(),
+      }),
+    )
+    //.use(enforceUserHasWorkspace) // TODO: make this a middleware
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.session.user.email)
+        throw new TRPCError({
+          message: "Not implemented",
+          code: "NOT_IMPLEMENTED",
+        }); //TODO: WTF do I do about non existing emails? ??
+
+      const invitation = await ctx.prisma.invitation.findUnique({
+        where: {
+          id: input.invitationId,
+          email: ctx.session.user.email,
+        },
+        select: {
+          workspace: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+
+      if (!invitation)
+        throw new TRPCError({
+          message: "No Invitation Found",
+          code: "NOT_FOUND",
+        });
+
+      await ctx.prisma.$transaction([
+        ctx.prisma.user.update({
+          where: {
+            id: ctx.session.user.id,
+          },
+          data: {
+            workspaces: {
+              connect: {
+                id: invitation.workspace.id,
+              },
+            },
+            activeWorkspaceId: invitation.workspace.id,
+          },
+        }),
+        ctx.prisma.invitation.delete({
+          where: {
+            id: input.invitationId,
+          },
+        }),
+      ]);
+    }),
+
   delete: protectedProcedure
     .input(
       z.object({
