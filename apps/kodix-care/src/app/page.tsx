@@ -3,6 +3,7 @@ import { api } from "@/trpc/server";
 
 export default async function Page() {
   const apps = await api.app.getAll.query();
+
   return (
     <div>
       <Link href="/loggedOrNot">Logged or not?</Link>

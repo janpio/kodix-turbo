@@ -10,6 +10,7 @@ export default async function SignIn({
   searchParams?: Record<string, string | undefined>;
 }) {
   const session = await auth();
-  if (session) return redirect("/");
+  if (session) return redirect(searchParams?.callbackUrl ?? "/");
+
   return <_SignIn callbackUrl={searchParams?.callbackUrl} />;
 }

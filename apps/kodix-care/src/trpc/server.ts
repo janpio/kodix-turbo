@@ -7,7 +7,7 @@ import {
 
 import type { AppRouter } from "@kdx/api";
 
-import { getBaseUrl, transformer } from "./shared";
+import { getBaseKdxUrl, transformer } from "./shared";
 
 export const api = createTRPCProxyClient<AppRouter>({
   transformer,
@@ -18,7 +18,7 @@ export const api = createTRPCProxyClient<AppRouter>({
         (op.direction === "down" && op.result instanceof Error),
     }),
     unstable_httpBatchStreamLink({
-      url: `${getBaseUrl()}/api/trpc`,
+      url: `${getBaseKdxUrl()}/api/trpc`,
       headers() {
         return {
           cookie: cookies().toString(),

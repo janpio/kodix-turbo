@@ -4,9 +4,11 @@ import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { ThemeProvider } from "next-themes";
 
+import { getBaseKdxUrl } from "../trpc/shared";
+
 export function signIn() {
   window.open(
-    "http://localhost:3000/api/auth/signin/google?" +
+    `${getBaseKdxUrl()}/api/auth/signin/google?` +
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       new URLSearchParams({
         callbackUrl: "http://localhost:3000/auth-redirect",
