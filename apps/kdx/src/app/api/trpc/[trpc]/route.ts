@@ -5,7 +5,7 @@ import { auth } from "@kdx/auth";
 
 import { CorsOptions, setCorsHeaders } from "../../_enableCors";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 
 const handler = auth(async (req) => {
   const response = await fetchRequestHandler({
