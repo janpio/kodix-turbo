@@ -1,12 +1,12 @@
 "use client";
 
-import type { ColumnDef } from "@tanstack/react-table";
 import {
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
+import type { RouterOutputs } from "@kdx/api";
 import {
   Table,
   TableBody,
@@ -14,29 +14,34 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  toast,
 } from "@kdx/ui";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-}
+import { api } from "~/trpc/react";
+import { inviteColumns } from "./inviteColumns";
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
+export function InviteDataTable({
+  initialInvites,
+}: {
+  initialInvites: RouterOutputs["workspace"]["invitation"]["getAll"];
+}) {
+  const { data } = api.workspace.invitation.getAll.useQuery(undefined, {
+    initialData: initialInvites,
+  });
+
+  const utils = api.useUtils();
+  const { mutate } = api.workspace.invitation.delete.useMutation({
+    onSuccess: () => {
+      toast.success("Invite deleted.");
+      void utils.workspace.invitation.getAll.invalidate();
+    },
+  });
+
+  const columns = inviteColumns({ mutate });
   const table = useReactTable({
     data,
-    columns,
+    columns: columns,
     getCoreRowModel: getCoreRowModel(),
-    defaultColumn: {
-      size: 1,
-    },
-    meta: {
-      removeInvite: (id: string) => {
-        return id;
-      },
-    },
   });
 
   return (
@@ -77,7 +82,7 @@ export function DataTable<TData, TValue>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+                No invitations right now
               </TableCell>
             </TableRow>
           )}

@@ -5,7 +5,7 @@ import { postRouter } from "./router/post";
 import { testRouter } from "./router/test";
 import { todoRouter } from "./router/todo";
 import { userRouter } from "./router/user";
-import { workspaceRouter } from "./router/workspace";
+import { workspaceRouter } from "./router/workspace/workspace";
 import { createTRPCRouter } from "./trpc";
 
 export const appRouter = createTRPCRouter({

@@ -1,9 +1,7 @@
-"use client";
-
-import type { RowData } from "@tanstack/react-table";
 import { createColumnHelper } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
+import type { RouterInputs, RouterOutputs } from "@kdx/api";
 import {
   AvatarWrapper,
   Button,
@@ -14,29 +12,31 @@ import {
   DropdownMenuTrigger,
 } from "@kdx/ui";
 
-import type { Invite } from "../edit-ws-members-and-invites-card";
+const columnHelper =
+  createColumnHelper<
+    RouterOutputs["workspace"]["invitation"]["getAll"][number]
+  >();
 
-const columnHelper = createColumnHelper<Invite>();
-
-declare module "@tanstack/react-table" {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface AsdMeta<TData extends RowData> {
-    hello: "world";
-  }
-}
-
-export const inviteColumns = [
+export const inviteColumns = ({
+  mutate,
+}: {
+  mutate: (input: RouterInputs["workspace"]["invitation"]["delete"]) => void;
+}) => [
   columnHelper.accessor("inviteEmail", {
-    header: ({ table }) => (
-      <div className="flex items-center space-x-8">
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-        <div className="text-muted-foreground">Select all</div>
-      </div>
-    ),
+    header: (info) => {
+      return (
+        <div className="flex items-center space-x-8">
+          <Checkbox
+            checked={info.table.getIsAllPageRowsSelected()}
+            onCheckedChange={(value) =>
+              info.table.toggleAllPageRowsSelected(!!value)
+            }
+            aria-label="Select all"
+          />
+          <div className="text-muted-foreground">Select all</div>
+        </div>
+      );
+    },
     cell: (info) => (
       <div className="flex flex-row space-x-8">
         <div className="flex flex-col items-center justify-center">
@@ -61,9 +61,9 @@ export const inviteColumns = [
     enableHiding: false,
     enableResizing: true,
   }),
-  {
-    id: "actions",
-    cell: () => {
+  columnHelper.accessor("inviteId", {
+    header: () => null,
+    cell: (info) => {
       return (
         <div className="flex justify-end">
           <DropdownMenu>
@@ -76,7 +76,11 @@ export const inviteColumns = [
             <DropdownMenuContent align="end">
               <DropdownMenuItem
                 className="text-destructive"
-                onSelect={() => {}}
+                onSelect={() => {
+                  mutate({
+                    invitationId: info.row.original.inviteId,
+                  });
+                }}
               >
                 Remove
               </DropdownMenuItem>
@@ -85,5 +89,5 @@ export const inviteColumns = [
         </div>
       );
     },
-  },
+  }),
 ];

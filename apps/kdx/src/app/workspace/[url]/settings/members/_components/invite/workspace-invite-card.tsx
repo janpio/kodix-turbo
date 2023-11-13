@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { MinusCircle, PlusCircle } from "lucide-react";
+import { Loader2, MinusCircle, PlusCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 import { inviteUserSchema } from "@kdx/api/src/shared";
@@ -30,7 +30,9 @@ import {
 import { api } from "~/trpc/react";
 
 export default function WorkspaceInviteCardClient() {
-  const { mutate } = api.workspace.inviteUser.useMutation({
+  const utils = api.useUtils();
+  const [loading, setLoading] = useState(false);
+  const { mutate } = api.workspace.invitation.invite.useMutation({
     onError: (error) => {
       const errorMessage = error.data?.zodError?.fieldErrors;
       if (errorMessage?.workspaceUrl)
@@ -39,6 +41,15 @@ export default function WorkspaceInviteCardClient() {
       toast.error(
         error.message || "Oops, something went wrong. Please try again later",
       );
+    },
+    onSuccess: () => {
+      toast.success(`Invitation(s) sent!`);
+      setOpen(false);
+      setEmails([""]);
+      void utils.workspace.invitation.getAll.invalidate();
+    },
+    onSettled: () => {
+      setLoading(false);
     },
   });
 
@@ -165,13 +176,19 @@ export default function WorkspaceInviteCardClient() {
               </div>
               <DialogFooter className="flex flex-row">
                 <DialogClose asChild>
-                  <Button className="mr-auto" variant={"outline"}>
+                  <Button
+                    className="mr-auto"
+                    variant={"outline"}
+                    disabled={loading}
+                  >
                     Cancel
                   </Button>
                 </DialogClose>
                 <Button
                   className="mx-auto"
+                  disabled={loading}
                   onClick={() => {
+                    setLoading(true);
                     const values = {
                       workspaceId: session.data?.user.activeWorkspaceId,
                       to: emails.filter((x) => Boolean(x)),
@@ -183,7 +200,13 @@ export default function WorkspaceInviteCardClient() {
                     mutate(values);
                   }}
                 >
-                  Confirm
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sending
+                    </>
+                  ) : (
+                    "Confirm"
+                  )}
                 </Button>
               </DialogFooter>
             </DialogContent>

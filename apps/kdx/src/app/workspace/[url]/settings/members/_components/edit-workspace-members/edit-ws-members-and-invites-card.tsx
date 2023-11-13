@@ -2,8 +2,9 @@ import { auth } from "@kdx/auth";
 import { prisma } from "@kdx/db";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@kdx/ui";
 
-import { inviteColumns } from "./invites/inviteColumns";
-import { DataTable } from "./members/data-table-members";
+import { api } from "~/trpc/server";
+import { InviteDataTable } from "./invites/data-table-invite";
+import { DataTableMembers } from "./members/data-table-members";
 import { memberColumns } from "./members/memberColumns";
 
 export interface Member {
@@ -11,11 +12,6 @@ export interface Member {
   name: string | null;
   email: string | null;
   image: string | null;
-}
-
-export interface Invite {
-  inviteId: string;
-  inviteEmail: string;
 }
 
 export async function EditWSMembersAndInvitesCard() {
@@ -39,22 +35,7 @@ export async function EditWSMembersAndInvitesCard() {
   });
   const members = workspace.users satisfies Member[];
 
-  const _invites = await prisma.invitation.findMany({
-    where: {
-      workspaceId: session.user.activeWorkspaceId,
-    },
-    select: {
-      id: true,
-      email: true,
-    },
-  });
-
-  const invites = _invites.map((invite) => {
-    return {
-      inviteId: invite.id,
-      inviteEmail: invite.email,
-    };
-  }) satisfies Invite[];
+  const initialInvites = await api.workspace.invitation.getAll.query();
 
   return (
     <Tabs defaultValue="members">
@@ -63,10 +44,10 @@ export async function EditWSMembersAndInvitesCard() {
         <TabsTrigger value="invites">Invites</TabsTrigger>
       </TabsList>
       <TabsContent value="members">
-        <DataTable columns={memberColumns} data={members} />
+        <DataTableMembers columns={memberColumns} data={members} />
       </TabsContent>
       <TabsContent value="invites">
-        <DataTable columns={inviteColumns} data={invites} />
+        <InviteDataTable initialInvites={initialInvites} />
       </TabsContent>
     </Tabs>
   );

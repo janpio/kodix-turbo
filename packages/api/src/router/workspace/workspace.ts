@@ -2,14 +2,13 @@ import crypto from "crypto";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import sendEmail from "../internal/email/email";
-import VercelInviteUserEmail from "../internal/email/templates/workspace-invite";
-import { inviteUserSchema, updateWorkspaceSchema } from "../shared";
+import { updateWorkspaceSchema } from "../../shared";
 import {
   createTRPCRouter,
   protectedProcedure,
   userAndWsLimitedProcedure,
-} from "../trpc";
+} from "../../trpc";
+import { invitationRouter } from "./invitation/invitation";
 
 export const workspaceRouter = createTRPCRouter({
   getAllForLoggedUser: protectedProcedure.query(async ({ ctx }) => {
@@ -182,67 +181,5 @@ export const workspaceRouter = createTRPCRouter({
 
       return uninstalledApp;
     }),
-  inviteUser: protectedProcedure
-    .input(inviteUserSchema)
-    //.use(enforceUserHasWorkspace) // TODO: make this a middleware
-    .mutation(async ({ ctx, input }) => {
-      const workspace = await ctx.prisma.workspace.findUniqueOrThrow({
-        where: {
-          id: input.workspaceId,
-          users: {
-            some: {
-              id: ctx.session.user.id,
-            },
-          },
-        },
-      });
-
-      const invitations = await ctx.prisma.invitation.findMany({
-        where: {
-          workspaceId: workspace.id,
-          email: {
-            in: input.to,
-          },
-        },
-      });
-
-      if (invitations[0])
-        throw new TRPCError({
-          message: `Invitation already sent to ${invitations[0].email}`,
-          code: "CONFLICT",
-        });
-
-      await Promise.all(
-        input.to.map(async (email) => {
-          const result = await sendEmail({
-            to: email,
-            subject:
-              "You have been invited to join a workspace on Kodix.com.br",
-            react: VercelInviteUserEmail({
-              username: "someone",
-              userImage: "string",
-              invitedByUsername: "string",
-              invitedByEmail: "string",
-              teamName: "string",
-              teamImage: "string",
-              inviteLink: "string",
-              inviteFromIp: "string",
-              inviteFromLocation: "string",
-            }),
-          });
-          if (result.error)
-            throw new TRPCError({
-              message: "Could not send email",
-              code: "INTERNAL_SERVER_ERROR",
-            });
-        }),
-      );
-
-      await ctx.prisma.invitation.createMany({
-        data: input.to.map((email) => ({
-          workspaceId: workspace.id,
-          email,
-        })),
-      });
-    }),
+  invitation: invitationRouter,
 });
