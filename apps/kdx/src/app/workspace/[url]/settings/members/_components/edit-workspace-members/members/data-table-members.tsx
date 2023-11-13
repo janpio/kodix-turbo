@@ -33,7 +33,15 @@ export function DataTableMembers({
   const { mutate } = api.workspace.removeUser.useMutation({
     onSuccess: () => {
       toast("User removed from workspace");
-      void utils.workspace.invitation.getAll.invalidate();
+      void utils.workspace.getAllUsers.invalidate();
+    },
+    onError: (error) => {
+      const errorMessage = error.data?.zodError?.fieldErrors;
+      if (errorMessage?.workspaceName)
+        return toast.error(errorMessage?.workspaceName[0]);
+      toast.error(
+        error.message || "Oops, something went wrong. Please try again later",
+      );
     },
   });
 
