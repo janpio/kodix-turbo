@@ -1,12 +1,12 @@
 "use client";
 
-import type { ColumnDef } from "@tanstack/react-table";
 import {
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
+import type { RouterOutputs } from "@kdx/api";
 import {
   Table,
   TableBody,
@@ -14,17 +14,30 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  toast,
 } from "@kdx/ui";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-}
+import { api } from "~/trpc/react";
+import { memberColumns } from "./memberColumns";
 
-export function DataTableMembers<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
+export function DataTableMembers({
+  initialUsers,
+}: {
+  initialUsers: RouterOutputs["workspace"]["getAllUsers"];
+}) {
+  const { data } = api.workspace.getAllUsers.useQuery(undefined, {
+    initialData: initialUsers,
+  });
+
+  const utils = api.useUtils();
+  const { mutate } = api.workspace.removeUser.useMutation({
+    onSuccess: () => {
+      toast("User removed from workspace");
+      void utils.workspace.invitation.getAll.invalidate();
+    },
+  });
+
+  const columns = memberColumns({ mutate });
   const table = useReactTable({
     data,
     columns,

@@ -1,8 +1,8 @@
-"use client";
-
 import { createColumnHelper } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
+import { useSession } from "next-auth/react";
 
+import type { RouterInputs, RouterOutputs } from "@kdx/api";
 import {
   AvatarWrapper,
   Button,
@@ -13,11 +13,14 @@ import {
   DropdownMenuTrigger,
 } from "@kdx/ui";
 
-import type { Member } from "../edit-ws-members-and-invites-card";
+const columnHelper =
+  createColumnHelper<RouterOutputs["workspace"]["getAllUsers"][number]>();
 
-const columnHelper = createColumnHelper<Member>();
-
-export const memberColumns = [
+export const memberColumns = ({
+  mutate,
+}: {
+  mutate: (input: RouterInputs["workspace"]["removeUser"]) => void;
+}) => [
   columnHelper.accessor("name", {
     header: ({ table }) => (
       <div className="flex items-center space-x-8">
@@ -57,9 +60,12 @@ export const memberColumns = [
     enableHiding: false,
     enableResizing: true,
   }),
-  {
+  columnHelper.display({
     id: "actions",
-    cell: () => {
+    cell: function Cell(info) {
+      const session = useSession();
+      if (!session.data) return null;
+
       return (
         <div className="flex justify-end">
           <DropdownMenu>
@@ -70,13 +76,23 @@ export const memberColumns = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem className="text-destructive">
-                Leave Workspace
+              <DropdownMenuItem
+                className="text-destructive"
+                onSelect={() => {
+                  mutate({
+                    workspaceId: session.data.user.activeWorkspaceId,
+                    userId: session.data.user.id,
+                  });
+                }}
+              >
+                {info.row.original.id === session.data.user.id
+                  ? "Leave"
+                  : "Remove"}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       );
     },
-  },
+  }),
 ];

@@ -1,11 +1,9 @@
 import { auth } from "@kdx/auth";
-import { prisma } from "@kdx/db";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@kdx/ui";
 
 import { api } from "~/trpc/server";
 import { InviteDataTable } from "./invites/data-table-invite";
 import { DataTableMembers } from "./members/data-table-members";
-import { memberColumns } from "./members/memberColumns";
 
 export interface Member {
   id: string;
@@ -17,24 +15,8 @@ export interface Member {
 export async function EditWSMembersAndInvitesCard() {
   const session = await auth();
   if (!session) return null;
-  const workspace = await prisma.workspace.findUniqueOrThrow({
-    where: {
-      id: session.user.activeWorkspaceId,
-    },
-    select: {
-      id: true,
-      users: {
-        select: {
-          id: true,
-          email: true,
-          name: true,
-          image: true,
-        },
-      },
-    },
-  });
-  const members = workspace.users satisfies Member[];
 
+  const users = await api.workspace.getAllUsers.query();
   const initialInvites = await api.workspace.invitation.getAll.query();
 
   return (
@@ -44,7 +26,7 @@ export async function EditWSMembersAndInvitesCard() {
         <TabsTrigger value="invites">Invites</TabsTrigger>
       </TabsList>
       <TabsContent value="members">
-        <DataTableMembers columns={memberColumns} data={members} />
+        <DataTableMembers initialUsers={users} />
       </TabsContent>
       <TabsContent value="invites">
         <InviteDataTable initialInvites={initialInvites} />

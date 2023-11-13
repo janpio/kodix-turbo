@@ -2,6 +2,8 @@ import crypto from "crypto";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import { prisma } from "@kdx/db";
+
 import { updateWorkspaceSchema } from "../../shared";
 import {
   createTRPCRouter,
@@ -182,4 +184,64 @@ export const workspaceRouter = createTRPCRouter({
       return uninstalledApp;
     }),
   invitation: invitationRouter,
+  removeUser: protectedProcedure
+    .input(
+      z.object({
+        workspaceId: z.string().cuid(),
+        userId: z.string().cuid(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      //TODO: Implemente role based access control
+      const otherWorkspace = await ctx.prisma.workspace.findFirst({
+        where: {
+          id: {
+            not: input.workspaceId,
+          },
+          users: {
+            some: {
+              id: input.userId,
+            },
+          },
+        },
+      });
+
+      if (!otherWorkspace)
+        throw new TRPCError({
+          message:
+            "The user needs to have at least one workspace. Please create another workspace before removing this user",
+          code: "BAD_REQUEST",
+        });
+
+      await ctx.prisma.user.update({
+        where: {
+          id: input.userId,
+        },
+        data: {
+          workspaces: {
+            disconnect: {
+              id: input.workspaceId,
+            },
+          },
+          activeWorkspaceId: otherWorkspace.id,
+        },
+      });
+    }),
+  getAllUsers: protectedProcedure.query(async ({ ctx }) => {
+    return await prisma.user.findMany({
+      where: {
+        workspaces: {
+          some: {
+            id: ctx.session.user.activeWorkspaceId,
+          },
+        },
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        image: true,
+      },
+    });
+  }),
 });
