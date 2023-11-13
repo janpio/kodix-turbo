@@ -1,8 +1,8 @@
-import { PrismaClient } from "@kdx/db";
-
-const prisma = new PrismaClient();
+import { prisma } from "..";
 
 (async () => {
+  console.log("Seeding...");
+
   const kdxPartnerId = "clh9tiqsj000835711pg3sskn";
   await prisma.devPartner.upsert({
     where: {
@@ -18,7 +18,7 @@ const prisma = new PrismaClient();
 
   const apps = [
     {
-      id: "clj2117860007skypdpzj0k1i",
+      id: "clj2117860007skypdpzj0k1u",
       name: "Todo",
       description: "Todo app",
       subscriptionCost: 0,

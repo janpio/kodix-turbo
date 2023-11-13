@@ -10,8 +10,7 @@
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "start": "pnpm with-env next start --port 3000",
     "typecheck": "tsc --noEmit",
-    "with-env": "dotenv -e ../../.env --",
-    "setupLocalDB": "pnpm dlx tsx ./src/z-scripts/setupLocalDB.ts"
+    "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
     "@formkit/auto-animate": "^0.8.1",

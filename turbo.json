@@ -40,6 +40,9 @@
       "inputs": ["prisma/schema.prisma"],
       "cache": false
     },
+    "db:seed": {
+      "inputs": ["seed/seed.ts"]
+    },
     "clean": {
       "cache": false
     },
