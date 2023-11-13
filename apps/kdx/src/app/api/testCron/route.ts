@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
-export const runtime = "edge";
+import { prisma } from "@kdx/db";
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
@@ -11,6 +11,13 @@ const ratelimit = new Ratelimit({
 });
 export async function GET() {
   await ratelimit.limit(`Cron Job fired at ${new Date().toString()}`);
+
+  await prisma.post.create({
+    data: {
+      content: "Cron Job fired at " + new Date().toString(),
+      title: "Cron Job",
+    },
+  });
 
   return new NextResponse(null, {
     status: 200,
