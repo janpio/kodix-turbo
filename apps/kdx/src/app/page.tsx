@@ -5,7 +5,7 @@ import { auth } from "@kdx/auth";
 
 import { KodixApp } from "~/app/_components/app/kodix-app";
 import { api } from "~/trpc/server";
-import { GradientHero } from "./gradient-hero";
+import { GradientHero } from "./_components/gradient-hero";
 
 export default async function Home() {
   const session = await auth();
