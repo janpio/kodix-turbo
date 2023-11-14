@@ -155,7 +155,9 @@ export default function WorkspaceInviteCardClient({
         </CardContent>
         <CardFooter className="flex justify-end border-t px-6 py-4">
           <Dialog onOpenChange={setOpen} open={open}>
-            <Button type="submit">Invite</Button>
+            <Button type="submit" disabled={!emails.some((x) => x.length)}>
+              Invite
+            </Button>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Invite to Workspace</DialogTitle>

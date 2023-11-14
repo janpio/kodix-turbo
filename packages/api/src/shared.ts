@@ -1,4 +1,4 @@
-//? Note: anything in this file must be shared between the api and the client
+//? Note: anything exported in this file must be something that is safe to be shared between the client and the server
 
 import { z } from "zod";
 
