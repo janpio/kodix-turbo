@@ -75,6 +75,9 @@ importers:
       '@kdx/db':
         specifier: workspace:^0.1.0
         version: link:../../packages/db
+      '@kdx/shared':
+        specifier: workspace:^0.1.0
+        version: link:../../packages/shared
       '@kdx/ui':
         specifier: workspace:^0.1.0
         version: link:../../packages/ui
@@ -196,6 +199,9 @@ importers:
 
   apps/kodix-care:
     dependencies:
+      '@kdx/shared':
+        specifier: workspace:^
+        version: link:../../packages/shared
       '@kdx/ui':
         specifier: workspace:^0.1.0
         version: link:../../packages/ui
@@ -284,6 +290,9 @@ importers:
 
   apps/stays-ai:
     dependencies:
+      '@kdx/shared':
+        specifier: workspace:^
+        version: link:../../packages/shared
       '@kdx/ui':
         specifier: workspace:^0.1.0
         version: link:../../packages/ui
@@ -402,6 +411,9 @@ importers:
       '@kdx/db':
         specifier: workspace:^0.1.0
         version: link:../db
+      '@kdx/shared':
+        specifier: workspace:^0.1.0
+        version: link:../shared
       '@paralleldrive/cuid2':
         specifier: ^2.2.2
         version: 2.2.2
@@ -558,6 +570,28 @@ importers:
       prisma:
         specifier: ^5.6.0
         version: 5.6.0
+      typescript:
+        specifier: ^5.2.2
+        version: 5.2.2
+
+  packages/shared:
+    dependencies:
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
+    devDependencies:
+      '@kdx/eslint-config':
+        specifier: workspace:^0.2.0
+        version: link:../../tooling/eslint
+      '@kdx/prettier-config':
+        specifier: workspace:^0.1.0
+        version: link:../../tooling/prettier
+      '@kdx/tsconfig':
+        specifier: workspace:^0.1.0
+        version: link:../../tooling/typescript
+      eslint:
+        specifier: ^8.53.0
+        version: 8.53.0
       typescript:
         specifier: ^5.2.2
         version: 5.2.2

@@ -13,6 +13,7 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
+    "@kdx/shared": "workspace:^0.1.0",
     "@kdx/ui": "workspace:^0.1.0",
     "@svgr/webpack": "^8.1.0",
     "@t3-oss/env-nextjs": "^0.6.1",

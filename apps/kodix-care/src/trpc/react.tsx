@@ -11,8 +11,9 @@ import {
 } from "@trpc/react-query";
 
 import type { AppRouter } from "@kdx/api";
+import { getBaseKdxUrl } from "@kdx/shared";
 
-import { getBaseKdxUrl, transformer } from "./shared";
+import { transformer } from "./shared";
 
 export const api = createTRPCReact<AppRouter>();
 

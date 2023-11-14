@@ -2,6 +2,8 @@ import { TRPCError } from "@trpc/server";
 import cuid from "cuid";
 import { z } from "zod";
 
+import { getBaseUrl } from "@kdx/shared";
+
 import sendEmail from "../../../internal/email/email";
 import VercelInviteUserEmail from "../../../internal/email/templates/workspace-invite";
 import { inviteUserSchema } from "../../../shared";
@@ -75,12 +77,6 @@ export const invitationRouter = createTRPCRouter({
       await ctx.prisma.invitation.createMany({
         data: invitations,
       });
-
-      const getBaseUrl = () => {
-        if (typeof window !== "undefined") return "";
-        if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-        return `http://localhost:${process.env.PORT ?? 3000}`;
-      }; //TODO: Create one source of truth for all of KDX server packages ?
 
       await Promise.all(
         invitations.map(async (invite) => {

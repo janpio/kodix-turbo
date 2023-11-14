@@ -8,8 +8,9 @@ import {
 
 import { appRouter, createTRPCContext } from "@kdx/api";
 import type { AppRouter } from "@kdx/api";
+import { getBaseUrl } from "@kdx/shared";
 
-import { getBaseUrl, transformer } from "./shared";
+import { transformer } from "./shared";
 
 export const api = createTRPCProxyClient<AppRouter>({
   transformer,

@@ -18,6 +18,7 @@
     "@kdx/api": "workspace:^0.1.0",
     "@kdx/auth": "workspace:^0.1.0",
     "@kdx/db": "workspace:^0.1.0",
+    "@kdx/shared": "workspace:^0.1.0",
     "@kdx/ui": "workspace:^0.1.0",
     "@t3-oss/env-nextjs": "^0.6.1",
     "@tanstack/react-query": "^5.8.1",

@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Check, ChevronsUpDown, Loader2, PlusCircle } from "lucide-react";
 
 import type { Session } from "@kdx/auth";
+import { getBaseUrl } from "@kdx/shared";
 import {
   AvatarWrapper,
   Button,
@@ -26,7 +27,6 @@ import {
 } from "@kdx/ui";
 
 import { api } from "~/trpc/react";
-import { getBaseUrl } from "~/trpc/shared";
 import { AddWorkspaceDialog } from "./add-workspace-dialog";
 
 export function TeamSwitcher({ session }: { session: Session }) {

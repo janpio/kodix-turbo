@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { ThemeProvider } from "next-themes";
 
-import { getBaseKdxUrl } from "../../trpc/shared";
+import { getBaseKdxUrl } from "@kdx/shared";
 
 export function signIn() {
   window.open(

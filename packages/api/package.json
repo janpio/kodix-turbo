@@ -14,6 +14,7 @@
   "dependencies": {
     "@kdx/auth": "workspace:^0.1.0",
     "@kdx/db": "workspace:^0.1.0",
+    "@kdx/shared": "workspace:^0.1.0",
     "@paralleldrive/cuid2": "^2.2.2",
     "@react-email/components": "^0.0.11",
     "@trpc/client": "next",
