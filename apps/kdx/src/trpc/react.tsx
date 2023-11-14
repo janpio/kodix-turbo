@@ -11,7 +11,7 @@ import {
 } from "@trpc/react-query";
 
 import type { AppRouter } from "@kdx/api";
-import { getBaseUrl } from "@kdx/shared";
+import { getBaseUrl } from "@kdx/api/src/shared";
 
 import { transformer } from "./shared";
 

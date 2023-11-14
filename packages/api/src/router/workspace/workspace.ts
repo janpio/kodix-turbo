@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { prisma } from "@kdx/db";
+import { toUrlFriendly } from "@kdx/shared";
 
 import { updateWorkspaceSchema } from "../../shared";
 import {
@@ -11,16 +12,6 @@ import {
   userAndWsLimitedProcedure,
 } from "../../trpc";
 import { invitationRouter } from "./invitation/invitation";
-
-function toUrlFriendly(name: string) {
-  return name
-    .normalize("NFD") // Normalize the string to decompose accented characters
-    .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
-    .toLowerCase() // Convert to lowercase
-    .trim() // Remove whitespace from both ends of the string
-    .replace(/\s+/g, "-") // Replace spaces with hyphens
-    .replace(/[^a-z0-9-]/g, ""); // Remove all non-alphanumeric characters except hyphens
-}
 
 export const workspaceRouter = createTRPCRouter({
   getAllForLoggedUser: protectedProcedure.query(async ({ ctx }) => {

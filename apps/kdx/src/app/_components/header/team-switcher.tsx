@@ -5,8 +5,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Check, ChevronsUpDown, Loader2, PlusCircle } from "lucide-react";
 
+import { getBaseUrl } from "@kdx/api/src/shared";
 import type { Session } from "@kdx/auth";
-import { getBaseUrl } from "@kdx/shared";
 import {
   AvatarWrapper,
   Button,

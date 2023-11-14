@@ -2,11 +2,9 @@ import { TRPCError } from "@trpc/server";
 import cuid from "cuid";
 import { z } from "zod";
 
-import { getBaseUrl } from "@kdx/shared";
-
 import sendEmail from "../../../internal/email/email";
 import VercelInviteUserEmail from "../../../internal/email/templates/workspace-invite";
-import { inviteUserSchema } from "../../../shared";
+import { getBaseUrl, inviteUserSchema } from "../../../shared";
 import { createTRPCRouter, protectedProcedure } from "../../../trpc";
 
 export const invitationRouter = createTRPCRouter({

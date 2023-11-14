@@ -496,6 +496,9 @@ importers:
       '@kdx/db':
         specifier: workspace:^0.1.0
         version: link:../db
+      '@kdx/shared':
+        specifier: workspace:^0.1.0
+        version: link:../shared
       '@t3-oss/env-nextjs':
         specifier: ^0.6.1
         version: 0.6.1(typescript@5.2.2)(zod@3.22.4)

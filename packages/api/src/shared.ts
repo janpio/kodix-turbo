@@ -2,6 +2,15 @@
 
 import { z } from "zod";
 
+/**
+ * @description Base URL for the current environment
+ */
+export const getBaseUrl = () => {
+  if (typeof window !== "undefined") return "";
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return `http://localhost:${process.env.PORT ?? 3000}`;
+};
+
 export const authorizedEmails = [
   "gdbianchii@gmail.com",
   "gabriel@stays.net",
