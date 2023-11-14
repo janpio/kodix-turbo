@@ -1,8 +1,8 @@
 "use client";
 
-import { signIn } from "@/components/providers";
-
 import { Button } from "@kdx/ui";
+
+import { signIn } from "~/app/_components/providers";
 
 export default function LoggedOrNot() {
   return (

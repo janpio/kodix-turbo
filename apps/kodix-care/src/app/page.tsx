@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { api } from "@/trpc/server";
+
+import { api } from "~/trpc/server";
 
 export default async function Page() {
   const apps = await api.app.getAll.query();

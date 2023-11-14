@@ -4,10 +4,11 @@ import "@/styles/globals.css";
 
 import { Inter as FontSans } from "next/font/google";
 import { cookies } from "next/headers";
-import { AuthProvider, NextThemeProvider } from "@/components/providers";
-import { TRPCReactProvider } from "@/trpc/react";
 
 import { cn } from "@kdx/ui";
+
+import { AuthProvider, NextThemeProvider } from "~/app/_components/providers";
+import { TRPCReactProvider } from "~/trpc/react";
 
 const fontSans = FontSans({
   subsets: ["latin"],

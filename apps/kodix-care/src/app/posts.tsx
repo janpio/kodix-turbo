@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { api } from "@/trpc/react";
 
 import type { RouterOutputs } from "@kdx/api";
+
+import { api } from "~/trpc/react";
 
 export function CreatePostForm() {
   const ctx = api.useUtils();
