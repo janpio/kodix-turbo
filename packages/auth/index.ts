@@ -35,13 +35,23 @@ const customUserInclude = {
   },
 };
 
+function toUrlFriendly(name: string) {
+  return name
+    .normalize("NFD") // Normalize the string to decompose accented characters
+    .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
+    .toLowerCase() // Convert to lowercase
+    .trim() // Remove whitespace from both ends of the string
+    .replace(/\s+/g, "-") // Replace spaces with hyphens
+    .replace(/[^a-z0-9-]/g, ""); // Remove all non-alphanumeric characters except hyphens
+}
+
 function CustomPrismaAdapter(p: PrismaClient): Adapter {
   return {
     ...PrismaAdapter(p),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async createUser(data): Promise<any> {
       //TODO: is it possible to do this with less DB calls?
-      let url = `${data.name?.toLowerCase()!.split(" ").join("-")}`;
+      let url = toUrlFriendly(data.name ?? "");
 
       const workspaces = await p.workspace.findMany({
         where: {

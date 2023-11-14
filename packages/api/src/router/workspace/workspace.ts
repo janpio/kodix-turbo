@@ -12,6 +12,16 @@ import {
 } from "../../trpc";
 import { invitationRouter } from "./invitation/invitation";
 
+function toUrlFriendly(name: string) {
+  return name
+    .normalize("NFD") // Normalize the string to decompose accented characters
+    .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
+    .toLowerCase() // Convert to lowercase
+    .trim() // Remove whitespace from both ends of the string
+    .replace(/\s+/g, "-") // Replace spaces with hyphens
+    .replace(/[^a-z0-9-]/g, ""); // Remove all non-alphanumeric characters except hyphens
+}
+
 export const workspaceRouter = createTRPCRouter({
   getAllForLoggedUser: protectedProcedure.query(async ({ ctx }) => {
     const workspaces = await ctx.prisma.workspace.findMany({
@@ -36,7 +46,7 @@ export const workspaceRouter = createTRPCRouter({
   create: protectedProcedure
     .input(z.object({ userId: z.string().cuid(), workspaceName: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      let url = input.workspaceName.toLowerCase().split(" ").join("-");
+      let url = toUrlFriendly(input.workspaceName);
 
       const workspaces = await ctx.prisma.workspace.findMany({
         where: {
