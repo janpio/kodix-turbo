@@ -40,7 +40,7 @@ import {
   toast,
 } from "@kdx/ui";
 
-import { StaysIcon, StaysLogo } from "~/components/svgs";
+import { StaysIcon, StaysLogo } from "~/app/_components/svgs";
 
 const joiner = "<&&>";
 

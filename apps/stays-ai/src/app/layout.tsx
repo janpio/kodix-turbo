@@ -9,7 +9,7 @@ import Script from "next/script";
 
 import { cn, Toaster } from "@kdx/ui";
 
-import { TailwindIndicator } from "~/components/dev-utils/tailwind-indicator";
+import { TailwindIndicator } from "~/app/_components/dev-utils/tailwind-indicator";
 import { TRPCReactProvider } from "./providers";
 
 const fontSans = FontSans({
