@@ -1,4 +1,4 @@
-import { toCamelCase } from "string-ts";
+import { camelCase } from "string-ts";
 
 import { Prisma } from ".prisma/client";
 
@@ -9,7 +9,7 @@ export function _wsPrisma(workspaceId: string) {
       query: {
         $allModels: {
           async $allOperations({ query, args, model, operation }) {
-            const camelCaseModel = toCamelCase(model);
+            const camelCaseModel = camelCase(model);
             if ("workspaceId" in prisma[camelCaseModel].fields) {
               if (operation !== "createMany" && operation !== "create") {
                 args.where = {
