@@ -7,11 +7,11 @@ import { cookies } from "next/headers";
 
 import { cn, Toaster } from "@kdx/ui";
 
-import { Footer } from "~/components/footer/footer";
-import { Header } from "~/components/header/header";
-import { NextAuthProvider, NextThemeProvider } from "~/components/providers";
-import { TailwindIndicator } from "~/components/tailwind-indicator";
-import { ThemeSwitcher } from "~/components/theme-switcher";
+import { Footer } from "~/app/_components/footer/footer";
+import { Header } from "~/app/_components/header/header";
+import { NextThemeProvider } from "~/app/_components/providers";
+import { TailwindIndicator } from "~/app/_components/tailwind-indicator";
+import { ThemeSwitcher } from "~/app/_components/theme-switcher";
 import { TRPCReactProvider } from "~/trpc/react";
 
 const fontSans = FontSans({
@@ -40,28 +40,26 @@ export default function Layout(props: { children: React.ReactNode }) {
         )}
       >
         <TRPCReactProvider cookies={cookies().toString()}>
-          <NextAuthProvider>
-            <NextThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <Toaster richColors closeButton />
+          <NextThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Toaster richColors closeButton />
 
-              <Header />
-              <main className="p-8">{props.children}</main>
-              <Footer />
+            <Header />
+            <main className="p-8">{props.children}</main>
+            <Footer />
 
-              {/* UI Design Helpers */}
-              {process.env.NODE_ENV !== "production" && (
-                <div className="fixed bottom-1 z-50 flex flex-row items-center space-x-1">
-                  <ThemeSwitcher />
-                  <TailwindIndicator />
-                </div>
-              )}
-            </NextThemeProvider>
-          </NextAuthProvider>
+            {/* UI Design Helpers */}
+            {process.env.NODE_ENV !== "production" && (
+              <div className="fixed bottom-1 z-50 flex flex-row items-center space-x-1">
+                <ThemeSwitcher />
+                <TailwindIndicator />
+              </div>
+            )}
+          </NextThemeProvider>
         </TRPCReactProvider>
       </body>
     </html>
