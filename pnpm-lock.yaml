@@ -200,7 +200,7 @@ importers:
   apps/kodix-care:
     dependencies:
       '@kdx/shared':
-        specifier: workspace:^
+        specifier: workspace:^0.1.0
         version: link:../../packages/shared
       '@kdx/ui':
         specifier: workspace:^0.1.0
@@ -291,7 +291,7 @@ importers:
   apps/stays-ai:
     dependencies:
       '@kdx/shared':
-        specifier: workspace:^
+        specifier: workspace:^0.1.0
         version: link:../../packages/shared
       '@kdx/ui':
         specifier: workspace:^0.1.0
