@@ -19,7 +19,13 @@ export const appsRouter = createTRPCRouter({
         }),
       ),
     )
-    .meta({ /* 👉 */ openapi: { method: "GET", path: "/apps/all" } })
+    .meta({
+      openapi: {
+        method: "GET",
+        path: "/apps/all",
+        description: "Gets all apps",
+      },
+    })
     .query(async ({ ctx }) => {
       const apps = await ctx.prisma.app.findMany({
         include: {
