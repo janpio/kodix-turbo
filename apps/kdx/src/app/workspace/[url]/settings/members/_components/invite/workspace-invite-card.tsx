@@ -63,7 +63,7 @@ export default function WorkspaceInviteCardClient({
       void utils.workspace.invitation.getAll.invalidate();
 
       setTimeout(() => {
-        setOpen(false);
+        closeDialog();
       }, 2000);
     },
     onSettled: () => {

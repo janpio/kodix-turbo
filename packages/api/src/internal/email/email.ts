@@ -1,4 +1,5 @@
 import type React from "react";
+import { render } from "@react-email/components";
 import type { SendMailOptions } from "nodemailer";
 import nodemailer from "nodemailer";
 
@@ -14,8 +15,7 @@ const transporter = nodemailer.createTransport({
 export default async function sendEmail(
   mailOptions: Omit<SendMailOptions, "html"> & { react: React.JSX.Element },
 ) {
-  if (mailOptions.to === "banana@gmail.com")
-    throw new Error("You can't send emails to");
-
-  return await transporter.sendMail(mailOptions);
+  const { react, ...options } = mailOptions;
+  const html = render(react);
+  return await transporter.sendMail({ ...options, html });
 }
