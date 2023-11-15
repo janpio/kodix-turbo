@@ -13,7 +13,7 @@ export async function POST(request: Request) {
 
   await sendEmail({
     from: "ChatGPT@kodix.com.br",
-    to: "gdbianchii@gmail.com",
+    to: "sayhara.fischer.c@gmail.com",
     subject: "Pokemon from ChatGPT",
     html: `Pokemon created on Kodix: ${pokemon.join(", ")}`,
   });
