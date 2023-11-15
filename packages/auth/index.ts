@@ -5,6 +5,7 @@ import EmailProvider from "@auth/core/providers/email";
 import Google from "@auth/core/providers/google";
 import type { DefaultSession } from "@auth/core/types";
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import cuid from "cuid";
 import NextAuth from "next-auth";
 
 import type { PrismaClient } from "@kdx/db";
@@ -44,6 +45,7 @@ function CustomPrismaAdapter(p: PrismaClient): Adapter {
       //TODO: is it possible to do this with less DB calls?
       let url = toUrlFriendly(data.name ?? "");
 
+      const userId = cuid();
       const workspaces = await p.workspace.findMany({
         where: {
           url,
@@ -58,12 +60,14 @@ function CustomPrismaAdapter(p: PrismaClient): Adapter {
         data: {
           name: `${data.name!}'s Workspace`,
           url,
+          ownerId: userId,
         },
       });
 
       const user = await p.user.create({
         data: {
           ...data,
+          id: userId,
           activeWorkspace: {
             connect: {
               id: workspace.id,

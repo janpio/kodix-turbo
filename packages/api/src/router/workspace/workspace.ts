@@ -51,6 +51,7 @@ export const workspaceRouter = createTRPCRouter({
 
       return await ctx.prisma.workspace.create({
         data: {
+          ownerId: input.userId,
           name: input.workspaceName,
           url,
           users: input.userId
@@ -193,6 +194,27 @@ export const workspaceRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const isUserTryingToRemoveSelfFromWs =
+        input.userId === ctx.session.user.id;
+
+      if (isUserTryingToRemoveSelfFromWs) {
+        const workspace = await ctx.prisma.workspace.findUnique({
+          where: {
+            id: input.workspaceId,
+          },
+          select: {
+            ownerId: true,
+          },
+        });
+        if (workspace?.ownerId === ctx.session.user.id) {
+          throw new TRPCError({
+            message:
+              "You are the owner of this workspace. You must transfer ownership first before leaving it",
+            code: "BAD_REQUEST",
+          });
+        }
+      }
+
       //TODO: Implemente role based access control
       const otherWorkspace = await ctx.prisma.workspace.findFirst({
         where: {

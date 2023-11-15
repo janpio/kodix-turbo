@@ -47,12 +47,16 @@ model AppWorkspaceConfig {
 }
 
 model Workspace {
-  id          String        @id @default(cuid())
-  name        String
-  url         String        @unique
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  users       User[]        @relation("UserWorkspace")
+  id        String   @id @default(cuid())
+  name      String
+  url       String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  users     User[]   @relation("UserWorkspace")
+
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
   activeUsers User[]        @relation("UserActiveWorkspace")
   activeApps  App[]         @relation("AppWorkspace")
   Todo        Todo[]
@@ -60,6 +64,8 @@ model Workspace {
   Invitations Invitation[]
 
   workspaceConfigs AppWorkspaceConfig[] @relation("WorkspaceConfig")
+
+  @@index([ownerId])
 }
 
 model Invitation {
@@ -245,6 +251,7 @@ model User {
   activeWorkspaceId String      @map("activeWorkspaceId")
   activeWorkspace   Workspace   @relation("UserActiveWorkspace", fields: [activeWorkspaceId], references: [id])
   EventDone         EventDone[]
+  ownedWorkspaces   Workspace[]
 
   @@index([activeWorkspaceId])
 }
