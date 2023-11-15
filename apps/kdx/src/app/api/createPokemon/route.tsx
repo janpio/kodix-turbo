@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     from: "ChatGPT@kodix.com.br",
     to: email,
     subject: "Pokemon from ChatGPT",
-    html: `Pokemon created on Kodix: ${pokemon.join(", ")}`,
+    react: <h1>Pokemon created on Kodix: ${pokemon.join(", ")}</h1>,
   });
 
   return Response.json({ pokemon });
