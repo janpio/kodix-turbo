@@ -50,11 +50,12 @@ export default function WorkspaceInviteCardClient({
       );
     },
     onSuccess: ({ successes, failures }) => {
-      toast.success(
-        `Invitation(s) sent${
-          failures.length ? ` to ${successes.join(", ")}` : "!"
-        }`,
-      );
+      if (successes.length > 0)
+        toast.success(
+          `Invitation(s) sent${
+            failures.length ? ` to ${successes.join(", ")}` : "!"
+          }`,
+        );
       if (failures.length > 0)
         toast.error(`Failed to send invitation(s) to ${failures.join(", ")}`, {
           important: true,
@@ -73,7 +74,7 @@ export default function WorkspaceInviteCardClient({
 
   const closeDialog = () => {
     const failures = emails.filter((x) => !successes.includes(x));
-    setEmails(failures.length ? failures : [""]); // Keep the failed to send emails
+    setEmails(failures.length > 0 ? failures : [""]); // Keep the failed to send emails
     setSuccesses([]);
     setOpen(false);
   };
