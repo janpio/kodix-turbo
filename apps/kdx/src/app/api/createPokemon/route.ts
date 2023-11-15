@@ -1,6 +1,6 @@
 import { prisma } from "@kdx/db";
 
-export async function Post(request: Request) {
+export async function POST(request: Request) {
   const { pokemon } = (await request.json()) as { pokemon: string };
 
   const result = await prisma.post.create({
