@@ -71,7 +71,7 @@ export const createTRPCContext = async (opts: {
  * This is where the trpc api is initialized, connecting the context and
  * transformer
  */
-export const t = initTRPC
+const t = initTRPC
   .context<typeof createTRPCContext>()
   .meta<OpenApiMeta>()
   .create({
