@@ -1,19 +1,25 @@
+import { z } from "zod";
+
 import sendEmail from "@kdx/api/src/internal/email/email";
-import { prisma } from "@kdx/db";
 
 export async function POST(request: Request) {
-  const { pokemon } = (await request.json()) as { pokemon: string[] };
+  const { pokemon, email } = (await request.json()) as {
+    pokemon: string[];
+    email: string;
+  };
 
-  await prisma.post.createMany({
-    data: pokemon.map((x) => ({
-      content: x,
-      title: x,
-    })),
+  const schema = z.object({
+    pokemon: z.array(z.string()),
+    email: z.string().email(),
   });
+  const result = schema.safeParse({ pokemon, email });
+
+  if (!result.success)
+    return Response.json(result.error.message, { status: 400 });
 
   await sendEmail({
     from: "ChatGPT@kodix.com.br",
-    to: "gdbianchii@gmail.com",
+    to: email,
     subject: "Pokemon from ChatGPT",
     html: `Pokemon created on Kodix: ${pokemon.join(", ")}`,
   });
