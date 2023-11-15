@@ -2,7 +2,10 @@ import { TRPCError } from "@trpc/server";
 import cuid from "cuid";
 import { z } from "zod";
 
+import { getSuccessesAndErrors } from "@kdx/shared";
+
 import sendEmail from "../../../internal/email/email";
+import VercelInviteUserEmail from "../../../internal/email/templates/workspace-invite";
 import { getBaseUrl, inviteUserSchema } from "../../../shared";
 import { createTRPCRouter, protectedProcedure } from "../../../trpc";
 
@@ -21,7 +24,6 @@ export const invitationRouter = createTRPCRouter({
   }),
   invite: protectedProcedure
     .input(inviteUserSchema)
-    //.use(enforceUserHasWorkspace) // TODO: make this a middleware
     .mutation(async ({ ctx, input }) => {
       const workspace = await ctx.prisma.workspace.findUniqueOrThrow({
         where: {
@@ -53,12 +55,14 @@ export const invitationRouter = createTRPCRouter({
         },
       });
 
-      for (const email of input.to)
-        if (workspace.users.find((user) => user.email === email))
-          throw new TRPCError({
-            message: `User ${email} is already a member of this workspace`,
-            code: "CONFLICT",
-          });
+      const inWsEmail = input.to.find((email) =>
+        workspace.users.find((x) => x.email === email),
+      );
+      if (inWsEmail)
+        throw new TRPCError({
+          message: `User ${inWsEmail} is already a member of this workspace`,
+          code: "CONFLICT",
+        });
 
       if (workspace.Invitations[0])
         throw new TRPCError({
@@ -72,39 +76,45 @@ export const invitationRouter = createTRPCRouter({
         email,
       }));
 
-      await Promise.all(
+      const results = await Promise.allSettled(
         invitations.map(async (invite) => {
-          const result = await sendEmail({
+          await sendEmail({
             from: "invite@kodix.com.br",
             to: invite.email,
             subject:
               "You have been invited to join a workspace on kodix.com.br",
-            html: `Someone asked to join your thingy. Click <a href='${getBaseUrl()}/workspace/invite/${
-              invite.id
-            }'>here</a> to accept: `,
-            // react: VercelInviteUserEmail({
-            //   username: "someone",
-            //   userImage: ctx.session.user.image ?? "",
-            //   invitedByUsername: ctx.session.user.name ?? "",
-            //   invitedByEmail: ctx.session.user.email ?? "",
-            //   teamName: workspace.name,
-            //   teamImage: `${getBaseUrl()}/api/avatar/${workspace.name}`,
-            //   inviteLink: `${getBaseUrl()}/workspace/invite/${invite.id}`,
-            //   inviteFromIp: "string",
-            //   inviteFromLocation: "Sao paulo",
-            // }),
+            react: VercelInviteUserEmail({
+              userImage: ctx.session.user.image ?? "",
+              invitedByUsername: ctx.session.user.name ?? "",
+              invitedByEmail: ctx.session.user.email ?? "",
+              teamName: workspace.name,
+              teamImage: `${getBaseUrl()}/api/avatar/${workspace.name}`,
+              inviteLink: `${getBaseUrl()}/workspace/invite/${invite.id}`,
+              inviteFromIp: "string",
+              inviteFromLocation: "Sao paulo",
+            }),
           });
-          if (result.rejected.length)
-            throw new TRPCError({
-              message: "Could not send email",
-              code: "INTERNAL_SERVER_ERROR",
-            });
+          return invite;
         }),
       );
 
-      await ctx.prisma.invitation.createMany({
-        data: invitations,
-      });
+      const { successes } = getSuccessesAndErrors(results);
+
+      if (successes.length)
+        await ctx.prisma.invitation.createMany({
+          data: successes.map((success) => {
+            return invitations.find((x) => x.id === success.value.id)!;
+          }),
+        });
+
+      const failedInvites = invitations.filter(
+        (invite) => !successes.find((x) => x.value.id === invite.id),
+      );
+
+      return {
+        successes: successes.map((s) => s.value.email),
+        failures: failedInvites.map((f) => f.email),
+      };
     }),
   accept: protectedProcedure
     .input(

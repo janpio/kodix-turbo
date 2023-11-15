@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { Loader2, MinusCircle, PlusCircle } from "lucide-react";
+import { Loader2, MailCheck, MinusCircle, PlusCircle } from "lucide-react";
 
 import { inviteUserSchema } from "@kdx/api/src/shared";
 import type { Session } from "@kdx/auth";
@@ -36,6 +36,9 @@ export default function WorkspaceInviteCardClient({
 }) {
   const utils = api.useUtils();
   const [loading, setLoading] = useState(false);
+  const [emails, setEmails] = useState([""]);
+  const [successes, setSuccesses] = useState<string[]>([]);
+
   const { mutate } = api.workspace.invitation.invite.useMutation({
     onError: (error) => {
       const errorMessage = error.data?.zodError?.fieldErrors;
@@ -46,18 +49,35 @@ export default function WorkspaceInviteCardClient({
         error.message || "Oops, something went wrong. Please try again later",
       );
     },
-    onSuccess: () => {
-      toast.success(`Invitation(s) sent!`);
-      setOpen(false);
-      setEmails([""]);
+    onSuccess: ({ successes, failures }) => {
+      toast.success(
+        `Invitation(s) sent${
+          failures.length ? ` to ${successes.join(", ")}` : "!"
+        }`,
+      );
+      if (failures.length > 0)
+        toast.error(`Failed to send invitation(s) to ${failures.join(", ")}`, {
+          important: true,
+        });
+      setSuccesses(successes);
       void utils.workspace.invitation.getAll.invalidate();
+
+      setTimeout(() => {
+        setOpen(false);
+      }, 2000);
     },
     onSettled: () => {
       setLoading(false);
     },
   });
 
-  const [emails, setEmails] = useState([""]);
+  const closeDialog = () => {
+    const failures = emails.filter((x) => !successes.includes(x));
+    setEmails(failures.length ? failures : [""]); // Keep the failed to send emails
+    setSuccesses([]);
+    setOpen(false);
+  };
+
   const [parent] = useAutoAnimate();
 
   const [open, setOpen] = useState(false);
@@ -154,7 +174,13 @@ export default function WorkspaceInviteCardClient({
           </div>
         </CardContent>
         <CardFooter className="flex justify-end border-t px-6 py-4">
-          <Dialog onOpenChange={setOpen} open={open}>
+          <Dialog
+            onOpenChange={(open) => {
+              if (!open) return closeDialog();
+              setOpen(open);
+            }}
+            open={open}
+          >
             <Button type="submit" disabled={!emails.some((x) => x.length)}>
               Invite
             </Button>
@@ -171,10 +197,17 @@ export default function WorkspaceInviteCardClient({
                   .filter((x) => Boolean(x))
                   .map((email) => (
                     <div
-                      className="m-0 rounded-md border p-3"
+                      className="m-0 flex justify-between rounded-md border p-3"
                       key={Math.random()}
                     >
                       {email}
+
+                      <MailCheck
+                        className={cn(
+                          "fade-in-0 text-green-600",
+                          !successes.includes(email) && "hidden",
+                        )}
+                      />
                     </div>
                   ))}
               </div>

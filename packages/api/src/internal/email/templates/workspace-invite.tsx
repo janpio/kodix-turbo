@@ -17,7 +17,19 @@ import {
   Text,
 } from "@react-email/components";
 
-interface VercelInviteUserEmailProps {
+import { getBaseUrl } from "../../../shared";
+
+export const VercelInviteUserEmail = ({
+  username = "zenorocha",
+  userImage = `${getBaseUrl()}/static/vercel-user.png`,
+  invitedByUsername = "bukinoshita",
+  invitedByEmail = "bukinoshita@example.com",
+  teamName = "My Project",
+  teamImage = `${getBaseUrl()}/static/vercel-team.png`,
+  inviteLink = "https://vercel.com/teams/invite/foo",
+  inviteFromIp = "204.13.186.218",
+  inviteFromLocation = "São Paulo, Brazil",
+}: {
   username?: string;
   userImage?: string;
   invitedByUsername?: string;
@@ -27,23 +39,7 @@ interface VercelInviteUserEmailProps {
   inviteLink?: string;
   inviteFromIp?: string;
   inviteFromLocation?: string;
-}
-
-const baseUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "";
-
-export const VercelInviteUserEmail = ({
-  username = "zenorocha",
-  userImage = `${baseUrl}/static/vercel-user.png`,
-  invitedByUsername = "bukinoshita",
-  invitedByEmail = "bukinoshita@example.com",
-  teamName = "My Project",
-  teamImage = `${baseUrl}/static/vercel-team.png`,
-  inviteLink = "https://vercel.com/teams/invite/foo",
-  inviteFromIp = "204.13.186.218",
-  inviteFromLocation = "São Paulo, Brazil",
-}: VercelInviteUserEmailProps) => {
+}) => {
   const previewText = `Join ${invitedByUsername} on Vercel`;
 
   return (
@@ -55,7 +51,7 @@ export const VercelInviteUserEmail = ({
           <Container className="mx-auto my-[40px] w-[465px] rounded border border-solid border-[#eaeaea] p-[20px]">
             <Section className="mt-[32px]">
               <Img
-                src={`${baseUrl}/static/vercel-logo.png`}
+                src={`${getBaseUrl()}/static/vercel-logo.png`}
                 width="40"
                 height="37"
                 alt="Vercel"
@@ -63,7 +59,7 @@ export const VercelInviteUserEmail = ({
               />
             </Section>
             <Heading className="mx-0 my-[30px] p-0 text-center text-[24px] font-normal text-black">
-              Join <strong>{teamName}</strong> on <strong>Vercel</strong>
+              Join <strong>{teamName}</strong> on <strong>Kodix</strong>
             </Heading>
             <Text className="text-[14px] leading-[24px] text-black">
               Hello {username},
@@ -91,7 +87,7 @@ export const VercelInviteUserEmail = ({
                 </Column>
                 <Column align="center">
                   <Img
-                    src={`${baseUrl}/static/vercel-arrow.png`}
+                    src={`${getBaseUrl()}/static/vercel-arrow.png`}
                     width="12"
                     height="9"
                     alt="invited you to"
