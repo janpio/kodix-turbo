@@ -3,7 +3,6 @@ import cuid from "cuid";
 import { z } from "zod";
 
 import sendEmail from "../../../internal/email/email";
-import VercelInviteUserEmail from "../../../internal/email/templates/workspace-invite";
 import { getBaseUrl, inviteUserSchema } from "../../../shared";
 import { createTRPCRouter, protectedProcedure } from "../../../trpc";
 
@@ -72,35 +71,40 @@ export const invitationRouter = createTRPCRouter({
         workspaceId: workspace.id,
         email,
       }));
-      await ctx.prisma.invitation.createMany({
-        data: invitations,
-      });
 
       await Promise.all(
         invitations.map(async (invite) => {
           const result = await sendEmail({
+            from: "invite@kodix.com.br",
             to: invite.email,
             subject:
               "You have been invited to join a workspace on kodix.com.br",
-            react: VercelInviteUserEmail({
-              username: "someone",
-              userImage: ctx.session.user.image ?? "",
-              invitedByUsername: ctx.session.user.name ?? "",
-              invitedByEmail: ctx.session.user.email ?? "",
-              teamName: workspace.name,
-              teamImage: `${getBaseUrl()}/api/avatar/${workspace.name}`,
-              inviteLink: `${getBaseUrl()}/workspace/invite/${invite.id}`,
-              inviteFromIp: "string",
-              inviteFromLocation: "Sao paulo",
-            }),
+            html: `Someone asked to join your thingy. Click <a href='${getBaseUrl()}/workspace/invite/${
+              invite.id
+            }'>here</a> to accept: `,
+            // react: VercelInviteUserEmail({
+            //   username: "someone",
+            //   userImage: ctx.session.user.image ?? "",
+            //   invitedByUsername: ctx.session.user.name ?? "",
+            //   invitedByEmail: ctx.session.user.email ?? "",
+            //   teamName: workspace.name,
+            //   teamImage: `${getBaseUrl()}/api/avatar/${workspace.name}`,
+            //   inviteLink: `${getBaseUrl()}/workspace/invite/${invite.id}`,
+            //   inviteFromIp: "string",
+            //   inviteFromLocation: "Sao paulo",
+            // }),
           });
-          if (result.error)
+          if (result.rejected.length)
             throw new TRPCError({
               message: "Could not send email",
               code: "INTERNAL_SERVER_ERROR",
             });
         }),
       );
+
+      await ctx.prisma.invitation.createMany({
+        data: invitations,
+      });
     }),
   accept: protectedProcedure
     .input(

@@ -1,20 +1,29 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-const resend = new Resend(process.env.RESEND_API_KEY); //! TODO: This should probably not be a process.env variable, but mjs import...
+const transporter = nodemailer.createTransport({
+  host: "smtp.resend.com",
+  port: 465,
+  auth: {
+    user: "resend",
+    pass: process.env.RESEND_API_KEY, //! TODO: This should probably not be a process.env variable, but mjs import...
+  },
+});
 
 export default async function sendEmail({
+  from,
   to,
   subject,
-  react,
+  html,
 }: {
+  from: string;
   to: string | string[];
   subject: string;
-  react: React.JSX.Element;
+  html: string;
 }) {
-  return await resend.emails.send({
-    from: "invitation@kodix.com.br",
+  return await transporter.sendMail({
+    from,
     to,
     subject: subject,
-    react: react,
+    html: html,
   });
 }

@@ -123,9 +123,6 @@ importers:
       next-themes:
         specifier: ^0.2.1
         version: 0.2.1(next@14.0.2)(react-dom@18.2.0)(react@18.2.0)
-      nodemailer:
-        specifier: ^6.9.7
-        version: 6.9.7
       openai-edge:
         specifier: ^1.2.2
         version: 1.2.2
@@ -426,6 +423,9 @@ importers:
       '@trpc/server':
         specifier: next
         version: 11.0.0-alpha-next-2023-11-11-17-32-01.100
+      '@types/nodemailer':
+        specifier: ^6.4.14
+        version: 6.4.14
       '@upstash/ratelimit':
         specifier: ^0.4.4
         version: 0.4.4
@@ -435,6 +435,9 @@ importers:
       moment:
         specifier: ^2.29.4
         version: 2.29.4
+      nodemailer:
+        specifier: ^6.9.7
+        version: 6.9.7
       resend:
         specifier: ^2.0.0
         version: 2.0.0
@@ -5329,7 +5332,12 @@ packages:
     resolution: {integrity: sha512-0f5klcuImLnG4Qreu9hPj/rEfFq6YRc5n2mAjSsH+ec/mJL+3voBH0+8T7o8RpFjH7ovc+TRsL/c7OYIQsPTfQ==}
     dependencies:
       undici-types: 5.26.5
-    dev: true
+
+  /@types/nodemailer@6.4.14:
+    resolution: {integrity: sha512-fUWthHO9k9DSdPCSPRqcu6TWhYyxTBg382vlNIttSe9M7XfsT06y0f24KHXtbnijPGGRIcVvdKHTNikOI6qiHA==}
+    dependencies:
+      '@types/node': 18.18.9
+    dev: false
 
   /@types/prop-types@15.7.10:
     resolution: {integrity: sha512-mxSnDQxPqsZxmeShFH+uwQ4kO4gcJcGahjjMFeLbKE95IAZiiZyiEepGZjtXJ7hN/yfu0bu9xN2ajcU0JcxX6A==}
@@ -11532,7 +11540,6 @@ packages:
 
   /undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
-    dev: true
 
   /undici@5.27.2:
     resolution: {integrity: sha512-iS857PdOEy/y3wlM3yRp+6SNQQ6xU0mmZcwRSriqk+et/cwWAtwmIGf6WkoDN2EK/AMdCO/dfXzIwi+rFMrjjQ==}
