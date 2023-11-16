@@ -1,5 +1,4 @@
 import * as React from "react";
-import Router from "next/router";
 import { Loader2 } from "lucide-react";
 
 import type { Session } from "@kdx/auth";
@@ -33,24 +32,28 @@ export function AddWorkspaceDialog({
   onOpenChange: React.Dispatch<React.SetStateAction<boolean>>;
   session: Session;
 }) {
-  const [loading, setLoading] = React.useState(false);
   const ctx = api.useUtils();
-  const { mutate: switchActiveWorkspace } =
-    api.user.switchActiveWorkspace.useMutation({
-      onSuccess: () => {
-        Router.reload();
-      },
-    });
-  const { mutateAsync } = api.workspace.create.useMutation({
-    onSuccess: (workspace) => {
-      switchActiveWorkspace({ workspaceId: workspace.id });
+  const { mutateAsync: switchActiveWorkspace } =
+    api.user.switchActiveWorkspace.useMutation();
+  const { mutateAsync, isPending } = api.workspace.create.useMutation({
+    onSuccess: async (workspace) => {
+      await switchActiveWorkspace({ workspaceId: workspace.id });
+      void ctx.workspace.getAllForLoggedUser.invalidate();
       onOpenChange(false);
-      setLoading(false);
 
       toast(`Workspace ${workspace.name} created`, {
         description: "Successfully created a new workspace.",
       });
-      void ctx.workspace.getAllForLoggedUser.invalidate();
+    },
+    onError: (e) => {
+      const zodContentErrors = e.data?.zodError?.fieldErrors.content;
+      const zodFormErrors = e.data?.zodError?.formErrors;
+      toast.error(
+        zodContentErrors?.[0] ??
+          zodFormErrors?.[0] ??
+          e.message ??
+          "Something went wrong, please try again later.",
+      );
     },
   });
   const [workspaceName, changeWorkspaceName] = React.useState("");
@@ -105,17 +108,16 @@ export function AddWorkspaceDialog({
             Cancel
           </Button>
           <Button
-            disabled={loading}
+            disabled={isPending}
             type="submit"
             onClick={() => {
               void mutateAsync({
                 userId: session.user.id,
                 workspaceName: workspaceName,
               });
-              setLoading(true);
             }}
           >
-            {loading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
+            {isPending && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
             Create
           </Button>
         </DialogFooter>
