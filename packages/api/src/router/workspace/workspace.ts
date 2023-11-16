@@ -1,9 +1,8 @@
-import crypto from "crypto";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { prisma } from "@kdx/db";
-import { toUrlFriendly } from "@kdx/shared";
+import { toUrlFriendly, toUrlFriendlyWithRandom } from "@kdx/shared";
 
 import { updateWorkspaceSchema } from "../../shared";
 import {
@@ -37,6 +36,8 @@ export const workspaceRouter = createTRPCRouter({
   create: protectedProcedure
     .input(z.object({ userId: z.string().cuid(), workspaceName: z.string() }))
     .mutation(async ({ ctx, input }) => {
+      //! When changing workspace creation flow here, change it on @kdx/auth new user creation as well!
+
       let url = toUrlFriendly(input.workspaceName);
 
       const workspaces = await ctx.prisma.workspace.findMany({
@@ -46,7 +47,7 @@ export const workspaceRouter = createTRPCRouter({
       });
 
       if (workspaces.length > 0) {
-        url = `${url}-${crypto.randomBytes(4).toString("hex")}`;
+        url = toUrlFriendlyWithRandom(input.workspaceName);
       }
 
       return await ctx.prisma.workspace.create({

@@ -1,3 +1,5 @@
+import crypto from "crypto";
+
 /**
  * @description Base URL for the KDX server
  * @usedBy kdx/stays-ai kdx/kodix-care
@@ -20,6 +22,13 @@ export const toUrlFriendly = (name: string) =>
     .trim() // Remove whitespace from both ends of the string
     .replace(/\s+/g, "-") // Replace spaces with hyphens
     .replace(/[^a-z0-9-]/g, ""); // Remove all non-alphanumeric characters except hyphens
+
+/**
+ * @description Converts a string to a URL-friendly string with tandom characters at the end
+ * @usedBy kdx/auth kdx/api
+ */
+export const toUrlFriendlyWithRandom = (name: string) =>
+  `${toUrlFriendly(name)}-${crypto.randomBytes(4).toString("hex")}`;
 
 /**
  * @description Extracts successes and errors from promise.allSettled in a typesafe maner
