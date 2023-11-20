@@ -49,17 +49,8 @@ export default function WorkspaceInviteCardClient({
         error.message || "Oops, something went wrong. Please try again later",
       );
     },
-    onSuccess: ({ successes, failures }) => {
-      if (successes.length > 0)
-        toast.success(
-          `Invitation(s) sent${
-            failures.length ? ` to ${successes.join(", ")}` : "!"
-          }`,
-        );
-      if (failures.length > 0)
-        toast.error(`Failed to send invitation(s) to ${failures.join(", ")}`, {
-          important: true,
-        });
+    onSuccess: () => {
+      toast.success(`Invitation(s) sent!`);
       setSuccesses(successes);
       void utils.workspace.invitation.getAll.invalidate();
 

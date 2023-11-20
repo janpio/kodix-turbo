@@ -10,7 +10,7 @@ export const sendVerificationRequest = async (
 ) => {
   try {
     await resend.emails.send({
-      from: "login@kodix.com.br",
+      from: "notification@kodix.com.br",
       to: params.identifier,
       subject: "Kodix login verification",
       react: VerificationRequestEmail({
