@@ -6,19 +6,23 @@ import { ArrowLeft } from "lucide-react";
 
 import { cn, navigationMenuTriggerStyle, useMediaQuery } from "@kdx/ui";
 
-export function SettingsNavigation({ url }: { url: string }) {
-  const items = [
-    {
-      href: `/workspace/${url}/settings/general`,
-      title: "General",
-    },
-    {
-      href: `/workspace/${url}/settings/members`,
-      title: "Members",
-    },
-  ];
+export function Navigation({
+  goBackItem,
+  items,
+}: {
+  goBackItem: {
+    href: string;
+    title: string;
+  };
+  items: {
+    href: string;
+    title: string;
+  }[];
+}) {
   const pathname = usePathname();
   const matches = useMediaQuery({ query: "md" });
+  const entryPoint = goBackItem.href.split("/").at(-1);
+  if (!entryPoint) throw new Error("Your goBackItem.href is invalid");
 
   return (
     <div
@@ -26,9 +30,9 @@ export function SettingsNavigation({ url }: { url: string }) {
         "flex w-full flex-col items-center space-y-2 self-start md:w-min",
       )}
     >
-      {!pathname!.endsWith("/settings") && !matches ? (
-        <NavigationItem href={`/workspace/${url}/settings`}>
-          <ArrowLeft className="mr-2 h-4 w-4" /> Settings
+      {!pathname!.endsWith(entryPoint) && !matches ? (
+        <NavigationItem href={goBackItem.href}>
+          <ArrowLeft className="mr-2 h-4 w-4" /> {goBackItem.title}
         </NavigationItem>
       ) : (
         items.map((item, i) => (

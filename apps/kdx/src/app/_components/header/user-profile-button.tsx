@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { CreditCard, LogOut, PlusCircle, Settings, User } from "lucide-react";
 import { signOut } from "next-auth/react";
 
@@ -54,10 +55,11 @@ export function UserProfileButton({ session }: { session: Session }) {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem disabled>
-              <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
-              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+            <DropdownMenuItem asChild>
+              <Link href="/account">
+                <User className="mr-2 h-4 w-4" />
+                <span>Account</span>
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem disabled>
               <CreditCard className="mr-2 h-4 w-4" />

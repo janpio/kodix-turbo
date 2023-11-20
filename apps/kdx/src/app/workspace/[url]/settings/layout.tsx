@@ -5,7 +5,7 @@ import { prisma } from "@kdx/db";
 
 import MaxWidthWrapper from "~/app/_components/max-width-wrapper";
 import { api } from "~/trpc/server";
-import { SettingsNavigation } from "./_components/settings-nav";
+import { Navigation } from "../../../_components/navigation";
 import { ShouldRender } from "./general/_components/client-should-render";
 
 export default async function Layout({
@@ -54,13 +54,30 @@ export default async function Layout({
     });
   }
 
+  const navItems = [
+    {
+      href: `/workspace/${params.url}/settings/general`,
+      title: "General",
+    },
+    {
+      href: `/workspace/${params.url}/settings/members`,
+      title: "Members",
+    },
+  ];
+
   return (
     <MaxWidthWrapper>
       <div className="flex flex-col justify-center border-b pb-8">
         <h1 className="text-4xl font-bold">Settings</h1>
       </div>
       <div className="mt-8 flex flex-col md:flex-row md:space-x-6">
-        <SettingsNavigation url={params.url} />
+        <Navigation
+          items={navItems}
+          goBackItem={{
+            title: "Settings",
+            href: `/workspace/${params.url}/settings`,
+          }}
+        />
         <ShouldRender>{children}</ShouldRender>
       </div>
     </MaxWidthWrapper>
