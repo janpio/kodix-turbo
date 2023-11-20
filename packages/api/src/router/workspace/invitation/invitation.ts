@@ -30,83 +30,85 @@ export const invitationRouter = createTRPCRouter({
       console.time("full invite");
 
       console.time("find workspace");
-      // const workspace = await ctx.prisma.workspace.findUniqueOrThrow({
-      //   where: {
-      //     id: input.workspaceId,
-      //     users: {
-      //       some: {
-      //         id: ctx.session.user.id,
-      //       },
-      //     },
-      //   },
-      //   select: {
-      //     name: true,
-      //     id: true,
-      //     users: {
-      //       select: {
-      //         email: true,
-      //       },
-      //     },
-      //     Invitations: {
-      //       where: {
-      //         email: {
-      //           in: input.to,
-      //         },
-      //       },
-      //       select: {
-      //         email: true,
-      //       },
-      //     },
-      //   },
-      // });
+      const workspace = await ctx.prisma.workspace.findUniqueOrThrow({
+        where: {
+          id: input.workspaceId,
+          users: {
+            some: {
+              id: ctx.session.user.id,
+            },
+          },
+        },
+        select: {
+          name: true,
+          id: true,
+          users: {
+            select: {
+              email: true,
+            },
+          },
+          Invitations: {
+            where: {
+              email: {
+                in: input.to,
+              },
+            },
+            select: {
+              email: true,
+            },
+          },
+        },
+      });
       console.timeEnd("find workspace");
 
-      // const inWsEmail = input.to.find((email) =>
-      //   workspace.users.find((x) => x.email === email),
-      // );
-      // if (inWsEmail)
-      //   throw new TRPCError({
-      //     message: `User ${inWsEmail} is already a member of this workspace`,
-      //     code: "CONFLICT",
-      //   });
+      const inWsEmail = input.to.find((email) =>
+        workspace.users.find((x) => x.email === email),
+      );
+      if (inWsEmail)
+        throw new TRPCError({
+          message: `User ${inWsEmail} is already a member of this workspace`,
+          code: "CONFLICT",
+        });
 
-      // if (workspace.Invitations[0])
-      //   throw new TRPCError({
-      //     message: `Invitation already sent to ${workspace.Invitations[0].email}`,
-      //     code: "CONFLICT",
-      //   });
+      if (workspace.Invitations[0])
+        throw new TRPCError({
+          message: `Invitation already sent to ${workspace.Invitations[0].email}`,
+          code: "CONFLICT",
+        });
 
       const invitations = input.to.map((email) => ({
         id: cuid(),
-        workspaceId: "workspace.id",
+        workspaceId: workspace.id,
         email,
       }));
 
+      for (const invite of invitations) {
+        await sendEmail({
+          from: "notification@kodix.com.br",
+          to: invite.email,
+          subject: "You have been invited to join a workspace on kodix.com.br",
+          react: VercelInviteUserEmail({
+            userImage: ctx.session.user.image ?? "",
+            invitedByUsername: ctx.session.user.name ?? "",
+            invitedByEmail: ctx.session.user.email ?? "",
+            teamName: workspace.name,
+            teamImage: `${getBaseUrl()}/api/avatar/${workspace.name}`,
+            inviteLink: `${getBaseUrl()}/workspace/invite/${invite.id}`,
+            inviteFromIp: "string",
+            inviteFromLocation: "Sao paulo",
+          }),
+        });
+      }
       console.time("send emails");
-      const results = await Promise.allSettled(
-        invitations.map(async (invite) => {
-          await sendEmail({
-            from: "notification@kodix.com.br",
-            to: invite.email,
-            subject:
-              "You have been invited to join a workspace on kodix.com.br",
-            react: VercelInviteUserEmail({
-              userImage: ctx.session.user.image ?? "",
-              invitedByUsername: ctx.session.user.name ?? "",
-              invitedByEmail: ctx.session.user.email ?? "",
-              teamName: "workspace.name",
-              teamImage: `${getBaseUrl()}/api/avatar/${"workspace.name"}`,
-              inviteLink: `${getBaseUrl()}/workspace/invite/${invite.id}`,
-              inviteFromIp: "string",
-              inviteFromLocation: "Sao paulo",
-            }),
-          });
-          return invite;
-        }),
-      );
+      // const results = await Promise.allSettled(
+      //   invitations.map(async (invite) => {
+
+      //     return invite;
+      //   }),
+      // );
       console.timeEnd("send emails");
 
-      const { successes } = getSuccessesAndErrors(results);
+      // const { successes } = getSuccessesAndErrors(results);
 
       // if (successes.length)
       //   await ctx.prisma.invitation.createMany({
@@ -115,13 +117,13 @@ export const invitationRouter = createTRPCRouter({
       //     }),
       //   });
 
-      const failedInvites = invitations.filter(
-        (invite) => !successes.find((x) => x.value.id === invite.id),
-      );
+      // const failedInvites = invitations.filter(
+      //   (invite) => !successes.find((x) => x.value.id === invite.id),
+      // );
       console.timeEnd("full invite");
       return {
-        successes: successes.map((s) => s.value.email),
-        failures: failedInvites.map((f) => f.email),
+        successes: invitations.map((s) => s.email),
+        failures: [],
       };
     }),
   accept: protectedProcedure
