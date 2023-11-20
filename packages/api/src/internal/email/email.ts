@@ -2,7 +2,8 @@ import type React from "react";
 import * as aws from "@aws-sdk/client-ses";
 import { render } from "@react-email/components";
 import type { SendMailOptions } from "nodemailer";
-import nodemailer from "nodemailer";
+
+// import nodemailer from "nodemailer";
 
 if (!process.env.AWS_SMTP_USER || !process.env.AWS_SMTP_PASSWORD)
   throw new Error("Missing AWS credentials");
@@ -17,9 +18,9 @@ const ses = new aws.SES({
   serviceId: "ses",
 });
 
-const transporter = nodemailer.createTransport({
-  SES: { ses, aws },
-});
+// const transporter = nodemailer.createTransport({
+//   SES: { ses, aws },
+// });
 
 // const transporter = nodemailer.createTransport({
 //   host: "smtp.resend.com",
@@ -35,6 +36,26 @@ export default async function sendEmail(
 ) {
   const { react, ...options } = mailOptions;
   const html = render(react);
-  const result = await transporter.sendMail({ ...options, html });
+  // const result = await transporter.sendMail({ ...options, html });
+  const params = {
+    Source: "notification@kodix.com.br", // Your verified sender email address
+    Destination: {
+      ToAddresses: [
+        "recipient@example.com", // Recipient's email address
+      ],
+    },
+    Message: {
+      Body: {
+        Text: {
+          Data: "Hello, this is a test email sent using AWS SES.",
+        },
+      },
+      Subject: {
+        Data: "Test Email",
+      },
+    },
+  };
+
+  const result = await ses.sendEmail(params);
   return result;
 }
