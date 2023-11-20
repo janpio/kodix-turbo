@@ -79,7 +79,7 @@ export const invitationRouter = createTRPCRouter({
       const results = await Promise.allSettled(
         invitations.map(async (invite) => {
           await sendEmail({
-            from: "invite@kodix.com.br",
+            from: "notification@kodix.com.br",
             to: invite.email,
             subject:
               "You have been invited to join a workspace on kodix.com.br",
