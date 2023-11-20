@@ -27,57 +27,62 @@ export const invitationRouter = createTRPCRouter({
   invite: protectedProcedure
     .input(inviteUserSchema)
     .mutation(async ({ ctx, input }) => {
-      const workspace = await ctx.prisma.workspace.findUniqueOrThrow({
-        where: {
-          id: input.workspaceId,
-          users: {
-            some: {
-              id: ctx.session.user.id,
-            },
-          },
-        },
-        select: {
-          name: true,
-          id: true,
-          users: {
-            select: {
-              email: true,
-            },
-          },
-          Invitations: {
-            where: {
-              email: {
-                in: input.to,
-              },
-            },
-            select: {
-              email: true,
-            },
-          },
-        },
-      });
+      console.time("full invite");
 
-      const inWsEmail = input.to.find((email) =>
-        workspace.users.find((x) => x.email === email),
-      );
-      if (inWsEmail)
-        throw new TRPCError({
-          message: `User ${inWsEmail} is already a member of this workspace`,
-          code: "CONFLICT",
-        });
+      console.time("find workspace");
+      // const workspace = await ctx.prisma.workspace.findUniqueOrThrow({
+      //   where: {
+      //     id: input.workspaceId,
+      //     users: {
+      //       some: {
+      //         id: ctx.session.user.id,
+      //       },
+      //     },
+      //   },
+      //   select: {
+      //     name: true,
+      //     id: true,
+      //     users: {
+      //       select: {
+      //         email: true,
+      //       },
+      //     },
+      //     Invitations: {
+      //       where: {
+      //         email: {
+      //           in: input.to,
+      //         },
+      //       },
+      //       select: {
+      //         email: true,
+      //       },
+      //     },
+      //   },
+      // });
+      console.timeEnd("find workspace");
 
-      if (workspace.Invitations[0])
-        throw new TRPCError({
-          message: `Invitation already sent to ${workspace.Invitations[0].email}`,
-          code: "CONFLICT",
-        });
+      // const inWsEmail = input.to.find((email) =>
+      //   workspace.users.find((x) => x.email === email),
+      // );
+      // if (inWsEmail)
+      //   throw new TRPCError({
+      //     message: `User ${inWsEmail} is already a member of this workspace`,
+      //     code: "CONFLICT",
+      //   });
+
+      // if (workspace.Invitations[0])
+      //   throw new TRPCError({
+      //     message: `Invitation already sent to ${workspace.Invitations[0].email}`,
+      //     code: "CONFLICT",
+      //   });
 
       const invitations = input.to.map((email) => ({
         id: cuid(),
-        workspaceId: workspace.id,
+        workspaceId: "workspace.id",
         email,
       }));
 
+      console.time("send emails");
       const results = await Promise.allSettled(
         invitations.map(async (invite) => {
           await sendEmail({
@@ -89,8 +94,8 @@ export const invitationRouter = createTRPCRouter({
               userImage: ctx.session.user.image ?? "",
               invitedByUsername: ctx.session.user.name ?? "",
               invitedByEmail: ctx.session.user.email ?? "",
-              teamName: workspace.name,
-              teamImage: `${getBaseUrl()}/api/avatar/${workspace.name}`,
+              teamName: "workspace.name",
+              teamImage: `${getBaseUrl()}/api/avatar/${"workspace.name"}`,
               inviteLink: `${getBaseUrl()}/workspace/invite/${invite.id}`,
               inviteFromIp: "string",
               inviteFromLocation: "Sao paulo",
@@ -99,20 +104,21 @@ export const invitationRouter = createTRPCRouter({
           return invite;
         }),
       );
+      console.timeEnd("send emails");
 
       const { successes } = getSuccessesAndErrors(results);
 
-      if (successes.length)
-        await ctx.prisma.invitation.createMany({
-          data: successes.map((success) => {
-            return invitations.find((x) => x.id === success.value.id)!;
-          }),
-        });
+      // if (successes.length)
+      //   await ctx.prisma.invitation.createMany({
+      //     data: successes.map((success) => {
+      //       return invitations.find((x) => x.id === success.value.id)!;
+      //     }),
+      //   });
 
       const failedInvites = invitations.filter(
         (invite) => !successes.find((x) => x.value.id === invite.id),
       );
-
+      console.timeEnd("full invite");
       return {
         successes: successes.map((s) => s.value.email),
         failures: failedInvites.map((f) => f.email),

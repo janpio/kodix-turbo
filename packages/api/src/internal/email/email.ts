@@ -35,5 +35,6 @@ export default async function sendEmail(
 ) {
   const { react, ...options } = mailOptions;
   const html = render(react);
-  return await transporter.sendMail({ ...options, html });
+  const result = await transporter.sendMail({ ...options, html });
+  return result;
 }
