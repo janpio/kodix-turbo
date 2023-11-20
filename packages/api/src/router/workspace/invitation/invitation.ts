@@ -2,6 +2,8 @@ import { TRPCError } from "@trpc/server";
 import cuid from "cuid";
 import { z } from "zod";
 
+import { getSuccessesAndErrors } from "@kdx/shared";
+
 //import { getSuccessesAndErrors } from "@kdx/shared";
 
 import sendEmail from "../../../internal/email/email";
@@ -76,25 +78,45 @@ export const invitationRouter = createTRPCRouter({
         email,
       }));
 
-      invitations.map((invite) => {
-        sendEmail({
-          from: "notification@kodix.com.br",
-          to: invite.email,
-          subject: "You have been invited to join a workspace on kodix.com.br",
-          react: VercelInviteUserEmail({
-            userImage: ctx.session.user.image ?? "",
-            invitedByUsername: ctx.session.user.name ?? "",
-            invitedByEmail: ctx.session.user.email ?? "",
-            teamName: workspace.name,
-            teamImage: `${getBaseUrl()}/api/avatar/${workspace.name}`,
-            inviteLink: `${getBaseUrl()}/workspace/invite/${invite.id}`,
-            inviteFromIp: "string",
-            inviteFromLocation: "Sao paulo",
+      const results = await Promise.allSettled(
+        invitations.map(async (invite) => {
+          await sendEmail({
+            from: "notification@kodix.com.br",
+            to: invite.email,
+            subject:
+              "You have been invited to join a workspace on kodix.com.br",
+            react: VercelInviteUserEmail({
+              userImage: ctx.session.user.image ?? "",
+              invitedByUsername: ctx.session.user.name ?? "",
+              invitedByEmail: ctx.session.user.email ?? "",
+              teamName: workspace.name,
+              teamImage: `${getBaseUrl()}/api/avatar/${workspace.name}`,
+              inviteLink: `${getBaseUrl()}/workspace/invite/${invite.id}`,
+              inviteFromIp: "string",
+              inviteFromLocation: "Sao paulo",
+            }),
+          });
+          return invite;
+        }),
+      );
+
+      const { successes } = getSuccessesAndErrors(results);
+
+      if (successes.length)
+        await ctx.prisma.invitation.createMany({
+          data: successes.map((success) => {
+            return invitations.find((x) => x.id === success.value.id)!;
           }),
         });
-        return invite;
-      });
-      console.log("hey");
+
+      const failedInvites = invitations.filter(
+        (invite) => !successes.find((x) => x.value.id === invite.id),
+      );
+
+      return {
+        successes: successes.map((s) => s.value.email),
+        failures: failedInvites.map((f) => f.email),
+      };
     }),
   accept: protectedProcedure
     .input(

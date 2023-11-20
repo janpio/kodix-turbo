@@ -17,7 +17,7 @@ export async function POST(request: Request) {
   if (!result.success)
     return Response.json(result.error.message, { status: 400 });
 
-  sendEmail({
+  await sendEmail({
     from: "ChatGPT@kodix.com.br",
     to: email,
     subject: "Pokemon from ChatGPT",

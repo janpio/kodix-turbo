@@ -30,10 +30,10 @@ const transporter = nodemailer.createTransport({
 //   },
 // });
 
-export default function sendEmail(
+export default async function sendEmail(
   mailOptions: Omit<SendMailOptions, "html"> & { react: React.JSX.Element },
 ) {
   const { react, ...options } = mailOptions;
   const html = render(react);
-  return void transporter.sendMail({ ...options, html });
+  return await transporter.sendMail({ ...options, html });
 }
