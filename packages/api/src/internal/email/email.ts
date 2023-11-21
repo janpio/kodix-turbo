@@ -31,7 +31,7 @@ const ses = new aws.SES({
 //   },
 // });
 
-export default async function sendEmail(
+export default function sendEmail(
   mailOptions: Omit<SendMailOptions, "html"> & { react: React.JSX.Element },
 ) {
   const { react, ...options } = mailOptions;
@@ -56,6 +56,6 @@ export default async function sendEmail(
     },
   };
 
-  const result = await ses.sendEmail(params);
+  const result = ses.sendEmail(params);
   return result;
 }
