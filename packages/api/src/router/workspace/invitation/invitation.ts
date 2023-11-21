@@ -83,8 +83,8 @@ export const invitationRouter = createTRPCRouter({
       }));
 
       console.time("send emails");
-      invitations.map((invite) => {
-        void sendEmail({
+      const results = invitations.map((invite) => {
+        sendEmail({
           from: "notification@kodix.com.br",
           to: invite.email,
           subject: "You have been invited to join a workspace on kodix.com.br",
@@ -100,17 +100,16 @@ export const invitationRouter = createTRPCRouter({
           }),
         });
         return invite;
-      }),
-        console.timeEnd("send emails");
+      });
+
+      console.timeEnd("send emails");
 
       // const { successes } = getSuccessesAndErrors(results);
 
       // if (successes.length)
-      //   await ctx.prisma.invitation.createMany({
-      //     data: successes.map((success) => {
-      //       return invitations.find((x) => x.id === success.value.id)!;
-      //     }),
-      //   });
+      await ctx.prisma.invitation.createMany({
+        data: invitations,
+      });
 
       // const failedInvites = invitations.filter(
       //   (invite) => !successes.find((x) => x.value.id === invite.id),

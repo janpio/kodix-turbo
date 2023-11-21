@@ -1,22 +1,21 @@
-import type React from "react";
-import * as aws from "@aws-sdk/client-ses";
-import { render } from "@react-email/components";
-import type { SendMailOptions } from "nodemailer";
+import { Resend } from "resend";
+import type { CreateEmailOptions } from "resend/build/src/emails/interfaces";
 
 // import nodemailer from "nodemailer";
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-if (!process.env.AWS_SMTP_USER || !process.env.AWS_SMTP_PASSWORD)
-  throw new Error("Missing AWS credentials");
+// if (!process.env.AWS_SMTP_USER || !process.env.AWS_SMTP_PASSWORD)
+//   throw new Error("Missing AWS credentials");
 
-const ses = new aws.SES({
-  apiVersion: "2010-12-01",
-  region: "sa-east-1", // Your region will need to be updated
-  credentials: {
-    accessKeyId: process.env.AWS_SMTP_USER,
-    secretAccessKey: process.env.AWS_SMTP_PASSWORD,
-  },
-  serviceId: "ses",
-});
+// const ses = new aws.SES({
+//   apiVersion: "2010-12-01",
+//   region: "sa-east-1", // Your region will need to be updated
+//   credentials: {
+//     accessKeyId: process.env.AWS_SMTP_USER,
+//     secretAccessKey: process.env.AWS_SMTP_PASSWORD,
+//   },
+//   serviceId: "ses",
+// });
 
 // const transporter = nodemailer.createTransport({
 //   SES: { ses, aws },
@@ -31,31 +30,7 @@ const ses = new aws.SES({
 //   },
 // });
 
-export default function sendEmail(
-  mailOptions: Omit<SendMailOptions, "html"> & { react: React.JSX.Element },
-) {
-  const { react, ...options } = mailOptions;
-  const html = render(react);
+export default function sendEmail(mailOptions: CreateEmailOptions) {
   // const result = await transporter.sendMail({ ...options, html });
-  const params = {
-    Source: "notification@kodix.com.br", // Your verified sender email address
-    Destination: {
-      ToAddresses: [
-        "recipient@example.com", // Recipient's email address
-      ],
-    },
-    Message: {
-      Body: {
-        Text: {
-          Data: "Hello, this is a test email sent using AWS SES.",
-        },
-      },
-      Subject: {
-        Data: "Test Email",
-      },
-    },
-  };
-
-  const result = ses.sendEmail(params);
-  return result;
+  void resend.emails.send(mailOptions);
 }
