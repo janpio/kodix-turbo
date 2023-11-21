@@ -30,7 +30,7 @@
     "@kdx/tsconfig": "workspace:^0.1.0",
     "@types/eslint": "^8.44.7",
     "eslint": "^8.53.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.3.2"
   },
   "eslintConfig": {
     "root": true,
