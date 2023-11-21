@@ -32,5 +32,5 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export default function sendEmail(mailOptions: CreateEmailOptions) {
   // const result = await transporter.sendMail({ ...options, html });
-  void resend.emails.send(mailOptions);
+  return
 }
