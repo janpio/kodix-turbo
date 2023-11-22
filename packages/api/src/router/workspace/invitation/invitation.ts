@@ -1,6 +1,5 @@
 import { TRPCError } from "@trpc/server";
 import cuid from "cuid";
-import { Resend } from "resend";
 import { z } from "zod";
 
 import { getSuccessesAndErrors } from "@kdx/shared";
@@ -11,8 +10,6 @@ import sendEmail from "../../../internal/email/email";
 import VercelInviteUserEmail from "../../../internal/email/templates/workspace-invite";
 import { getBaseUrl, inviteUserSchema } from "../../../shared";
 import { createTRPCRouter, protectedProcedure } from "../../../trpc";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const invitationRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -30,9 +27,6 @@ export const invitationRouter = createTRPCRouter({
   invite: protectedProcedure
     .input(inviteUserSchema)
     .mutation(async ({ ctx, input }) => {
-      console.time("full invite");
-
-      console.time("find workspace");
       const workspace = await ctx.prisma.workspace.findUniqueOrThrow({
         where: {
           id: input.workspaceId,
@@ -62,7 +56,6 @@ export const invitationRouter = createTRPCRouter({
           },
         },
       });
-      console.timeEnd("find workspace");
 
       const inWsEmail = input.to.find((email) =>
         workspace.users.find((x) => x.email === email),
@@ -85,32 +78,34 @@ export const invitationRouter = createTRPCRouter({
         email,
       }));
 
-      console.time("send emails");
-      await resend.emails.send({
-        from: "notification@kodix.com.br",
-        to: invitations[0]!.email,
-        subject: "You have been invited to join a workspace on kodix.com.br",
-        html: "<h1>Test</h1>",
-      });
+      const results = await Promise.allSettled(
+        invitations.map(async (invite) => {
+          await sendEmail({
+            from: "notification@kodix.com.br",
+            to: invite.email,
+            subject:
+              "You have been invited to join a workspace on kodix.com.br",
+            html: "BROOO",
+          });
+          return invite;
+        }),
+      );
 
-      console.timeEnd("send emails");
+      const { successes } = getSuccessesAndErrors(results);
 
-      // const { successes } = getSuccessesAndErrors(results);
+      if (successes.length)
+        await ctx.prisma.invitation.createMany({
+          data: successes.map((success) => {
+            return invitations.find((x) => x.id === success.value.id)!;
+          }),
+        });
 
-      // if (successes.length)
-      //   await ctx.prisma.invitation.createMany({
-      //     data: successes.map((success) => {
-      //       return invitations.find((x) => x.id === success.value.id)!;
-      //     }),
-      //   });
-
-      // const failedInvites = invitations.filter(
-      //   (invite) => !successes.find((x) => x.value.id === invite.id),
-      // );
-      console.timeEnd("full invite");
+      const failedInvites = invitations.filter(
+        (invite) => !successes.find((x) => x.value.id === invite.id),
+      );
       return {
-        successes: invitations.map((s) => s.email),
-        failures: [],
+        successes: successes.map((s) => s.value.email),
+        failures: failedInvites.map((f) => f.email),
       };
     }),
   accept: protectedProcedure
