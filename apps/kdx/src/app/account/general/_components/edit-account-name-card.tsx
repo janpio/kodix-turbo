@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 import { revalidatePath } from "next/cache";
 import { Loader2 } from "lucide-react";
 
