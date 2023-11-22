@@ -89,8 +89,8 @@ export const invitationRouter = createTRPCRouter({
               invitedByEmail: ctx.session.user.email!,
               invitedByUsername: ctx.session.user.name!,
               inviteLink: `${getBaseKdxUrl()}/workspace/invite/${invite.id}`,
-              teamImage: `${getBaseKdxUrl()}/api/avatar/${workspace.name}`,
-              teamName: workspace.name,
+              workspaceImage: `${getBaseKdxUrl()}/api/avatar/${workspace.name}`,
+              workspaceName: workspace.name,
               // username: ??
             }),
           });
