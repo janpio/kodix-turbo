@@ -90,16 +90,7 @@ export const invitationRouter = createTRPCRouter({
         from: "notification@kodix.com.br",
         to: invitations[0]!.email,
         subject: "You have been invited to join a workspace on kodix.com.br",
-        react: VercelInviteUserEmail({
-          userImage: ctx.session.user.image ?? "",
-          invitedByUsername: ctx.session.user.name ?? "",
-          invitedByEmail: ctx.session.user.email ?? "",
-          teamName: workspace.name,
-          teamImage: `${getBaseUrl()}/api/avatar/${workspace.name}`,
-          inviteLink: `${getBaseUrl()}/workspace/invite/${invitations[0]!.id}`,
-          inviteFromIp: "string",
-          inviteFromLocation: "Sao paulo",
-        }),
+        html: "<h1>Test</h1>",
       });
 
       console.timeEnd("send emails");
