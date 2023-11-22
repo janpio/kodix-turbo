@@ -1,7 +1,6 @@
 import { Resend } from "resend";
 import type { CreateEmailOptions } from "resend/build/src/emails/interfaces";
 
-// import nodemailer from "nodemailer";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 // if (!process.env.AWS_SMTP_USER || !process.env.AWS_SMTP_PASSWORD)
@@ -17,24 +16,20 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 //   serviceId: "ses",
 // });
 
-// const transporter = nodemailer.createTransport({
+// const transporter = nodemailer.createTransport({ //? For sending emails with AWS SMTP
 //   SES: { ses, aws },
 // });
 
-// const transporter = nodemailer.createTransport({
+// const transporter = nodemailer.createTransport({ //? For sending emails with resend SMTP
 //   host: "smtp.resend.com",
 //   port: 465,
 //   auth: {
 //     user: "resend",
-//     pass: process.env.RESEND_API_KEY, //! TODO: This should probably not be a process.env variable, but mjs import...
+//     pass: process.env.RESEND_API_KEY,
 //   },
 // });
 
 export default async function sendEmail(mailOptions: CreateEmailOptions) {
   // const result = await transporter.sendMail({ ...options, html });
-  try {
-    return await resend.emails.send(mailOptions);
-  } catch (error) {
-    console.log({ error });
-  }
+  return await resend.emails.send(mailOptions);
 }
