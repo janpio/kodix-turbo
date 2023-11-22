@@ -31,18 +31,20 @@ interface WorkspaceInviteUserEmailProps {
   inviteFromLocation?: string;
 }
 
+const baseUrl = getBaseUrl();
+
 export const WorkspaceInvite = ({
   username = "",
-  userImage = `${getBaseUrl()}/static/vercel-user.png`,
+  userImage = `${baseUrl}/static/kodix-user.png`,
   invitedByUsername = "",
   invitedByEmail = "bukinoshita@example.com",
   teamName = "My Project",
-  teamImage = `${getBaseUrl()}/static/vercel-team.png`,
-  inviteLink = "https://vercel.com/teams/invite/foo",
+  teamImage = `${baseUrl}/static/kodix-team.png`,
+  inviteLink = "https://kodix.com/teams/invite/foo",
   inviteFromIp = "204.13.186.218",
   inviteFromLocation = "São Paulo, Brazil",
 }: WorkspaceInviteUserEmailProps) => {
-  const previewText = `Join ${invitedByUsername} on Vercel`;
+  const previewText = `Join ${invitedByUsername} on Kodix`;
 
   return (
     <Html>
@@ -53,15 +55,15 @@ export const WorkspaceInvite = ({
           <Container className="mx-auto my-[40px] w-[465px] rounded border border-solid border-[#eaeaea] p-[20px]">
             <Section className="mt-[32px]">
               <Img
-                src={`${getBaseUrl()}/static/vercel-logo.png`}
+                src={`${baseUrl}/static/kodix-logo.png`}
                 width="40"
                 height="37"
-                alt="Vercel"
+                alt="Kodix"
                 className="mx-auto my-0"
               />
             </Section>
             <Heading className="mx-0 my-[30px] p-0 text-center text-[24px] font-normal text-black">
-              Join <strong>{teamName}</strong> on <strong>Vercel</strong>
+              Join <strong>{teamName}</strong> on <strong>Kodix</strong>
             </Heading>
             <Text className="text-[14px] leading-[24px] text-black">
               Hello {username},
@@ -75,7 +77,7 @@ export const WorkspaceInvite = ({
                 {invitedByEmail}
               </Link>
               ) has invited you to the <strong>{teamName}</strong> team on{" "}
-              <strong>Vercel</strong>.
+              <strong>Kodix</strong>.
             </Text>
             <Section>
               <Row>
@@ -89,7 +91,7 @@ export const WorkspaceInvite = ({
                 </Column>
                 <Column align="center">
                   <Img
-                    src={`${getBaseUrl()}/static/vercel-arrow.png`}
+                    src={`${baseUrl}/static/kodix-arrow.png`}
                     width="12"
                     height="9"
                     alt="invited you to"
