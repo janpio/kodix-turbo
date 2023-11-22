@@ -37,4 +37,5 @@ export default async function sendEmail(mailOptions: CreateEmailOptions) {
   } catch (error) {
     console.log({ error });
   }
+  return;
 }
