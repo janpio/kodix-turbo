@@ -17,19 +17,7 @@ import {
   Text,
 } from "@react-email/components";
 
-import { getBaseUrl } from "../../../shared";
-
-export const VercelInviteUserEmail = ({
-  username = "zenorocha",
-  userImage = `${getBaseUrl()}/static/vercel-user.png`,
-  invitedByUsername = "bukinoshita",
-  invitedByEmail = "bukinoshita@example.com",
-  teamName = "My Project",
-  teamImage = `${getBaseUrl()}/static/vercel-team.png`,
-  inviteLink = "https://vercel.com/teams/invite/foo",
-  inviteFromIp = "204.13.186.218",
-  inviteFromLocation = "São Paulo, Brazil",
-}: {
+interface VercelInviteUserEmailProps {
   username?: string;
   userImage?: string;
   invitedByUsername?: string;
@@ -39,7 +27,19 @@ export const VercelInviteUserEmail = ({
   inviteLink?: string;
   inviteFromIp?: string;
   inviteFromLocation?: string;
-}) => {
+}
+
+export const VercelInviteUserEmail = ({
+  username = "zenorocha",
+  userImage,
+  invitedByUsername = "bukinoshita",
+  invitedByEmail = "bukinoshita@example.com",
+  teamName = "My Project",
+  teamImage,
+  inviteLink = "https://vercel.com/teams/invite/foo",
+  inviteFromIp = "204.13.186.218",
+  inviteFromLocation = "São Paulo, Brazil",
+}: VercelInviteUserEmailProps) => {
   const previewText = `Join ${invitedByUsername} on Vercel`;
 
   return (
@@ -51,7 +51,7 @@ export const VercelInviteUserEmail = ({
           <Container className="mx-auto my-[40px] w-[465px] rounded border border-solid border-[#eaeaea] p-[20px]">
             <Section className="mt-[32px]">
               <Img
-                src={`${getBaseUrl()}/static/vercel-logo.png`}
+                src={`/static/vercel-logo.png`}
                 width="40"
                 height="37"
                 alt="Vercel"
@@ -59,7 +59,7 @@ export const VercelInviteUserEmail = ({
               />
             </Section>
             <Heading className="mx-0 my-[30px] p-0 text-center text-[24px] font-normal text-black">
-              Join <strong>{teamName}</strong> on <strong>Kodix</strong>
+              Join <strong>{teamName}</strong> on <strong>Vercel</strong>
             </Heading>
             <Text className="text-[14px] leading-[24px] text-black">
               Hello {username},
@@ -87,7 +87,7 @@ export const VercelInviteUserEmail = ({
                 </Column>
                 <Column align="center">
                   <Img
-                    src={`${getBaseUrl()}/static/vercel-arrow.png`}
+                    src={`/static/vercel-arrow.png`}
                     width="12"
                     height="9"
                     alt="invited you to"
@@ -105,7 +105,7 @@ export const VercelInviteUserEmail = ({
             </Section>
             <Section className="mb-[32px] mt-[32px] text-center">
               <Button
-                className="rounded bg-[#000000] text-center text-[12px] font-semibold text-white no-underline"
+                className="h-16 w-24 rounded bg-[#000000] text-center text-[12px] font-semibold text-white no-underline"
                 href={inviteLink}
               >
                 Join the team
@@ -125,8 +125,8 @@ export const VercelInviteUserEmail = ({
               located in{" "}
               <span className="text-black">{inviteFromLocation}</span>. If you
               were not expecting this invitation, you can ignore this email. If
-              you are concerned about your account&apos;s safety, please reply
-              to this email to get in touch with us.
+              you are concerned about your account's safety, please reply to
+              this email to get in touch with us.
             </Text>
           </Container>
         </Body>
