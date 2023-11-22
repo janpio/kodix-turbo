@@ -17,7 +17,9 @@ import {
 } from "@react-email/components";
 import { Tailwind } from "@react-email/tailwind";
 
-interface VercelInviteUserEmailProps {
+import { getBaseUrl } from "../../../shared";
+
+interface WorkspaceInviteUserEmailProps {
   username?: string;
   userImage?: string;
   invitedByUsername?: string;
@@ -30,16 +32,16 @@ interface VercelInviteUserEmailProps {
 }
 
 export const WorkspaceInvite = ({
-  username = "zenorocha",
-  userImage,
-  invitedByUsername = "bukinoshita",
+  username = "",
+  userImage = `${getBaseUrl()}/static/vercel-user.png`,
+  invitedByUsername = "",
   invitedByEmail = "bukinoshita@example.com",
   teamName = "My Project",
-  teamImage,
+  teamImage = `${getBaseUrl()}/static/vercel-team.png`,
   inviteLink = "https://vercel.com/teams/invite/foo",
   inviteFromIp = "204.13.186.218",
   inviteFromLocation = "São Paulo, Brazil",
-}: VercelInviteUserEmailProps) => {
+}: WorkspaceInviteUserEmailProps) => {
   const previewText = `Join ${invitedByUsername} on Vercel`;
 
   return (
@@ -51,7 +53,7 @@ export const WorkspaceInvite = ({
           <Container className="mx-auto my-[40px] w-[465px] rounded border border-solid border-[#eaeaea] p-[20px]">
             <Section className="mt-[32px]">
               <Img
-                src={`/static/vercel-logo.png`}
+                src={`${getBaseUrl()}/static/vercel-logo.png`}
                 width="40"
                 height="37"
                 alt="Vercel"
@@ -87,7 +89,7 @@ export const WorkspaceInvite = ({
                 </Column>
                 <Column align="center">
                   <Img
-                    src={`/static/vercel-arrow.png`}
+                    src={`${getBaseUrl()}/static/vercel-arrow.png`}
                     width="12"
                     height="9"
                     alt="invited you to"
@@ -105,7 +107,7 @@ export const WorkspaceInvite = ({
             </Section>
             <Section className="mb-[32px] mt-[32px] text-center">
               <Button
-                className="h-16 w-24 rounded bg-[#000000] text-center text-[12px] font-semibold text-white no-underline"
+                className="rounded bg-[#000000] px-[20px] py-[12px] text-center text-[12px] font-semibold text-white no-underline"
                 href={inviteLink}
               >
                 Join the team
