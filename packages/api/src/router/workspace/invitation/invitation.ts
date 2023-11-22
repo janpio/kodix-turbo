@@ -86,45 +86,40 @@ export const invitationRouter = createTRPCRouter({
       }));
 
       console.time("send emails");
-      const results = await Promise.allSettled(
-        invitations.map(async (invite) => {
-          await resend.emails.send({
-            from: "notification@kodix.com.br",
-            to: invite.email,
-            subject:
-              "You have been invited to join a workspace on kodix.com.br",
-            react: VercelInviteUserEmail({
-              userImage: ctx.session.user.image ?? "",
-              invitedByUsername: ctx.session.user.name ?? "",
-              invitedByEmail: ctx.session.user.email ?? "",
-              teamName: workspace.name,
-              teamImage: `${getBaseUrl()}/api/avatar/${workspace.name}`,
-              inviteLink: `${getBaseUrl()}/workspace/invite/${invite.id}`,
-              inviteFromIp: "string",
-              inviteFromLocation: "Sao paulo",
-            }),
-          });
-          return invite;
+      await resend.emails.send({
+        from: "notification@kodix.com.br",
+        to: invitations[0]!.email,
+        subject: "You have been invited to join a workspace on kodix.com.br",
+        react: VercelInviteUserEmail({
+          userImage: ctx.session.user.image ?? "",
+          invitedByUsername: ctx.session.user.name ?? "",
+          invitedByEmail: ctx.session.user.email ?? "",
+          teamName: workspace.name,
+          teamImage: `${getBaseUrl()}/api/avatar/${workspace.name}`,
+          inviteLink: `${getBaseUrl()}/workspace/invite/${invitations[0]!.id}`,
+          inviteFromIp: "string",
+          inviteFromLocation: "Sao paulo",
         }),
-      );
+      });
+
       console.timeEnd("send emails");
 
-      const { successes } = getSuccessesAndErrors(results);
+      // const { successes } = getSuccessesAndErrors(results);
 
-      if (successes.length)
-        await ctx.prisma.invitation.createMany({
-          data: successes.map((success) => {
-            return invitations.find((x) => x.id === success.value.id)!;
-          }),
-        });
+      // if (successes.length)
+      //   await ctx.prisma.invitation.createMany({
+      //     data: successes.map((success) => {
+      //       return invitations.find((x) => x.id === success.value.id)!;
+      //     }),
+      //   });
 
-      const failedInvites = invitations.filter(
-        (invite) => !successes.find((x) => x.value.id === invite.id),
-      );
+      // const failedInvites = invitations.filter(
+      //   (invite) => !successes.find((x) => x.value.id === invite.id),
+      // );
       console.timeEnd("full invite");
       return {
-        successes: successes.map((s) => s.value.email),
-        failures: failedInvites.map((f) => f.email),
+        successes: invitations.map((s) => s.email),
+        failures: [],
       };
     }),
   accept: protectedProcedure
