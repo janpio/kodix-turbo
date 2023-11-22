@@ -441,6 +441,9 @@ importers:
       nodemailer:
         specifier: ^6.9.7
         version: 6.9.7
+      react:
+        specifier: 18.2.0
+        version: 18.2.0
       react-email:
         specifier: ^1.9.5
         version: 1.9.5
