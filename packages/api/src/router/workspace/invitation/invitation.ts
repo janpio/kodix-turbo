@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import cuid from "cuid";
+import { Resend } from "resend";
 import { z } from "zod";
 
 import { getSuccessesAndErrors } from "@kdx/shared";
@@ -10,6 +11,8 @@ import sendEmail from "../../../internal/email/email";
 import VercelInviteUserEmail from "../../../internal/email/templates/workspace-invite";
 import { getBaseUrl, inviteUserSchema } from "../../../shared";
 import { createTRPCRouter, protectedProcedure } from "../../../trpc";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const invitationRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -85,7 +88,7 @@ export const invitationRouter = createTRPCRouter({
       console.time("send emails");
       const results = await Promise.allSettled(
         invitations.map(async (invite) => {
-          await sendEmail({
+          await resend.emails.send({
             from: "notification@kodix.com.br",
             to: invite.email,
             subject:
