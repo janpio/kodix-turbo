@@ -32,7 +32,7 @@ export function Email() {
               className="mx-auto my-0"
             />
           </Section>
-          {/* <Heading className="mx-0 my-[30px] p-0 text-center text-[24px] font-normal text-black">
+          <Heading className="mx-0 my-[30px] p-0 text-center text-[24px] font-normal text-black">
             Join <strong>team name</strong> on <strong>Vercel</strong>
           </Heading>
           <Text className="text-[14px] leading-[24px] text-black">
@@ -100,7 +100,7 @@ export function Email() {
             were not expecting this invitation, you can ignore this email. If
             you are concerned about your account&apos;s safety, please reply to
             this email to get in touch with us.
-          </Text> */}
+          </Text>
         </Container>
       </Body>
     </Html>
