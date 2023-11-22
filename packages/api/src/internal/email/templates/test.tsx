@@ -1,6 +1,5 @@
 import * as React from "react";
-import { Button } from "@react-email/button";
-import { Html } from "@react-email/html";
+import { Button, Html } from "@react-email/components";
 
 export function Email() {
   return (

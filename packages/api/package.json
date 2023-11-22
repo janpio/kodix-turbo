@@ -25,6 +25,7 @@
     "aws-sdk": "^2.1499.0",
     "moment": "^2.29.4",
     "nodemailer": "^6.9.7",
+    "react-email": "^1.9.5",
     "resend": "^2.0.0",
     "rrule": "^2.8.1",
     "superjson": "1.9.1",
