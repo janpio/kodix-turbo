@@ -33,7 +33,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export default async function sendEmail(mailOptions: CreateEmailOptions) {
   // const result = await transporter.sendMail({ ...options, html });
   try {
-    await resend.emails.send(mailOptions);
+    return await resend.emails.send(mailOptions);
   } catch (error) {
     console.log({ error });
   }
