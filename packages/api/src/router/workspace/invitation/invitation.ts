@@ -7,6 +7,7 @@ import { getSuccessesAndErrors } from "@kdx/shared";
 //import { getSuccessesAndErrors } from "@kdx/shared";
 
 import sendEmail from "../../../internal/email/email";
+import { Email } from "../../../internal/email/templates/test";
 import VercelInviteUserEmail from "../../../internal/email/templates/workspace-invite";
 import { getBaseUrl, inviteUserSchema } from "../../../shared";
 import { createTRPCRouter, protectedProcedure } from "../../../trpc";
@@ -85,7 +86,7 @@ export const invitationRouter = createTRPCRouter({
             to: invite.email,
             subject:
               "You have been invited to join a workspace on kodix.com.br",
-            react: VercelInviteUserEmail({}),
+            react: Email(),
           });
           return invite;
         }),
