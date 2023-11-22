@@ -17,7 +17,7 @@ import {
 } from "@react-email/components";
 import { Tailwind } from "@react-email/tailwind";
 
-import { getBaseUrl } from "../../../shared";
+import { getBaseKdxUrl } from "@kdx/shared";
 
 interface WorkspaceInviteUserEmailProps {
   username?: string;
@@ -31,7 +31,7 @@ interface WorkspaceInviteUserEmailProps {
   inviteFromLocation?: string;
 }
 
-const baseUrl = getBaseUrl();
+const baseUrl = getBaseKdxUrl();
 
 export const WorkspaceInvite = ({
   username = "",

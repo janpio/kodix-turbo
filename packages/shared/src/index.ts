@@ -2,7 +2,7 @@ import crypto from "crypto";
 
 /**
  * @description Base URL for the KDX server
- * @usedBy kdx/stays-ai kdx/kodix-care
+ * @usedBy kdx/stays-ai kdx/kodix-care kdx/api
  */
 export const getBaseKdxUrl = () => {
   if (typeof window !== "undefined") return "http://localhost:3000";
