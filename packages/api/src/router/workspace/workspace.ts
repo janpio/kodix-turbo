@@ -1,3 +1,4 @@
+import { revalidateTag } from "next/cache";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -22,16 +23,15 @@ export const workspaceRouter = createTRPCRouter({
           },
         },
       },
+      select: {
+        id: true,
+        name: true,
+        url: true,
+        ownerId: true,
+      },
     });
 
-    return {
-      workspaces: workspaces,
-      activeWorkspaceId: ctx.session.user.activeWorkspaceId,
-      activeWorkspaceName: ctx.session.user.activeWorkspaceName,
-      activeWorkspaceUrl:
-        workspaces.find((x) => x.id === ctx.session.user.activeWorkspaceId)
-          ?.url ?? "",
-    };
+    return workspaces;
   }),
   create: protectedProcedure
     .input(z.object({ userId: z.string().cuid(), workspaceName: z.string() }))
@@ -50,7 +50,7 @@ export const workspaceRouter = createTRPCRouter({
         url = toUrlFriendlyWithRandom(input.workspaceName);
       }
 
-      return await ctx.prisma.workspace.create({
+      const ws = await ctx.prisma.workspace.create({
         data: {
           ownerId: input.userId,
           name: input.workspaceName,
@@ -62,6 +62,8 @@ export const workspaceRouter = createTRPCRouter({
             : undefined,
         },
       });
+      revalidateTag("getAllForLoggedUser");
+      return ws;
     }),
   getOne: protectedProcedure
     .input(z.object({ workspaceId: z.string().cuid() }))
@@ -98,7 +100,7 @@ export const workspaceRouter = createTRPCRouter({
           });
       }
 
-      return await ctx.prisma.workspace.update({
+      const ws = await ctx.prisma.workspace.update({
         where: {
           id: input.workspaceId,
         },
@@ -107,6 +109,8 @@ export const workspaceRouter = createTRPCRouter({
           name: input.workspaceName,
         },
       });
+      revalidateTag("getAllForLoggedUser");
+      return ws;
     }),
   getActiveWorkspace: protectedProcedure.query(async ({ ctx }) => {
     const workspace = await ctx.prisma.workspace.findUniqueOrThrow({
@@ -161,6 +165,7 @@ export const workspaceRouter = createTRPCRouter({
           },
         },
       });
+      revalidateTag("getAllForLoggedUser");
 
       return installedApp;
     }),
@@ -183,6 +188,7 @@ export const workspaceRouter = createTRPCRouter({
           },
         },
       });
+      revalidateTag("getAllForLoggedUser");
 
       return uninstalledApp;
     }),
@@ -198,15 +204,21 @@ export const workspaceRouter = createTRPCRouter({
       const isUserTryingToRemoveSelfFromWs =
         input.userId === ctx.session.user.id;
 
+      const workspace = await ctx.prisma.workspace.findFirstOrThrow({
+        where: {
+          id: input.workspaceId,
+        },
+        select: {
+          ownerId: true,
+          users: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+
       if (isUserTryingToRemoveSelfFromWs) {
-        const workspace = await ctx.prisma.workspace.findUnique({
-          where: {
-            id: input.workspaceId,
-          },
-          select: {
-            ownerId: true,
-          },
-        });
         if (workspace?.ownerId === ctx.session.user.id) {
           throw new TRPCError({
             message:
@@ -215,6 +227,13 @@ export const workspaceRouter = createTRPCRouter({
           });
         }
       }
+
+      if (workspace?.users.length <= 1)
+        throw new TRPCError({
+          message:
+            "This user cannot leave since they are the only remaining owner of the workspace. Delete this workspace instead",
+          code: "BAD_REQUEST",
+        });
 
       //TODO: Implemente role based access control
       const otherWorkspace = await ctx.prisma.workspace.findFirst({
@@ -236,6 +255,8 @@ export const workspaceRouter = createTRPCRouter({
             "The user needs to have at least one workspace. Please create another workspace before removing this user",
           code: "BAD_REQUEST",
         });
+
+      //check if there are more people in the workspace before removal
 
       await ctx.prisma.user.update({
         where: {

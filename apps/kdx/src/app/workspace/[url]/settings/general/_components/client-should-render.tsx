@@ -5,14 +5,20 @@ import { usePathname } from "next/navigation";
 
 import { cn } from "@kdx/ui";
 
-export function ShouldRender({ children }: { children: React.ReactNode }) {
+export function ShouldRender({
+  children,
+  endsWith,
+}: {
+  children: React.ReactNode;
+  endsWith: string;
+}) {
   const pathname = usePathname();
 
   return (
     <div
       className={cn(
-        "hidden w-full text-center md:block",
-        pathname && !pathname.endsWith("/settings") && "block",
+        "hidden w-full md:block",
+        pathname && !pathname.endsWith(endsWith) && "block",
       )}
     >
       {children}

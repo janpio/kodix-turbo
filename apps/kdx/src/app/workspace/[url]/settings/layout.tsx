@@ -78,7 +78,7 @@ export default async function Layout({
             href: `/workspace/${params.url}/settings`,
           }}
         />
-        <ShouldRender>{children}</ShouldRender>
+        <ShouldRender endsWith="/settings">{children}</ShouldRender>
       </div>
     </MaxWidthWrapper>
   );

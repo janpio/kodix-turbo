@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Check, ChevronsUpDown, Loader2, PlusCircle } from "lucide-react";
 
+import type { RouterOutputs } from "@kdx/api";
 import { getBaseUrl } from "@kdx/api/src/shared";
 import type { Session } from "@kdx/auth";
 import {
@@ -29,14 +30,22 @@ import {
 import { api } from "~/trpc/react";
 import { AddWorkspaceDialog } from "./add-workspace-dialog";
 
-export function TeamSwitcher({ session }: { session: Session }) {
+export function TeamSwitcher({
+  session,
+  initialWorkspaces,
+}: {
+  session: Session;
+  initialWorkspaces: RouterOutputs["workspace"]["getAllForLoggedUser"];
+}) {
   const utils = api.useUtils();
   const router = useRouter();
   const pathName = usePathname();
   const { isPending, mutateAsync: switchActiveWorkspace } =
     api.user.switchActiveWorkspace.useMutation();
 
-  const { data } = api.workspace.getAllForLoggedUser.useQuery();
+  const { data } = api.workspace.getAllForLoggedUser.useQuery(undefined, {
+    initialData: initialWorkspaces,
+  });
 
   const [open, setOpen] = React.useState(false);
   const [showNewWorkspaceDialog, setShowNewWorkspaceDialog] =
@@ -55,7 +64,9 @@ export function TeamSwitcher({ session }: { session: Session }) {
             href={
               isPending
                 ? "#"
-                : `/workspace/${data?.activeWorkspaceUrl}/settings`
+                : `/workspace/${data.find(
+                    (x) => x.id === session.user.activeWorkspaceId,
+                  )?.url}/settings`
             }
             className={cn(
               buttonVariants({ variant: "ghost", size: "sm" }),
@@ -71,14 +82,18 @@ export function TeamSwitcher({ session }: { session: Session }) {
               <>
                 <AvatarWrapper
                   className="mr-2 h-5 w-5"
-                  src={`${getBaseUrl()}/api/avatar/${data?.activeWorkspaceName}`}
-                  alt={data?.activeWorkspaceName}
-                  fallback={data?.activeWorkspaceName}
+                  src={`${getBaseUrl()}/api/avatar/${
+                    session.user.activeWorkspaceName
+                  }`}
+                  alt={session.user.activeWorkspaceName}
+                  fallback={session.user.activeWorkspaceName}
                 />
-                {data?.activeWorkspaceName.length > 19 ? (
-                  <span className="text-xs">{data?.activeWorkspaceName}</span>
+                {session.user.activeWorkspaceName.length > 19 ? (
+                  <span className="text-xs">
+                    {session.user.activeWorkspaceName}
+                  </span>
                 ) : (
-                  data?.activeWorkspaceName
+                  session.user.activeWorkspaceName
                 )}
               </>
             )}
@@ -103,7 +118,7 @@ export function TeamSwitcher({ session }: { session: Session }) {
               <CommandInput placeholder="Search team..." />
               <CommandEmpty>No workspace found.</CommandEmpty>
               <CommandGroup>
-                {data.workspaces.map((ws) => (
+                {data.map((ws) => (
                   <CommandItem
                     key={ws.name}
                     value={ws.name + ws.id} //
@@ -116,7 +131,9 @@ export function TeamSwitcher({ session }: { session: Session }) {
 
                       //find in string where old data.url is, and replace it with new url
                       const newUrl = pathName?.replace(
-                        data.activeWorkspaceUrl,
+                        data.find(
+                          (x) => x.id === session.user.activeWorkspaceId,
+                        )!.url,
                         newActiveWorkspace.url,
                       );
                       router.push(newUrl ?? "/");
@@ -133,7 +150,7 @@ export function TeamSwitcher({ session }: { session: Session }) {
                     <Check
                       className={cn(
                         "ml-auto h-4 w-4",
-                        data?.activeWorkspaceId === ws.id
+                        session.user.activeWorkspaceId === ws.id
                           ? "opacity-100"
                           : "opacity-0",
                       )}

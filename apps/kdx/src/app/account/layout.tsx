@@ -8,6 +8,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       href: `/account/general`,
       title: "General",
     },
+    {
+      href: `/account/workspaces`,
+      title: "Workspaces",
+    },
   ];
 
   return (
@@ -23,7 +27,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             title: "Account settings",
           }}
         />
-        <ShouldRender>{children}</ShouldRender>
+        <ShouldRender endsWith="/account">{children}</ShouldRender>
       </div>
     </MaxWidthWrapper>
   );

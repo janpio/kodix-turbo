@@ -1,4 +1,5 @@
 import React from "react";
+import { unstable_cache } from "next/cache";
 import Link from "next/link";
 
 import { auth } from "@kdx/auth";
@@ -12,13 +13,20 @@ import {
   navigationMenuTriggerStyle,
 } from "@kdx/ui";
 
+import { api } from "~/trpc/server";
 import HeaderFooterRemover from "../header-footer-remover";
 import MaxWidthWrapper from "../max-width-wrapper";
 import { TeamSwitcher } from "./team-switcher";
 import { UserProfileButton } from "./user-profile-button";
 
+const getAllForLoggedUserCache = unstable_cache(async () => {
+  return await api.workspace.getAllForLoggedUser.query();
+}, ["getAllForLoggedUser"]);
+
 export async function Header() {
   const session = await auth();
+
+  const workspaces = await getAllForLoggedUserCache();
 
   return (
     <HeaderFooterRemover>
@@ -53,7 +61,10 @@ export async function Header() {
                 >
                   <path d="M16.88 3.549L7.12 20.451"></path>
                 </svg>
-                <TeamSwitcher session={session} />
+                <TeamSwitcher
+                  session={session}
+                  initialWorkspaces={workspaces}
+                />
               </>
             )}
 
