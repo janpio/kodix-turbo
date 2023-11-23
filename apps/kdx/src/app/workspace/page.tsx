@@ -36,18 +36,20 @@ export default async function Home() {
           </span>
         </div>
       </div>
-      {apps?.map((app) => (
-        <div key={app.id}>
-          <KodixApp
-            id={app.id}
-            appName={app.name}
-            appDescription={app.description}
-            appUrl={app.urlApp}
-            installed={true}
-            session={session}
-          />
-        </div>
-      ))}
+      <div className="flex flex-row space-x-4">
+        {apps?.map((app) => (
+          <div key={app.id}>
+            <KodixApp
+              id={app.id}
+              appName={app.name}
+              appDescription={app.description}
+              appUrl={app.urlApp}
+              installed={true}
+              session={session}
+            />
+          </div>
+        ))}
+      </div>
 
       <GradientHero />
     </div>

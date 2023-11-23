@@ -52,7 +52,7 @@ function CustomPrismaAdapter(p: PrismaClient): Adapter {
             connectOrCreate: {
               create: {
                 id: wsId,
-                name: `${data.name!}'s Workspace`,
+                name: `Personal Workspace`,
                 ownerId: userId,
               },
               where: {

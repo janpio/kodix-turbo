@@ -1,24 +1,16 @@
 import { redirect } from "next/navigation";
 
 import { auth } from "@kdx/auth";
-import { prisma } from "@kdx/db";
 import { H1, Lead } from "@kdx/ui";
 
 import { KodixApp } from "~/app/_components/app/kodix-app";
 import MaxWidthWrapper from "~/app/_components/max-width-wrapper";
+import { api } from "~/trpc/server";
 
 export default async function Apps() {
   const session = await auth();
   if (!session) return redirect("/api/auth/signin");
-  const apps = await prisma.app.findMany({
-    include: {
-      activeWorkspaces: {
-        where: {
-          id: session.user.activeWorkspaceId,
-        },
-      },
-    },
-  });
+  const apps = await api.app.getInstalled.query();
 
   return (
     <MaxWidthWrapper>

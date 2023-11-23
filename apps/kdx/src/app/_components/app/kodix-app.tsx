@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Loader2, MoreHorizontal, Trash2 } from "lucide-react";
 
 import type { Session } from "@kdx/auth";
@@ -46,11 +47,12 @@ export function KodixApp({
 }) {
   const [open, onOpenChange] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const router = useRouter();
   const ctx = api.useUtils();
   const { mutate } = api.workspace.installApp.useMutation({
     onSuccess: () => {
       void ctx.app.getAll.invalidate();
+      router.refresh();
       toast(`App ${appName} installed`);
     },
   });
@@ -59,6 +61,7 @@ export function KodixApp({
       onOpenChange(false);
       void ctx.app.getAll.invalidate();
       setLoading(false);
+      router.refresh();
       toast(`App ${appName} uninstalled`);
     },
   });
@@ -136,7 +139,10 @@ export function KodixApp({
                 Open
               </Link>
             ) : (
-              <Button onClick={() => void mutate({ appId: id })}>
+              <Button
+                onClick={() => void mutate({ appId: id })}
+                variant={"outline"}
+              >
                 Install
               </Button>
             )}

@@ -21,9 +21,8 @@ export const appsRouter = createTRPCRouter({
       .map((app) => {
         return {
           ...app,
-          installed: app.activeWorkspaces.some(
-            (workspace) =>
-              workspace.id === ctx?.session?.user?.activeWorkspaceId,
+          installed: !!app.activeWorkspaces.find(
+            (x) => x.id === ctx.session?.user.activeWorkspaceId,
           ),
         };
       })
