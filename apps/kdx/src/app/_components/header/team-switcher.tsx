@@ -161,7 +161,7 @@ export function TeamSwitcher({
                     }}
                   >
                     <PlusCircle className="mr-2 h-5 w-5" />
-                    Create Workspace
+                    Create New Workspace
                   </CommandItem>
                 </DialogTrigger>
                 <CommandItem
