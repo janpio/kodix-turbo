@@ -17,7 +17,7 @@ export const eventRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const eventMasters = await ctx.prisma.eventMaster.findMany({
         where: {
-          id: ctx.session.user.activeWorkspaceId,
+          workspaceId: ctx.session.user.activeWorkspaceId,
           AND: [
             {
               DateStart: {
