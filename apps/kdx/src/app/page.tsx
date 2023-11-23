@@ -1,8 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { getBaseUrl } from "@kdx/api/src/shared";
 import { auth } from "@kdx/auth";
-import { AvatarWrapper } from "@kdx/ui";
 
 import { GradientHero } from "./_components/gradient-hero";
 
