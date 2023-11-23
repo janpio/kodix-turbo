@@ -1,8 +1,9 @@
 "use client";
 
 import * as React from "react";
+import { revalidatePath } from "next/cache";
 import Link from "next/link";
-import { redirect, usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   Check,
   ChevronsUpDown,
@@ -127,7 +128,7 @@ export function TeamSwitcher({
                         workspaceId: ws.id,
                       });
                       void utils.workspace.getAllForLoggedUser.invalidate();
-
+                      revalidatePath("/", "layout");
                       router.refresh();
                     }}
                     className="text-sm"
