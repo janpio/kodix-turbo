@@ -19,14 +19,21 @@ import MaxWidthWrapper from "../max-width-wrapper";
 import { TeamSwitcher } from "./team-switcher";
 import { UserProfileButton } from "./user-profile-button";
 
-const getAllForLoggedUserCache = unstable_cache(async () => {
-  return await api.workspace.getAllForLoggedUser.query();
-}, ["getAllForLoggedUser"]);
+const getAllForLoggedUserCache = unstable_cache(
+  async () => {
+    return await api.workspace.getAllForLoggedUser.query();
+  },
+  ["getAllForLoggedUser"],
+  {
+    revalidate: 1000,
+  },
+); //TODO: How do I revalidate this?
 
 export async function Header() {
   const session = await auth();
 
-  const workspaces = await getAllForLoggedUserCache();
+  let workspaces: Awaited<ReturnType<typeof getAllForLoggedUserCache>> = [];
+  if (session) workspaces = await api.workspace.getAllForLoggedUser.query(); //TODO: I am not using cache here on purpose
 
   return (
     <HeaderFooterRemover>
