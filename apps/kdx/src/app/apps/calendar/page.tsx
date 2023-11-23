@@ -1,8 +1,9 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import moment from "moment";
 
 import { auth } from "@kdx/auth";
-import { H1, Separator } from "@kdx/ui";
+import { buttonVariants, cn, H1, Separator } from "@kdx/ui";
 
 import { columns } from "~/app/_components/apps/calendar/columns";
 import { CreateEventDialogButton } from "~/app/_components/apps/calendar/create-event-dialog";
@@ -13,6 +14,20 @@ import { api } from "~/trpc/server";
 export default async function Calendar() {
   const session = await auth();
   if (!session) return redirect("/");
+
+  const installedApps = await api.app.getInstalled.query();
+  if (!installedApps.some((x) => x.name === "Calendar"))
+    return (
+      <div className="flex flex-col items-center justify-center space-y-4">
+        <h1 className="text-red-500">You need to install this app first</h1>
+        <Link
+          href="/marketplace"
+          className={cn(buttonVariants({ variant: "outline" }))}
+        >
+          Marketplace
+        </Link>
+      </div>
+    );
 
   //date Start should be the beginninig of the day
   //date End should be the end of the day
