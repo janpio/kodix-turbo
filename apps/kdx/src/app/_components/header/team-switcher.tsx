@@ -128,7 +128,6 @@ export function TeamSwitcher({
                         workspaceId: ws.id,
                       });
                       void utils.workspace.getAllForLoggedUser.invalidate();
-                      revalidatePath("/", "layout");
                       router.refresh();
                     }}
                     className="text-sm"
