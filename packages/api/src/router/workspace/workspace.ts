@@ -1,4 +1,4 @@
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -135,6 +135,7 @@ export const workspaceRouter = createTRPCRouter({
         },
       });
       revalidateTag("getAllForLoggedUser");
+      revalidatePath(`/apps${app.urlApp}`);
 
       return installedApp;
     }),

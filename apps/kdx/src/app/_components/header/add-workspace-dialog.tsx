@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
 import type { Session } from "@kdx/auth";
@@ -32,6 +33,7 @@ export function AddWorkspaceDialog({
   onOpenChange: React.Dispatch<React.SetStateAction<boolean>>;
   session: Session;
 }) {
+  const router = useRouter();
   const ctx = api.useUtils();
   const { mutateAsync: switchActiveWorkspace } =
     api.user.switchActiveWorkspace.useMutation();
@@ -44,6 +46,7 @@ export function AddWorkspaceDialog({
       toast(`Workspace ${workspace.name} created`, {
         description: "Successfully created a new workspace.",
       });
+      router.push("/workspace");
     },
     onError: (e) => {
       const zodContentErrors = e.data?.zodError?.fieldErrors.content;
