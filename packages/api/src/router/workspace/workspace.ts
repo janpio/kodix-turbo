@@ -3,7 +3,6 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { prisma } from "@kdx/db";
-import { toUrlFriendly, toUrlFriendlyWithRandom } from "@kdx/shared";
 
 import { updateWorkspaceSchema } from "../../shared";
 import {
@@ -26,7 +25,6 @@ export const workspaceRouter = createTRPCRouter({
       select: {
         id: true,
         name: true,
-        url: true,
         ownerId: true,
       },
     });
@@ -38,23 +36,10 @@ export const workspaceRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       //! When changing workspace creation flow here, change it on @kdx/auth new user creation as well!
 
-      let url = toUrlFriendly(input.workspaceName);
-
-      const workspaces = await ctx.prisma.workspace.findMany({
-        where: {
-          url,
-        },
-      });
-
-      if (workspaces.length > 0) {
-        url = toUrlFriendlyWithRandom(input.workspaceName);
-      }
-
       const ws = await ctx.prisma.workspace.create({
         data: {
           ownerId: input.userId,
           name: input.workspaceName,
-          url,
           users: input.userId
             ? {
                 connect: [{ id: input.userId }],
@@ -85,27 +70,11 @@ export const workspaceRouter = createTRPCRouter({
   update: userAndWsLimitedProcedure
     .input(updateWorkspaceSchema)
     .mutation(async ({ ctx, input }) => {
-      if (input.workspaceUrl) {
-        const workspacesWithSameUrl = await ctx.prisma.workspace.findMany({
-          where: {
-            url: input.workspaceUrl,
-          },
-        });
-
-        if (workspacesWithSameUrl.length > 0)
-          throw new TRPCError({
-            message:
-              "Workspace with same url already exists. Please choose another url",
-            code: "CONFLICT",
-          });
-      }
-
       const ws = await ctx.prisma.workspace.update({
         where: {
           id: input.workspaceId,
         },
         data: {
-          url: input.workspaceUrl,
           name: input.workspaceName,
         },
       });

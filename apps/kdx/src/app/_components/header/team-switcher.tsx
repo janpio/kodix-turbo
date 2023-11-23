@@ -2,8 +2,14 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { Check, ChevronsUpDown, Loader2, PlusCircle } from "lucide-react";
+import { redirect, usePathname, useRouter } from "next/navigation";
+import {
+  Check,
+  ChevronsUpDown,
+  Loader2,
+  PlusCircle,
+  Settings,
+} from "lucide-react";
 
 import type { RouterOutputs } from "@kdx/api";
 import { getBaseUrl } from "@kdx/api/src/shared";
@@ -39,7 +45,6 @@ export function TeamSwitcher({
 }) {
   const utils = api.useUtils();
   const router = useRouter();
-  const pathName = usePathname();
   const { isPending, mutateAsync: switchActiveWorkspace } =
     api.user.switchActiveWorkspace.useMutation();
 
@@ -61,13 +66,7 @@ export function TeamSwitcher({
       <Popover open={open} onOpenChange={setOpen}>
         <div className="center flex justify-center rounded-lg">
           <Link
-            href={
-              isPending
-                ? "#"
-                : `/workspace/${data.find(
-                    (x) => x.id === session.user.activeWorkspaceId,
-                  )?.url}/settings`
-            }
+            href={`/workspace`}
             className={cn(
               buttonVariants({ variant: "ghost", size: "sm" }),
               "justify-start hover:bg-inherit",
@@ -124,19 +123,11 @@ export function TeamSwitcher({
                     value={ws.name + ws.id} //
                     onSelect={async () => {
                       setOpen(false);
-                      const newActiveWorkspace = await switchActiveWorkspace({
+                      await switchActiveWorkspace({
                         workspaceId: ws.id,
                       });
                       void utils.workspace.getAllForLoggedUser.invalidate();
 
-                      //find in string where old data.url is, and replace it with new url
-                      const newUrl = pathName?.replace(
-                        data.find(
-                          (x) => x.id === session.user.activeWorkspaceId,
-                        )!.url,
-                        newActiveWorkspace.url,
-                      );
-                      router.push(newUrl ?? "/");
                       router.refresh();
                     }}
                     className="text-sm"
@@ -173,6 +164,15 @@ export function TeamSwitcher({
                     Create Workspace
                   </CommandItem>
                 </DialogTrigger>
+                <CommandItem
+                  onSelect={() => {
+                    router.push("/workspace/settings");
+                    setOpen(false);
+                  }}
+                >
+                  <Settings className="mr-2 h-5 w-5" />
+                  Workspace Settings
+                </CommandItem>
               </CommandGroup>
             </CommandList>
           </Command>

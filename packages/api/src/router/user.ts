@@ -58,7 +58,7 @@ export const userRouter = createTRPCRouter({
               id: input.workspaceId,
             },
             select: {
-              url: true,
+              id: true,
             },
           },
         },

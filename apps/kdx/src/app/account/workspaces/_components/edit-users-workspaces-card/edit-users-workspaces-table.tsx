@@ -45,7 +45,7 @@ export async function EditUserWorkspacesTable() {
                 <TableCell>
                   <div className="flex justify-end space-x-4">
                     <Link
-                      href={`/workspace/${ws.url}/settings`}
+                      href={`/workspace/settings`}
                       className={cn(buttonVariants({ variant: "outline" }))}
                     >
                       Manage

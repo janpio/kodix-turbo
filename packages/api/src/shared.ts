@@ -26,17 +26,6 @@ export const updateWorkspaceSchema = z.object({
       message: "Workspace name must be at most 32 characters",
     })
     .optional(),
-  workspaceUrl: z
-    .string()
-    .max(48, {
-      message: "Workspace url must be at most 48 characters",
-    })
-    .refine((value) => /^[a-z0-9-]+$/i.test(value) && !/\s/.test(value), {
-      message:
-        "String cannot contain spaces and must be alphanumeric or contain dashes",
-    })
-    .transform((value) => value.toLowerCase())
-    .optional(),
 });
 
 export const inviteUserSchema = z.object({

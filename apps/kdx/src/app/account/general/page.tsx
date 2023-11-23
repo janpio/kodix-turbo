@@ -2,7 +2,7 @@ import { Suspense } from "react";
 
 import { auth } from "@kdx/auth";
 
-import SettingsEditCardSkeleton from "~/app/workspace/[url]/settings/general/_components/edit-workspace-name-card-skeleton";
+import SettingsEditCardSkeleton from "~/app/workspace/settings/general/_components/edit-workspace-name-card-skeleton";
 import { EditAccountNameCard } from "./_components/edit-account-name-card";
 
 export default async function GeneralAccountSettings() {

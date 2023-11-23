@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 
-import SettingsEditCardSkeleton from "~/app/workspace/[url]/settings/general/_components/edit-workspace-name-card-skeleton";
+import SettingsEditCardSkeleton from "~/app/workspace/settings/general/_components/edit-workspace-name-card-skeleton";
 import { EditUserWorkspacesTable } from "./_components/edit-users-workspaces-card/edit-users-workspaces-table";
 
 export default function Workspaces() {

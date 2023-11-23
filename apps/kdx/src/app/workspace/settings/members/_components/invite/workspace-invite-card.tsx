@@ -41,9 +41,7 @@ export default function WorkspaceInviteCardClient({
 
   const { mutate } = api.workspace.invitation.invite.useMutation({
     onError: (error) => {
-      const errorMessage = error.data?.zodError?.fieldErrors;
-      if (errorMessage?.workspaceUrl)
-        return toast.error(errorMessage?.workspaceUrl?.[0]);
+      //const errorMessage = error.data?.zodError?.fieldErrors;
 
       toast.error(
         error.message || "Oops, something went wrong. Please try again later",

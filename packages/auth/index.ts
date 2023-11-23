@@ -1,4 +1,3 @@
-import { revalidateTag } from "next/cache";
 import type { Adapter } from "@auth/core/adapters";
 import EmailProvider from "@auth/core/providers/email";
 // import EmailProvider from "next-auth/providers/email";
@@ -10,7 +9,6 @@ import NextAuth from "next-auth";
 
 import type { PrismaClient } from "@kdx/db";
 import { prisma } from "@kdx/db";
-import { toUrlFriendly, toUrlFriendlyWithRandom } from "@kdx/shared";
 
 import { env } from "./env.mjs";
 import { sendVerificationRequest } from "./src/email/send-verification-request";
@@ -42,19 +40,8 @@ function CustomPrismaAdapter(p: PrismaClient): Adapter {
     ...PrismaAdapter(p),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async createUser(data): Promise<any> {
-      let url = toUrlFriendly(data.name ?? "");
       const userId = cuid();
       const wsId = cuid();
-
-      const workspaces = await prisma.workspace.findMany({
-        where: {
-          url,
-        },
-      });
-
-      if (workspaces.length > 0) {
-        url = toUrlFriendlyWithRandom(data.name ?? "");
-      }
 
       //! When changing workspace creation flow here, change it on api.workspace.create router as well!
       const user = await p.user.create({
@@ -66,7 +53,6 @@ function CustomPrismaAdapter(p: PrismaClient): Adapter {
               create: {
                 id: wsId,
                 name: `${data.name!}'s Workspace`,
-                url,
                 ownerId: userId,
               },
               where: {

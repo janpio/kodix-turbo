@@ -49,7 +49,6 @@ model AppWorkspaceConfig {
 model Workspace {
   id        String   @id @default(cuid())
   name      String
-  url       String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   users     User[]   @relation("UserWorkspace")
