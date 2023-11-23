@@ -32,13 +32,13 @@
     "@radix-ui/react-toggle": "^1.0.3",
     "@radix-ui/react-tooltip": "^1.0.7",
     "class-variance-authority": "^0.7.0",
-    "clsx": "^1.2.1",
+    "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
     "lucide-react": "^0.263.1",
     "react-day-picker": "^8.9.1",
     "react-hook-form": "^7.48.2",
-    "sonner": "^1.2.0",
-    "tailwind-merge": "^1.14.0",
+    "sonner": "^1.2.3",
+    "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
@@ -49,8 +49,8 @@
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
     "autoprefixer": "^10.4.16",
-    "eslint": "^8.53.0",
-    "prettier": "^3.0.3",
+    "eslint": "^8.54.0",
+    "prettier": "^3.1.0",
     "react": "18.2.0",
     "tailwindcss": "^3.3.5",
     "typescript": "^5.3.2"
