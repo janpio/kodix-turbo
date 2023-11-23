@@ -1,11 +1,10 @@
-import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { getBaseUrl } from "@kdx/api/src/shared";
 import { auth } from "@kdx/auth";
 import {
   AvatarWrapper,
-  buttonVariants,
-  cn,
+  Button,
   Table,
   TableBody,
   TableCell,
@@ -44,12 +43,20 @@ export async function EditUserWorkspacesTable() {
                 </TableCell>
                 <TableCell>
                   <div className="flex justify-end space-x-4">
-                    <Link
-                      href={`/workspace/settings`}
-                      className={cn(buttonVariants({ variant: "outline" }))}
+                    <form
+                      action={async () => {
+                        "use server";
+                        if (ws.ownerId !== session.user.id)
+                          await api.user.switchActiveWorkspace.mutate({
+                            workspaceId: ws.id,
+                          });
+                        redirect("/workspace/settings");
+                      }}
                     >
-                      Manage
-                    </Link>
+                      <Button variant="outline" type="submit">
+                        Manage
+                      </Button>
+                    </form>
                     <LeaveWsDropdown session={session} />
                   </div>
                 </TableCell>
