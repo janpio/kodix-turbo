@@ -6,7 +6,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import type { RouterOutputs } from "@kdx/api";
 import {
   Table,
   TableBody,
@@ -20,14 +19,8 @@ import {
 import { api } from "~/trpc/react";
 import { inviteColumns } from "./inviteColumns";
 
-export function InviteDataTable({
-  initialInvites,
-}: {
-  initialInvites: RouterOutputs["workspace"]["invitation"]["getAll"];
-}) {
-  const { data } = api.workspace.invitation.getAll.useQuery(undefined, {
-    initialData: initialInvites,
-  });
+export function InviteDataTable() {
+  const { data } = api.workspace.invitation.getAll.useQuery();
 
   const utils = api.useUtils();
   const { mutate } = api.workspace.invitation.delete.useMutation({
@@ -39,7 +32,7 @@ export function InviteDataTable({
 
   const columns = inviteColumns({ mutate });
   const table = useReactTable({
-    data,
+    data: data ?? [],
     columns: columns,
     getCoreRowModel: getCoreRowModel(),
   });

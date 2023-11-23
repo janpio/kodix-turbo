@@ -17,7 +17,6 @@ export async function EditWSMembersAndInvitesCard() {
   if (!session) return null;
 
   const users = await api.workspace.getAllUsers.query();
-  const initialInvites = await api.workspace.invitation.getAll.query();
 
   return (
     <Tabs defaultValue="members">
@@ -29,7 +28,7 @@ export async function EditWSMembersAndInvitesCard() {
         <DataTableMembers initialUsers={users} session={session} />
       </TabsContent>
       <TabsContent value="invites">
-        <InviteDataTable initialInvites={initialInvites} />
+        <InviteDataTable />
       </TabsContent>
     </Tabs>
   );
