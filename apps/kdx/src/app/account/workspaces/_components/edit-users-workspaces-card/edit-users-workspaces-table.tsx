@@ -46,7 +46,7 @@ export async function EditUserWorkspacesTable() {
                     <form
                       action={async () => {
                         "use server";
-                        if (ws.ownerId !== session.user.id)
+                        if (ws.id !== session.user.activeWorkspaceId)
                           await api.user.switchActiveWorkspace.mutate({
                             workspaceId: ws.id,
                           });
