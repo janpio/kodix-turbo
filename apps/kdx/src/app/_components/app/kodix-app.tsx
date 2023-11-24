@@ -14,6 +14,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  cn,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -66,9 +67,11 @@ export function KodixApp({
     },
   });
 
+  const isActive = !["Kodix Care"].includes(appName);
+
   return (
     <>
-      <Card className="max-w-sm">
+      <Card className="w-[250px]">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="">{appName} </CardTitle>
 
@@ -124,27 +127,36 @@ export function KodixApp({
         <CardContent>
           <CardDescription className="mb-4">{appDescription}</CardDescription>
           <div className="flex w-full flex-col">
-            {!session ? (
-              <Link
-                href="/signin"
-                className={buttonVariants({ variant: "default" })}
-              >
-                Install
-              </Link>
-            ) : installed ? (
+            {session && installed && (
               <Link
                 href={`apps${appUrl}`}
-                className={buttonVariants({ variant: "default" })}
+                className={cn(
+                  buttonVariants({ variant: "default" }),
+                  !isActive && "pointer-events-none opacity-50",
+                )}
               >
-                Open
+                {isActive ? "Open" : "Coming soon"}
               </Link>
-            ) : (
+            )}
+            {session && !installed && (
               <Button
                 onClick={() => void mutate({ appId: id })}
-                variant={"outline"}
+                variant={"secondary"}
+                className={cn(
+                  "disabled",
+                  !isActive && "pointer-events-none opacity-50",
+                )}
+              >
+                {isActive ? "Install" : "Coming soon"}
+              </Button>
+            )}
+            {!session && (
+              <Link
+                href="/signin"
+                className={cn(buttonVariants({ variant: "default" }))}
               >
                 Install
-              </Button>
+              </Link>
             )}
           </div>
         </CardContent>

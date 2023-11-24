@@ -9,7 +9,7 @@ import MaxWidthWrapper from "~/app/_components/max-width-wrapper";
 import { api } from "~/trpc/react";
 
 export default function Todo() {
-  const { data } = api.todo.getAllForLoggedUser.useQuery();
+  const { data } = api.todo.getAll.useQuery();
 
   return (
     <MaxWidthWrapper>
