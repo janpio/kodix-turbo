@@ -7,7 +7,7 @@ import type { RouterOutputs } from "@kdx/api";
 import { api } from "~/trpc/react";
 
 export function CreatePostForm() {
-  const ctx = api.useUtils();
+  const utils = api.useUtils();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");

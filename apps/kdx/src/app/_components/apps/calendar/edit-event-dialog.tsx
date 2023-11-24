@@ -51,13 +51,13 @@ export function EditEventDialog({
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const ctx = api.useUtils();
+  const utils = api.useUtils();
   const { mutate: editEvent } = api.event.edit.useMutation({
     onMutate: () => {
       setButtonLoading(true);
     },
     onSuccess: () => {
-      void ctx.event.getAll.invalidate();
+      void utils.event.getAll.invalidate();
       setOpen(false);
     },
     onSettled: () => {

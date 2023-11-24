@@ -34,13 +34,13 @@ export function AddWorkspaceDialog({
   session: Session;
 }) {
   const router = useRouter();
-  const ctx = api.useUtils();
+  const utils = api.useUtils();
   const { mutateAsync: switchActiveWorkspace } =
     api.user.switchActiveWorkspace.useMutation();
   const { mutateAsync, isPending } = api.workspace.create.useMutation({
     onSuccess: async (workspace) => {
       await switchActiveWorkspace({ workspaceId: workspace.id });
-      void ctx.workspace.getAllForLoggedUser.invalidate();
+      void utils.workspace.getAllForLoggedUser.invalidate();
       onOpenChange(false);
 
       toast(`Workspace ${workspace.name} created`, {

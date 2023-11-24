@@ -32,7 +32,14 @@ export const workspaceRouter = createTRPCRouter({
     return workspaces;
   }),
   create: protectedProcedure
-    .input(z.object({ userId: z.string().cuid(), workspaceName: z.string() }))
+    .input(
+      z.object({
+        userId: z.string().cuid(),
+        workspaceName: z.string().min(3).max(32, {
+          message: "Workspace name must be at most 32 characters",
+        }),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       //! When changing workspace creation flow here, change it on @kdx/auth new user creation as well!
 

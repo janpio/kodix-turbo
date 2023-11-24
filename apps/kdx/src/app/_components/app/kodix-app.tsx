@@ -49,10 +49,10 @@ export function KodixApp({
   const [open, onOpenChange] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const ctx = api.useUtils();
+  const utils = api.useUtils();
   const { mutate } = api.workspace.installApp.useMutation({
     onSuccess: () => {
-      void ctx.app.getAll.invalidate();
+      void utils.app.getAll.invalidate();
       router.refresh();
       toast(`App ${appName} installed`);
     },
@@ -60,7 +60,7 @@ export function KodixApp({
   const { mutate: uninstall } = api.workspace.uninstallApp.useMutation({
     onSuccess: () => {
       onOpenChange(false);
-      void ctx.app.getAll.invalidate();
+      void utils.app.getAll.invalidate();
       setLoading(false);
       router.refresh();
       toast(`App ${appName} uninstalled`);

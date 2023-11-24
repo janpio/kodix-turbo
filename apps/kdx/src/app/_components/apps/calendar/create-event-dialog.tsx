@@ -33,13 +33,13 @@ import { RecurrencePicker } from "./recurrence-picker";
 
 export function CreateEventDialogButton() {
   const [open, setOpen] = useState(false);
-  const ctx = api.useUtils();
+  const utils = api.useUtils();
   const { mutate: createEvent } = api.event.create.useMutation({
     onMutate: () => {
       setButtonLoading(true);
     },
     onSuccess: () => {
-      void ctx.event.getAll.invalidate();
+      void utils.event.getAll.invalidate();
       revertStateToDefault();
       setOpen(false);
     },

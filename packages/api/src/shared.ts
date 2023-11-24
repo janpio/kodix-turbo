@@ -22,6 +22,7 @@ export const updateWorkspaceSchema = z.object({
   workspaceId: z.string().cuid(),
   workspaceName: z
     .string()
+    .min(3, { message: "Workspace name must be at least 3 characters" })
     .max(32, {
       message: "Workspace name must be at most 32 characters",
     })

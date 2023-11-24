@@ -69,7 +69,7 @@ export function DataTable({
   const [openCancelDialog, setOpenCancelDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
 
-  const ctx = api.useUtils();
+  const utils = api.useUtils();
   const result = api.event.getAll.useQuery(
     {
       dateStart: moment(selectedDay).startOf("day").toDate(),
@@ -84,7 +84,7 @@ export function DataTable({
 
   const { mutate: nukeEvents } = api.event.nuke.useMutation({
     onSuccess() {
-      void ctx.event.getAll.invalidate();
+      void utils.event.getAll.invalidate();
     },
   });
 

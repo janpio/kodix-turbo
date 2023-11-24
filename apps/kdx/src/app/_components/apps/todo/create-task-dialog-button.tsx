@@ -46,10 +46,10 @@ export function CreateTaskDialogButton() {
     setOpen(false);
   }
 
-  const ctx = api.useUtils();
+  const utils = api.useUtils();
   const { mutate: createTask } = api.todo.create.useMutation({
     onSuccess: () => {
-      void ctx.todo.getAll.invalidate();
+      void utils.todo.getAll.invalidate();
     },
   });
 

@@ -61,13 +61,13 @@ export const columns = [
         if (value) setPriority(value);
       }, [value]);
 
-      const ctx = api.useUtils();
+      const utils = api.useUtils();
       const { mutate: updateTodo } = api.todo.update.useMutation({
         async onMutate(newData) {
           if (!newData.priority) return;
 
           // Cancel outgoing fetches (so they don't overwrite our optimistic update)
-          await ctx.todo.getAll.cancel();
+          await utils.todo.getAll.cancel();
 
           // Get the previous data, so we can rollback later
           const prevData = priority;
@@ -115,13 +115,13 @@ export const columns = [
         if (value) setStatus(value);
       }, [value]);
 
-      const ctx = api.useUtils();
+      const utils = api.useUtils();
       const { mutate: updateTodo } = api.todo.update.useMutation({
         async onMutate(newData) {
           if (!newData.status) return;
 
           // Cancel outgoing fetches (so they don't overwrite our optimistic update)
-          await ctx.todo.getAll.cancel();
+          await utils.todo.getAll.cancel();
 
           // Get the previous data, so we can rollback later
           const prevData = status;
@@ -169,11 +169,11 @@ export const columns = [
         if (value) setDueDate(value);
       }, [value]);
 
-      const ctx = api.useUtils();
+      const utils = api.useUtils();
       const { mutate: updateTodo } = api.todo.update.useMutation({
         async onMutate(newData) {
           // Cancel outgoing fetches (so they don't overwrite our optimistic update)
-          await ctx.todo.getAll.cancel();
+          await utils.todo.getAll.cancel();
 
           // Get the previous data, so we can rollback later
           const prevData = dueDate;
@@ -210,11 +210,11 @@ export const columns = [
         if (value) setAssignedToUserId(value.id);
       }, [value]);
 
-      const ctx = api.useUtils();
+      const utils = api.useUtils();
       const { mutate: updateTodo } = api.todo.update.useMutation({
         async onMutate(newData) {
           // Cancel outgoing fetches (so they don't overwrite our optimistic update)
-          await ctx.todo.getAll.cancel();
+          await utils.todo.getAll.cancel();
 
           // Get the previous data, so we can rollback later
           const prevData = assignedToUserId;
