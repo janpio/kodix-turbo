@@ -32,7 +32,18 @@ import {
 
 import { DatePicker } from "~/app/_components/date-picker";
 import { FrequencyToTxt } from "~/app/_components/frequency-picker";
-import { tzOffsetText } from "~/helpers";
+
+/**
+ * @description rrule.toText() returns the text based on the UTC timezone. This function returns the text based on the local timezone.
+ */
+export function tzOffsetText(rule: RRule) {
+  const tzOffset = moment().utcOffset();
+  const newRRule = rule.clone();
+  newRRule.options.until = newRRule.options.until
+    ? moment(rule.options.until).add(tzOffset, "minutes").toDate()
+    : null;
+  return newRRule.toText();
+}
 
 const freqs = [RRule.DAILY, RRule.WEEKLY, RRule.MONTHLY, RRule.YEARLY];
 const allWeekdays: Weekday[] = [

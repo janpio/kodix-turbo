@@ -2,8 +2,10 @@ import React from "react";
 import { unstable_cache } from "next/cache";
 import Link from "next/link";
 
+import { getBaseUrl } from "@kdx/api/src/shared";
 import { auth } from "@kdx/auth";
 import {
+  AvatarWrapper,
   buttonVariants,
   cn,
   NavigationMenu,
@@ -70,7 +72,17 @@ export async function Header() {
                 </svg>
                 <TeamSwitcher
                   session={session}
-                  initialWorkspaces={workspaces}
+                  workspaces={workspaces}
+                  avatar={
+                    <AvatarWrapper
+                      className="mr-2 h-5 w-5"
+                      src={`${getBaseUrl()}/api/avatar/${
+                        session.user.activeWorkspaceName
+                      }`}
+                      alt={session.user.activeWorkspaceName}
+                      fallback={session.user.activeWorkspaceName}
+                    />
+                  }
                 />
               </>
             )}

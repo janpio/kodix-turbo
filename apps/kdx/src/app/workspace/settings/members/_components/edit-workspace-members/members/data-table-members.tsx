@@ -18,6 +18,7 @@ import {
   toast,
 } from "@kdx/ui";
 
+import { trpcErrorToastDefault } from "~/helpers/miscelaneous";
 import { api } from "~/trpc/react";
 import { memberColumns } from "./memberColumns";
 
@@ -38,14 +39,7 @@ export function DataTableMembers({
       toast("User removed from workspace");
       void utils.workspace.getAllUsers.invalidate();
     },
-    onError: (error) => {
-      const errorMessage = error.data?.zodError?.fieldErrors;
-      if (errorMessage?.workspaceName)
-        return toast.error(errorMessage?.workspaceName[0]);
-      toast.error(
-        error.message || "Oops, something went wrong. Please try again later",
-      );
-    },
+    onError: (e) => trpcErrorToastDefault(e),
   });
 
   const columns = memberColumns({ mutate, session });

@@ -17,6 +17,7 @@ import {
   toast,
 } from "@kdx/ui";
 
+import { trpcErrorToastDefault } from "~/helpers/miscelaneous";
 import { api } from "~/trpc/react";
 
 export function EditWorkspaceNameCardClient({
@@ -32,14 +33,7 @@ export function EditWorkspaceNameCardClient({
       void utils.workspace.getAllForLoggedUser.invalidate();
       toast.success("Workspace name updated successfully");
     },
-    onError: (error) => {
-      const errorMessage = error.data?.zodError?.fieldErrors;
-      if (errorMessage?.workspaceName)
-        return toast.error(errorMessage?.workspaceName[0]);
-      toast.error(
-        error.message || "Oops, something went wrong. Please try again later",
-      );
-    },
+    onError: (e) => trpcErrorToastDefault(e),
   });
 
   const [newName, setNewName] = useState(workspaceName);

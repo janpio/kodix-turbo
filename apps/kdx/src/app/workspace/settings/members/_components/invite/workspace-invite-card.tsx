@@ -27,6 +27,7 @@ import {
   toast,
 } from "@kdx/ui";
 
+import { trpcErrorToastDefault } from "~/helpers/miscelaneous";
 import { api } from "~/trpc/react";
 
 export default function WorkspaceInviteCardClient({
@@ -40,13 +41,6 @@ export default function WorkspaceInviteCardClient({
   const [successes, setSuccesses] = useState<string[]>([]);
 
   const { mutate } = api.workspace.invitation.invite.useMutation({
-    onError: (error) => {
-      //const errorMessage = error.data?.zodError?.fieldErrors;
-
-      toast.error(
-        error.message || "Oops, something went wrong. Please try again later",
-      );
-    },
     onSuccess: ({ successes, failures }) => {
       if (successes.length > 0)
         toast.success(
@@ -65,6 +59,7 @@ export default function WorkspaceInviteCardClient({
         closeDialog();
       }, 2000);
     },
+    onError: (e) => trpcErrorToastDefault(e),
     onSettled: () => {
       setLoading(false);
     },

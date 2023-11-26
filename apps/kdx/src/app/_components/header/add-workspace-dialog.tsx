@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
 import type { Session } from "@kdx/auth";
@@ -16,7 +16,8 @@ import {
   toast,
 } from "@kdx/ui";
 
-import { api } from "~/trpc/react";
+import { defaultSafeActionToastError } from "~/helpers/safe-action/default-action-error-toast";
+import { createWorkspaceAction } from "./actions";
 
 /**
  * To use this Dialog, make sure you wrap it in a DialogTrigger component.
@@ -34,33 +35,9 @@ export function AddWorkspaceDialog({
   session: Session;
 }) {
   const router = useRouter();
-  const utils = api.useUtils();
-  const { mutateAsync: switchActiveWorkspace } =
-    api.user.switchActiveWorkspace.useMutation();
-  const { mutateAsync, isPending } = api.workspace.create.useMutation({
-    onSuccess: async (workspace) => {
-      await switchActiveWorkspace({ workspaceId: workspace.id });
-      void utils.workspace.getAllForLoggedUser.invalidate();
-      onOpenChange(false);
-
-      toast(`Workspace ${workspace.name} created`, {
-        description: "Successfully created a new workspace.",
-      });
-      router.push("/workspace");
-    },
-    onError: (e) => {
-      const zodContentErrors = e.data?.zodError?.fieldErrors.content;
-      const zodFormErrors = e.data?.zodError?.formErrors;
-      toast.error(
-        zodContentErrors?.[0] ??
-          zodFormErrors?.[0] ??
-          e.message ??
-          "Something went wrong, please try again later.",
-      );
-    },
-  });
+  const pathname = usePathname();
   const [workspaceName, changeWorkspaceName] = React.useState("");
-
+  const [isPending, setIsPending] = React.useState(false);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       {children}
@@ -112,12 +89,20 @@ export function AddWorkspaceDialog({
           </Button>
           <Button
             disabled={isPending}
-            type="submit"
-            onClick={() => {
-              void mutateAsync({
+            onClick={async () => {
+              setIsPending(true);
+              const result = await createWorkspaceAction({
                 userId: session.user.id,
                 workspaceName: workspaceName,
               });
+              setIsPending(false);
+              if (defaultSafeActionToastError(result)) return;
+              onOpenChange(false);
+              toast(`Workspace ${result.data?.name} created`, {
+                description: "Successfully created a new workspace.",
+              });
+              if (pathname === "/workspace") return router.refresh();
+              router.push("/workspace");
             }}
           >
             {isPending && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}

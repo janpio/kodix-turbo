@@ -42,7 +42,6 @@ export const workspaceRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       //! When changing workspace creation flow here, change it on @kdx/auth new user creation as well!
-
       const ws = await ctx.prisma.workspace.create({
         data: {
           ownerId: input.userId,

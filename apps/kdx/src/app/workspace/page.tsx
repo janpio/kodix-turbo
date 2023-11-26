@@ -8,7 +8,7 @@ import { api } from "~/trpc/server";
 import { KodixApp } from "../_components/app/kodix-app";
 import { GradientHero } from "../_components/gradient-hero";
 
-export default async function Home() {
+export default async function Workspace() {
   const session = await auth();
   if (!session) return redirect("/");
   const apps = await api.app.getInstalled.query();
@@ -18,7 +18,6 @@ export default async function Home() {
       <h1 className="text-primary scroll-m-20 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-6xl font-extrabold tracking-tight text-transparent lg:text-8xl">
         Welcome to Kodix
       </h1>
-      <div></div>
 
       <div className="text-center">
         <p className="font-italic italic">You are on</p>

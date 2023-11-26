@@ -24,9 +24,9 @@ import {
   PopoverContent,
   PopoverTrigger,
   Textarea,
-  toast,
 } from "@kdx/ui";
 
+import { trpcErrorToastDefault } from "~/helpers/miscelaneous";
 import { api } from "~/trpc/react";
 import type { RouterInputs } from "~/trpc/shared";
 import { RecurrencePicker } from "./recurrence-picker";
@@ -46,16 +46,7 @@ export function CreateEventDialogButton() {
     onSettled: () => {
       setButtonLoading(false);
     },
-    onError: (e) => {
-      const zodContentErrors = e.data?.zodError?.fieldErrors.content;
-      const zodFormErrors = e.data?.zodError?.formErrors;
-      toast.error(
-        zodContentErrors?.[0] ??
-          zodFormErrors?.[0] ??
-          e.message ??
-          "Something went wrong, please try again later.",
-      );
-    },
+    onError: (e) => trpcErrorToastDefault(e),
   });
   const [buttonLoading, setButtonLoading] = useState(false);
   const [personalizedRecurrenceOpen, setPersonalizedRecurrenceOpen] =

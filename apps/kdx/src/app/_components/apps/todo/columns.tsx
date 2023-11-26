@@ -6,17 +6,18 @@ import { createColumnHelper } from "@tanstack/react-table";
 
 import type { RouterOutputs } from "@kdx/api";
 import type { Status } from "@kdx/db";
-import { Button, Checkbox, toast } from "@kdx/ui";
+import { Button, Checkbox } from "@kdx/ui";
 
 import { DatePickerWithPresets } from "~/app/_components/date-picker-with-presets";
+import { trpcErrorToastDefault } from "~/helpers/miscelaneous";
 import { api } from "~/trpc/react";
 import { AssigneePopover } from "./assignee-popover";
+import type { Priority } from "./priority-popover";
 import {
   PriorityIcon,
   PriorityPopover,
   PriorityToTxt,
 } from "./priority-popover";
-import type { Priority } from "./priority-popover";
 import { StatusIcon, StatusPopover, StatusToText } from "./status-popover";
 
 export type TodoColumn = RouterOutputs["todo"]["getAll"][number];
@@ -78,9 +79,7 @@ export const columns = [
         onError(err, newTodo, ctx) {
           if (!ctx?.prevData) return;
 
-          toast.error("Failed to update priority", {
-            description: "Please try again later",
-          });
+          trpcErrorToastDefault(err);
           // If the mutation fails, use the context-value from onMutate
           setPriority(ctx?.prevData);
         },
@@ -132,9 +131,7 @@ export const columns = [
         onError(err, newTodo, ctx) {
           if (!ctx?.prevData) return;
 
-          toast.error("Failed to update priority", {
-            description: "Please try again later",
-          });
+          trpcErrorToastDefault(err);
           // If the mutation fails, use the context-value from onMutate
           setStatus(ctx?.prevData);
         },
@@ -182,9 +179,7 @@ export const columns = [
           return { prevData };
         },
         onError(err, newTodo, ctx) {
-          toast.error("Failed to update priority", {
-            description: "Please try again later",
-          });
+          trpcErrorToastDefault(err);
           // If the mutation fails, use the context-value from onMutate
           setDueDate(ctx?.prevData ?? undefined);
         },
@@ -225,9 +220,7 @@ export const columns = [
         onError(err, newTodo, ctx) {
           if (!ctx?.prevData) return;
 
-          toast.error("Failed to update priority", {
-            description: "Please try again later",
-          });
+          trpcErrorToastDefault(err);
           // If the mutation fails, use the context-value from onMutate
           setAssignedToUserId(ctx?.prevData);
         },
