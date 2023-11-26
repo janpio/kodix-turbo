@@ -10,5 +10,5 @@
   ],
   "updateInternalDeps": true,
   "rangeStrategy": "bump",
-  "automerge": false
+  "automerge": true
 }
