@@ -58,8 +58,8 @@ export default function Page() {
       process.env.NODE_ENV === "production"
         ? "https://www.kodix.com.br"
         : typeof window !== "undefined"
-        ? window.location.origin.replace("3001", "3000")
-        : ""
+          ? window.location.origin.replace("3001", "3000")
+          : ""
     }/api/ai`,
     onError: () => {
       setLoading(false);
