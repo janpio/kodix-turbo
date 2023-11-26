@@ -1,3 +1,4 @@
+import { renderAsync } from "@react-email/components";
 import { Resend } from "resend";
 import type { CreateEmailOptions } from "resend/build/src/emails/interfaces";
 
@@ -29,7 +30,10 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 //   },
 // });
 
-export default async function sendEmail(mailOptions: CreateEmailOptions) {
+export default async function sendEmail(
+  mailOptions: CreateEmailOptions & { react: JSX.Element },
+) {
   // const result = await transporter.sendMail({ ...options, html });
-  return await resend.emails.send(mailOptions);
+  const html = await renderAsync(mailOptions.react); //TODO: remove this rendering to html process once this is resolved https://github.com/resendlabs/resend-node/issues/256
+  return await resend.emails.send({ ...mailOptions, html });
 }
