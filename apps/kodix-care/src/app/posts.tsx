@@ -16,7 +16,7 @@ export function CreatePostForm() {
     async onSuccess() {
       setTitle("");
       setContent("");
-      await ctx.post.all.invalidate();
+      await utils.post.all.invalidate();
     },
   });
 
@@ -31,7 +31,7 @@ export function CreatePostForm() {
         });
         setTitle("");
         setContent("");
-        await ctx.post.all.invalidate();
+        await utils.post.all.invalidate();
       }}
     >
       <input
