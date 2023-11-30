@@ -24,7 +24,6 @@
     "@trpc/next": "next",
     "@trpc/react-query": "next",
     "@trpc/server": "next",
-    "@vercel/analytics": "^1.1.1",
     "ai": "^2.2.22",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.263.1",
