@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
 import { updateWorkspaceSchema } from "@kdx/api/src/shared";
@@ -27,11 +28,11 @@ export function EditWorkspaceNameCardClient({
   workspaceId: string;
   workspaceName: string;
 }) {
-  const utils = api.useUtils();
+  const router = useRouter();
   const { mutate, isPending } = api.workspace.update.useMutation({
     onSuccess: () => {
-      void utils.workspace.getAllForLoggedUser.invalidate();
       toast.success("Workspace name updated successfully");
+      router.refresh();
     },
     onError: (e) => trpcErrorToastDefault(e),
   });
