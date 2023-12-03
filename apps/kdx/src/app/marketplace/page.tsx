@@ -9,6 +9,13 @@ export default async function Apps() {
   const apps = await api.app.getAll.query();
   const session = await auth();
 
+  apps.sort((a, b) => {
+    if (a.name === "Kodix Care") return 1;
+    if (b.name === "Kodix Care") return -1;
+
+    return 0;
+  });
+
   return (
     <MaxWidthWrapper>
       <H1>Marketplace</H1>
