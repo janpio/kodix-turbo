@@ -1,6 +1,7 @@
 import { appsRouter } from "./router/apps";
 import { authRouter } from "./router/auth";
 import { eventRouter } from "./router/event";
+import { kodixCareRouter } from "./router/kodixcare";
 import { postRouter } from "./router/post";
 import { testRouter } from "./router/test";
 import { todoRouter } from "./router/todo";
@@ -17,6 +18,7 @@ export const appRouter = createTRPCRouter({
   event: eventRouter,
   post: postRouter,
   test: testRouter,
+  kodixCare: kodixCareRouter,
 });
 
 // export type definition of API

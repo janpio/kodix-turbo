@@ -67,7 +67,7 @@ export function KodixApp({
     },
   });
 
-  const isActive = !["Kodix Care"].includes(appName);
+  const isActive = !["null"].includes(appName);
 
   return (
     <>
