@@ -21,8 +21,8 @@ model AppRoles {
   appId           String
   roleName        String
   roleDescription String?
-  maxRoleUsers    Int     @default(0)
   minRoleUsers    Int     @default(0)
+  maxRoleUsers    Int     @default(0)
 
   app App @relation(fields: [appId], references: [id])
 

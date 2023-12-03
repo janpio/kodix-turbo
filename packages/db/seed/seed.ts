@@ -40,6 +40,25 @@ import { prisma } from "..";
       subscriptionCost: 0,
       devPartnerId: kdxPartnerId,
       urlApp: "/kodixCare",
+      appRoles: {
+        create: [
+          {
+            roleName: "Admin",
+            minRoleUsers: 0,
+            maxRoleUsers: 0,
+          },
+          {
+            roleName: "Patient",
+            minRoleUsers: 1,
+            maxRoleUsers: 1,
+          },
+          {
+            roleName: "CareGiver",
+            minRoleUsers: 1,
+            maxRoleUsers: 0,
+          },
+        ],
+      },
     },
   ];
 
@@ -48,7 +67,7 @@ import { prisma } from "..";
       where: {
         id: app.id,
       },
-      update: {},
+      update: app,
       create: app,
     });
   }
