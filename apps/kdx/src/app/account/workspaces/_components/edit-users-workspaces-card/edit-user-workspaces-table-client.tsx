@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, MoreHorizontal } from "lucide-react";
+import { ChevronLeft, Loader2, MoreHorizontal } from "lucide-react";
 
 import type { RouterOutputs } from "@kdx/api";
 import type { Session } from "@kdx/auth";
@@ -69,6 +69,8 @@ function CustomRow({
   session: Session;
 }) {
   const [isHovered, setIsHovered] = useState(false);
+  const [manageLoading, setManageLoading] = useState(false);
+  const router = useRouter();
 
   return (
     <TableRow
@@ -105,16 +107,24 @@ function CustomRow({
         <div className="flex justify-end space-x-4">
           <form
             onSubmit={(e) => {
+              setManageLoading(true);
               e.stopPropagation();
               e.preventDefault();
-              void switchWorkspaceAction({
-                workspaceId: ws.id,
-                redirect: "/workspace/settings",
-              });
+
+              if (ws.id !== session.user.activeWorkspaceId)
+                void switchWorkspaceAction({
+                  workspaceId: ws.id,
+                  redirect: "/workspace/settings",
+                });
+              else void router.push(`/workspace/settings`);
             }}
           >
             <Button variant="outline" type="submit">
-              Manage
+              {manageLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <>Manage</>
+              )}
             </Button>
           </form>
           <LeaveWsDropdown session={session} />
