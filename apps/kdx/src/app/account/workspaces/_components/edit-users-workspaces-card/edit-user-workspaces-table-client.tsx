@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronLeft, MoreHorizontal } from "lucide-react";
 
 import type { RouterOutputs } from "@kdx/api";
@@ -125,10 +126,12 @@ function CustomRow({
 
 function LeaveWsDropdown({ session }: { session: Session }) {
   const utils = api.useUtils();
+  const router = useRouter();
   const { mutate } = api.workspace.removeUser.useMutation({
     onSuccess: () => {
       toast("User removed from workspace");
       void utils.workspace.getAllUsers.invalidate();
+      router.refresh();
     },
     onError: (e) => trpcErrorToastDefault(e),
   });
