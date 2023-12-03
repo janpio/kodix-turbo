@@ -13,7 +13,6 @@ export default async function Home() {
       <h1 className="text-primary scroll-m-20 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-6xl font-extrabold tracking-tight text-transparent lg:text-8xl">
         Welcome to Kodix
       </h1>
-      <div></div>
       <GradientHero />
     </div>
   );

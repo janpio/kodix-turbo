@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { action } from "~/helpers/safe-action/safe-action";
@@ -22,10 +23,11 @@ export const createWorkspaceAction = action(
 export const switchWorkspaceAction = action(
   z.object({
     workspaceId: z.string(),
-    redirect: z.string(),
+    redirect: z.string().optional(),
   }),
   async (input) => {
     await api.user.switchActiveWorkspace.mutate(input);
     revalidatePath("/", "layout"); //IDK what this is doing exactly
+    redirect(input.redirect ?? "/workspace");
   },
 );

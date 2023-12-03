@@ -1,11 +1,7 @@
-import React from "react";
-import { unstable_cache } from "next/cache";
 import Link from "next/link";
 
-import { getBaseUrl } from "@kdx/api/src/shared";
 import { auth } from "@kdx/auth";
 import {
-  AvatarWrapper,
   buttonVariants,
   cn,
   NavigationMenu,
@@ -15,27 +11,16 @@ import {
   navigationMenuTriggerStyle,
 } from "@kdx/ui";
 
-import { api } from "~/trpc/server";
 import HeaderFooterRemover from "../header-footer-remover";
 import MaxWidthWrapper from "../max-width-wrapper";
-import { TeamSwitcher } from "./team-switcher";
+// import { TeamSwitcher } from "./team-switcher";
 import { UserProfileButton } from "./user-profile-button";
 
-const getAllForLoggedUserCache = unstable_cache(
-  async () => {
-    return await api.workspace.getAllForLoggedUser.query();
-  },
-  ["getAllForLoggedUser"],
-  {
-    revalidate: 1000,
-  },
-); //TODO: How do I revalidate this?
+export function Header() {
+  // const session = await auth();
 
-export async function Header() {
-  const session = await auth();
-
-  let workspaces: Awaited<ReturnType<typeof getAllForLoggedUserCache>> = [];
-  if (session) workspaces = await api.workspace.getAllForLoggedUser.query(); //TODO: I am not using cache here on purpose
+  // let workspaces: Awaited<ReturnType<typeof getAllForLoggedUserCache>> = [];
+  // if (session) workspaces = await api.workspace.getAllForLoggedUser.query(); //TODO: I am not using cache here on purpose
 
   return (
     <HeaderFooterRemover>
@@ -53,7 +38,7 @@ export async function Header() {
                 Kdx
               </span>
             </Link>
-            {session && (
+            {/* {session && (
               //Slash icon
               <>
                 <svg
@@ -85,7 +70,7 @@ export async function Header() {
                   }
                 />
               </>
-            )}
+            )} */}
 
             <div className="ml-auto flex items-center space-x-4">
               <UserNav />

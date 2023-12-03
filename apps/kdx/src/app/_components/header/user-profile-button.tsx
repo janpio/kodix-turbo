@@ -2,14 +2,14 @@
 
 import React from "react";
 import Link from "next/link";
-import { CreditCard, LogOut, PlusCircle, Settings, User } from "lucide-react";
+import { LogOut, Settings, User, Users } from "lucide-react";
 import { signOut } from "next-auth/react";
+import { MdOutlineSwapHorizontalCircle } from "react-icons/md";
 
 import type { Session } from "@kdx/auth";
 import {
   AvatarWrapper,
   Button,
-  DialogTrigger,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -53,7 +53,6 @@ export function UserProfileButton({ session }: { session: Session }) {
               </p>
             </div>
           </DropdownMenuLabel>
-          <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem asChild>
               <Link href="/account">
@@ -61,27 +60,27 @@ export function UserProfileButton({ session }: { session: Session }) {
                 <span>Account</span>
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem disabled>
-              <CreditCard className="mr-2 h-4 w-4" />
-              <span>Billing</span>
-              <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+            <DropdownMenuSeparator className="mb-2" />
+            <DropdownMenuItem asChild>
+              <Link href="/workspace" className="flex border border-gray-600">
+                <Users className="h-4 w-4" />
+                <p className="ml-2 font-bold">
+                  {session.user.activeWorkspaceName}
+                </p>
+              </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem disabled>
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
-              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+            <DropdownMenuItem asChild>
+              <Link href="/workspace/settings">
+                <Settings className="mr-2 h-4 w-4" />
+                Settings
+              </Link>
             </DropdownMenuItem>
-
-            <DialogTrigger asChild>
-              <DropdownMenuItem
-                onSelect={() => {
-                  setShowNewWorkspaceDialog(true);
-                }}
-              >
-                <PlusCircle className="mr-2 h-4 w-4" />
-                <span>New Workspace</span>
-              </DropdownMenuItem>
-            </DialogTrigger>
+            <DropdownMenuItem asChild>
+              <Link href="/account/workspaces">
+                <MdOutlineSwapHorizontalCircle className="mr-2 h-4 w-4" />
+                Change workspace...
+              </Link>
+            </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => void signOut()}>

@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { ChevronRight } from "lucide-react";
 
 import { auth } from "@kdx/auth";
 
@@ -27,8 +28,14 @@ export default async function Layout({
 
   return (
     <MaxWidthWrapper>
-      <div className="flex flex-col justify-center border-b pb-8">
-        <h1 className="text-4xl font-bold">Settings</h1>
+      <div className="flex flex-col justify-center space-y-2 border-b pb-8">
+        <h1 className="text-4xl font-bold">Workspace Settings</h1>
+        <div className="flex items-center">
+          <ChevronRight />
+          <p className="text-muted-foreground text-2xl">
+            {session.user.activeWorkspaceName}
+          </p>
+        </div>
       </div>
       <div className="mt-8 flex flex-col md:flex-row md:space-x-6">
         <Navigation

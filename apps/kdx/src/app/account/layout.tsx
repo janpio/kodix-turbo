@@ -17,7 +17,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <MaxWidthWrapper>
       <div className="flex flex-col justify-center border-b pb-8">
-        <h1 className="text-4xl font-bold">Settings</h1>
+        <h1 className="text-4xl font-bold">Account Settings</h1>
       </div>
       <div className="mt-8 flex flex-col md:flex-row md:space-x-6">
         <Navigation
