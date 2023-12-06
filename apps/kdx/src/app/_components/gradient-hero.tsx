@@ -6,8 +6,9 @@ import { useTheme } from "next-themes";
 export function GradientHero() {
   //Made a comment here to test graphite
 
-  //Here I shall add a new comment to test graphite
+  //Here I shall add a new comment to test graphite!!
   const { theme } = useTheme();
+
   return (
     <>
       {theme === "light" ? (
