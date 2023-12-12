@@ -5,6 +5,7 @@ import moment from "moment";
 import { auth } from "@kdx/auth";
 import { buttonVariants, cn, H1, Separator } from "@kdx/ui";
 
+import { IconKodixApp } from "~/app/_components/app/kodix-app";
 import { columns } from "~/app/_components/apps/calendar/columns";
 import { CreateEventDialogButton } from "~/app/_components/apps/calendar/create-event-dialog";
 import { DataTable } from "~/app/_components/apps/calendar/data-table";
@@ -38,7 +39,14 @@ export default async function Calendar() {
 
   return (
     <MaxWidthWrapper>
-      <H1>Calendar</H1>
+      <div className="flex space-x-4">
+        <IconKodixApp
+          appName="Calendar"
+          appUrl="/calendar"
+          renderText={false}
+        />
+        <H1>Calendar</H1>
+      </div>
       <Separator className="my-4" />
       <CreateEventDialogButton />
       <DataTable columns={columns} data={data} session={session} />

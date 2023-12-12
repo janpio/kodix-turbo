@@ -34,7 +34,6 @@ import {
 import { api } from "~/trpc/react";
 
 interface KodixAppProps {
-  variant?: "rich" | "icon";
   id: string;
   appName: KodixAppType["name"];
   appDescription: string;
@@ -43,36 +42,14 @@ interface KodixAppProps {
   session: Session | null;
 }
 
-export function KodixApp(props: KodixAppProps) {
-  if (props.variant === "icon") return <IconKodixApp {...props} />;
-  if (props.variant === "rich") return <RichKodixApp {...props} />;
-}
-
-function IconKodixApp(props: {
-  appUrl: KodixAppProps["appUrl"];
-  appName: KodixAppProps["appName"];
-}) {
-  return (
-    <Link href={`/apps/${props.appUrl}`} className="flex flex-col items-center">
-      <Image
-        src={`/appIcons${props.appUrl}.png`}
-        height={60}
-        width={60}
-        alt={`${props.appName} icon`}
-      />
-      <p className="text-muted-foreground text-sm">{props.appName}</p>
-    </Link>
-  );
-}
-
-function RichKodixApp({
+export function KodixApp({
   id,
   appName,
   appDescription,
   appUrl,
   installed,
   session,
-}: Omit<KodixAppProps, "variant">) {
+}: KodixAppProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -189,5 +166,28 @@ function RichKodixApp({
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+export function IconKodixApp({
+  renderText = true,
+  ...props
+}: {
+  appUrl: KodixAppProps["appUrl"];
+  appName: KodixAppProps["appName"];
+  renderText: boolean;
+}) {
+  return (
+    <Link href={`/apps/${props.appUrl}`} className="flex flex-col items-center">
+      <Image
+        src={`/appIcons${props.appUrl}.png`}
+        height={60}
+        width={60}
+        alt={`${props.appName} icon`}
+      />
+      {renderText && (
+        <p className="text-muted-foreground text-sm">{props.appName}</p>
+      )}
+    </Link>
   );
 }

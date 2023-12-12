@@ -6,7 +6,7 @@ import type { KodixApp as KodixAppType } from "@kdx/db";
 import { AvatarWrapper } from "@kdx/ui";
 
 import { api } from "~/trpc/server";
-import { KodixApp } from "../_components/app/kodix-app";
+import { IconKodixApp } from "../_components/app/kodix-app";
 import { GradientHero } from "../_components/gradient-hero";
 
 export default async function Workspace() {
@@ -35,14 +35,9 @@ export default async function Workspace() {
       <div className="flex flex-row space-x-8">
         {apps?.map((app) => (
           <div key={app.id}>
-            <KodixApp
-              variant="icon"
-              id={app.id}
+            <IconKodixApp
               appName={app.name as KodixAppType["name"]}
-              appDescription={app.description}
               appUrl={app.url as KodixAppType["url"]}
-              installed={true}
-              session={session}
             />
           </div>
         ))}

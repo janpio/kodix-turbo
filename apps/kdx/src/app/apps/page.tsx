@@ -26,7 +26,7 @@ export default async function Apps() {
               id={app.id}
               appName={app.name as KodixAppType["name"]}
               appDescription={app.description}
-              appUrl={app.url}
+              appUrl={app.url as KodixAppType["url"]}
               installed={true}
               session={session}
             />
