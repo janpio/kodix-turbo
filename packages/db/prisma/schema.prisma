@@ -89,7 +89,7 @@ model App {
   activeWorkspaces    Workspace[]          @relation("AppWorkspace")
   idpartnerDev        DevPartner           @relation(fields: [devPartnerId], references: [id])
   devPartnerId        String
-  urlApp              String               @unique
+  url                 String               @unique
   appWorkspaceConfigs AppWorkspaceConfig[] @relation("AppConfig")
 
   appRoles AppRoles[]

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { getBaseUrl } from "@kdx/api/src/shared";
 import { auth } from "@kdx/auth";
+import type { KodixApp as KodixAppType } from "@kdx/db";
 import { AvatarWrapper } from "@kdx/ui";
 
 import { api } from "~/trpc/server";
@@ -36,9 +37,9 @@ export default async function Workspace() {
           <div key={app.id}>
             <KodixApp
               id={app.id}
-              appName={app.name}
+              appName={app.name as KodixAppType["name"]}
               appDescription={app.description}
-              appUrl={app.urlApp}
+              appUrl={app.url}
               installed={true}
               session={session}
             />

@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Loader2, MoreHorizontal, Trash2 } from "lucide-react";
 
 import type { Session } from "@kdx/auth";
+import type { KodixApp } from "@kdx/db";
 import {
   Button,
   buttonVariants,
@@ -40,13 +42,13 @@ export function KodixApp({
   session,
 }: {
   id: string;
-  appName: string;
+  appName: KodixApp["name"];
   appDescription: string;
   appUrl: string;
   installed: boolean;
   session: Session | null;
 }) {
-  const [open, onOpenChange] = useState(false);
+  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const utils = api.useUtils();
@@ -59,7 +61,7 @@ export function KodixApp({
   });
   const { mutate: uninstall } = api.workspace.uninstallApp.useMutation({
     onSuccess: () => {
-      onOpenChange(false);
+      setOpen(false);
       void utils.app.getAll.invalidate();
       setLoading(false);
       router.refresh();
@@ -69,14 +71,25 @@ export function KodixApp({
 
   const isActive = !["null"].includes(appName);
 
+  const nameToIcon = {
+    "Kodix Care": "/calendar.png",
+    Todo: "/calendar.png",
+    Calendar: "/calendar.png",
+  };
+
   return (
     <>
       <Card className="w-[250px]">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="">{appName} </CardTitle>
-
+          <Image
+            src={nameToIcon[appName]}
+            height={40}
+            width={40}
+            alt="calendarIcon"
+          />
+          <CardTitle className="">{appName}</CardTitle>
           {installed && (
-            <Dialog open={open} onOpenChange={onOpenChange}>
+            <Dialog open={open} onOpenChange={setOpen}>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" className="">
@@ -88,7 +101,6 @@ export function KodixApp({
                   <DialogTrigger asChild>
                     <DropdownMenuItem>
                       <Trash2 className="text-destructive mr-2 h-4 w-4" />
-
                       <span>Uninstall from workspace</span>
                     </DropdownMenuItem>
                   </DialogTrigger>
@@ -104,7 +116,7 @@ export function KodixApp({
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => onOpenChange(false)}>
+                  <Button variant="outline" onClick={() => setOpen(false)}>
                     Cancel
                   </Button>
                   <Button

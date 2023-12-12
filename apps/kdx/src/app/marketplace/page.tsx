@@ -1,4 +1,5 @@
 import { auth } from "@kdx/auth";
+import type { KodixAppName } from "@kdx/db";
 import { H1, Lead } from "@kdx/ui";
 
 import { KodixApp } from "~/app/_components/app/kodix-app";
@@ -29,9 +30,9 @@ export default async function Apps() {
           <div key={app.id}>
             <KodixApp
               id={app.id}
-              appName={app.name}
+              appName={app.name as KodixAppName}
               appDescription={app.description}
-              appUrl={app.urlApp}
+              appUrl={app.url}
               installed={app.installed}
               session={session}
             />

@@ -141,7 +141,7 @@ export const workspaceRouter = createTRPCRouter({
         },
       });
       revalidateTag("getAllForLoggedUser");
-      revalidatePath(`/apps${app.urlApp}`);
+      revalidatePath(`/apps${app.url}`);
 
       return installedApp;
     }),

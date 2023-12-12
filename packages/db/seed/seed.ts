@@ -1,9 +1,57 @@
 import { prisma } from "..";
 
+const kdxPartnerId = "clh9tiqsj000835711pg3sskn";
+const apps = [
+  {
+    id: "clj2117860007skypdpzj0k1u", //As const so it can be used as a type
+    name: "Todo" as const,
+    description: "Todo app" as const,
+    subscriptionCost: 0 as const,
+    devPartnerId: kdxPartnerId,
+    url: "/todo" as const,
+  },
+  {
+    id: "clohjphbm000008ju6oywfy4i",
+    name: "Calendar" as const,
+    description: "Calendar app" as const,
+    subscriptionCost: 0 as const,
+    devPartnerId: kdxPartnerId,
+    url: "/calendar" as const,
+  },
+  {
+    id: "clj2117860009skyp5e613fih",
+    name: "Kodix Care" as const,
+    description: "Kodix Care app" as const,
+    subscriptionCost: 0 as const,
+    devPartnerId: kdxPartnerId,
+    url: "/kodixCare" as const,
+    appRoles: {
+      create: [
+        {
+          roleName: "Admin",
+          minRoleUsers: 0,
+          maxRoleUsers: 0,
+        },
+        {
+          roleName: "Patient",
+          minRoleUsers: 1,
+          maxRoleUsers: 1,
+        },
+        {
+          roleName: "CareGiver",
+          minRoleUsers: 1,
+          maxRoleUsers: 0,
+        },
+      ],
+    },
+  },
+];
+
+export type KodixApp = Omit<(typeof apps)[number], "appRoles">;
+
 (async () => {
   console.log("Seeding...");
 
-  const kdxPartnerId = "clh9tiqsj000835711pg3sskn";
   await prisma.devPartner.upsert({
     where: {
       id: kdxPartnerId,
@@ -15,52 +63,6 @@ import { prisma } from "..";
       partnerUrl: "kodix.com.br",
     },
   });
-
-  const apps = [
-    {
-      id: "clj2117860007skypdpzj0k1u",
-      name: "Todo",
-      description: "Todo app",
-      subscriptionCost: 0,
-      devPartnerId: kdxPartnerId,
-      urlApp: "/todo",
-    },
-    {
-      id: "clohjphbm000008ju6oywfy4i",
-      name: "Calendar",
-      description: "Calendar app",
-      subscriptionCost: 0,
-      devPartnerId: kdxPartnerId,
-      urlApp: "/calendar",
-    },
-    {
-      id: "clj2117860009skyp5e613fih",
-      name: "Kodix Care",
-      description: "Kodix Care app",
-      subscriptionCost: 0,
-      devPartnerId: kdxPartnerId,
-      urlApp: "/kodixCare",
-      appRoles: {
-        create: [
-          {
-            roleName: "Admin",
-            minRoleUsers: 0,
-            maxRoleUsers: 0,
-          },
-          {
-            roleName: "Patient",
-            minRoleUsers: 1,
-            maxRoleUsers: 1,
-          },
-          {
-            roleName: "CareGiver",
-            minRoleUsers: 1,
-            maxRoleUsers: 0,
-          },
-        ],
-      },
-    },
-  ];
 
   for (const app of apps) {
     await prisma.app.upsert({
