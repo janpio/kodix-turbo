@@ -8,7 +8,7 @@ const apps = [
     description: "Todo app" as const,
     subscriptionCost: 0 as const,
     devPartnerId: kdxPartnerId,
-    url: "/todo" as const,
+    url: "/todo" as const, //! Used as appIcon import (e.g.: /appIcons/todo.png)
   },
   {
     id: "clohjphbm000008ju6oywfy4i",
