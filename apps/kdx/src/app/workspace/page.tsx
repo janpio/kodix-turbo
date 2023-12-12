@@ -32,14 +32,15 @@ export default async function Workspace() {
           </span>
         </div>
       </div>
-      <div className="flex flex-row space-x-4">
+      <div className="flex flex-row space-x-8">
         {apps?.map((app) => (
           <div key={app.id}>
             <KodixApp
+              variant="icon"
               id={app.id}
               appName={app.name as KodixAppType["name"]}
               appDescription={app.description}
-              appUrl={app.url}
+              appUrl={app.url as KodixAppType["url"]}
               installed={true}
               session={session}
             />
