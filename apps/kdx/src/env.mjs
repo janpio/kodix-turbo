@@ -18,7 +18,7 @@ export const env = createEnv({
     STAYS_OPENAI_API_KEY: z.string(),
     UPSTASH_REDIS_REST_URL: z.string().url(),
     UPSTASH_REDIS_REST_TOKEN: z.string(),
-    RESEND_API_KEY: z.string(), //TODO: Probably remove
+    RESEND_API_KEY: z.string(),
     AWS_SMTP_USER: z.string(),
     AWS_SMTP_PASSWORD: z.string(),
   },
