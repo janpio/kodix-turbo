@@ -175,7 +175,7 @@ export function IconKodixApp({
 }: {
   appUrl: KodixAppProps["appUrl"];
   appName: KodixAppProps["appName"];
-  renderText: boolean;
+  renderText?: boolean;
 }) {
   return (
     <Link href={`/apps/${props.appUrl}`} className="flex flex-col items-center">
