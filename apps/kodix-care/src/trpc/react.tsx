@@ -9,11 +9,10 @@ import {
   loggerLink,
   unstable_httpBatchStreamLink,
 } from "@trpc/react-query";
+import SuperJSON from "superjson";
 
 import type { AppRouter } from "@kdx/api";
 import { getBaseKdxUrl } from "@kdx/shared";
-
-import { transformer } from "./shared";
 
 export const api = createTRPCReact<AppRouter>();
 
@@ -34,7 +33,7 @@ export function TRPCReactProvider(props: {
 
   const [trpcClient] = useState(() =>
     api.createClient({
-      transformer,
+      transformer: SuperJSON,
       links: [
         loggerLink({
           enabled: (opts) =>
@@ -57,7 +56,7 @@ export function TRPCReactProvider(props: {
   return (
     <api.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        <ReactQueryStreamedHydration transformer={transformer}>
+        <ReactQueryStreamedHydration transformer={SuperJSON}>
           {props.children}
         </ReactQueryStreamedHydration>
         <ReactQueryDevtools initialIsOpen={false} />

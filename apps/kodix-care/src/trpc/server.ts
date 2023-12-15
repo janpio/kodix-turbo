@@ -4,14 +4,13 @@ import {
   loggerLink,
   unstable_httpBatchStreamLink,
 } from "@trpc/client";
+import SuperJSON from "superjson";
 
 import type { AppRouter } from "@kdx/api";
 import { getBaseKdxUrl } from "@kdx/shared";
 
-import { transformer } from "./shared";
-
 export const api = createTRPCProxyClient<AppRouter>({
-  transformer,
+  transformer: SuperJSON,
   links: [
     loggerLink({
       enabled: (op) =>

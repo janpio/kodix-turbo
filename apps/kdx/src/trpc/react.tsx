@@ -7,11 +7,10 @@ import {
   loggerLink,
   unstable_httpBatchStreamLink,
 } from "@trpc/react-query";
+import SuperJSON from "superjson";
 
 import type { AppRouter } from "@kdx/api";
 import { getBaseUrl } from "@kdx/api/src/shared";
-
-import { transformer } from "./shared";
 
 export const api = createTRPCReact<AppRouter>();
 
@@ -32,7 +31,7 @@ export function TRPCReactProvider(props: {
 
   const [trpcClient] = useState(() =>
     api.createClient({
-      transformer,
+      transformer: SuperJSON,
       links: [
         loggerLink({
           enabled: (op) =>

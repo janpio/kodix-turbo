@@ -1,14 +1,13 @@
-import type { TRPCErrorResponse } from "@trpc/server/rpc";
 import { cache } from "react";
 import { headers } from "next/headers";
 import { createTRPCClient, loggerLink, TRPCClientError } from "@trpc/client";
 import { callProcedure } from "@trpc/server";
 import { observable } from "@trpc/server/observable";
+import type { TRPCErrorResponse } from "@trpc/server/rpc";
+import SuperJSON from "superjson";
 
 import { appRouter, createTRPCContext } from "@kdx/api";
 import { auth } from "@kdx/auth";
-
-import { transformer } from "./shared";
 
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
@@ -25,7 +24,7 @@ const createContext = cache(async () => {
 });
 
 export const api = createTRPCClient<typeof appRouter>({
-  transformer,
+  transformer: SuperJSON,
   links: [
     loggerLink({
       enabled: (op) =>
