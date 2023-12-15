@@ -8,6 +8,7 @@ import { IconKodixApp } from "~/app/_components/app/kodix-app";
 import MaxWidthWrapper from "~/app/_components/max-width-wrapper";
 import { api } from "~/trpc/server";
 
+export const dynamic = "force-dynamic"; //TODO: help me
 export default async function KodixCare() {
   const onboardingCompleted = await api.kodixCare.onboardingCompleted.query();
   if (!onboardingCompleted) return redirect("/apps/kodixCare/onboarding");

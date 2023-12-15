@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import SettingsEditCardSkeleton from "~/app/workspace/settings/general/_components/edit-workspace-name-card-skeleton";
 import { EditUserWorkspacesTable } from "./_components/edit-users-workspaces-card/edit-users-workspaces-table";
 
+export const dynamic = "force-dynamic"; //TODO: help me
 export default function Workspaces() {
   return (
     <div className="mt-8 space-y-8 md:mt-0">
