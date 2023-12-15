@@ -44,7 +44,6 @@ export default function Layout(props: { children: React.ReactNode }) {
             attribute="class"
             defaultTheme="system"
             enableSystem
-            disableTransitionOnChange
           >
             <Toaster richColors closeButton />
             <div className="flex min-h-screen flex-col">
