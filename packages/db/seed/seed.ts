@@ -1,6 +1,9 @@
 import { prisma } from "..";
 
 const kdxPartnerId = "clh9tiqsj000835711pg3sskn";
+
+export const kodixCareAdminRoleId = "clq5yvcvu000008ia3yppfnou";
+
 const apps = [
   {
     id: "clj2117860007skypdpzj0k1u", //As const so it can be used as a type
@@ -28,19 +31,22 @@ const apps = [
     appRoles: {
       create: [
         {
-          roleName: "Admin",
-          minRoleUsers: 0,
-          maxRoleUsers: 0,
+          id: kodixCareAdminRoleId,
+          name: "Admin",
+          minUsers: 1,
+          maxUsers: 0,
         },
         {
-          roleName: "Patient",
-          minRoleUsers: 1,
-          maxRoleUsers: 1,
+          id: "clq5yvhuz000108ia55qk06ts",
+          name: "Patient",
+          minUsers: 1,
+          maxUsers: 1,
         },
         {
-          roleName: "CareGiver",
-          minRoleUsers: 1,
-          maxRoleUsers: 0,
+          id: "clq5yvqdg000208ia3861eyow",
+          name: "CareGiver",
+          asdas: 1,
+          maxUsers: 0,
         },
       ],
     },

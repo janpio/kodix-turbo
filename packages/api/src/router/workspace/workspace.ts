@@ -2,7 +2,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { prisma } from "@kdx/db";
+import { kodixCareAdminRoleId, prisma } from "@kdx/db";
 
 import { updateWorkspaceSchema } from "../../shared";
 import {
@@ -106,6 +106,9 @@ export const workspaceRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      //ao instalar o Kodix Care,
+      //Colocar o usuario como admin
+
       const app = await ctx.prisma.app.findUnique({
         where: {
           id: input.appId,
@@ -128,22 +131,56 @@ export const workspaceRouter = createTRPCRouter({
           code: "NOT_FOUND",
         });
 
-      const installedApp = await ctx.prisma.app.update({
-        where: {
-          id: input.appId,
-        },
-        data: {
-          activeWorkspaces: {
-            connect: {
-              id: workspace.id,
+      if (workspace.ownerId !== ctx.session.user.id)
+        throw new TRPCError({
+          message: "Only the workspace owner can install apps",
+          code: "FORBIDDEN",
+        });
+
+      const transactionResult = await ctx.prisma.$transaction([
+        ctx.prisma.app.update({
+          where: {
+            id: input.appId,
+          },
+          data: {
+            activeWorkspaces: {
+              connect: {
+                id: workspace.id,
+              },
             },
           },
-        },
-      });
+        }),
+        ctx.prisma.userAppRole.create({
+          data: {
+            app: {
+              connect: {
+                id: input.appId,
+              },
+            },
+            user: {
+              connect: {
+                id: ctx.session.user.id,
+              },
+            },
+            workspace: {
+              connect: {
+                id: ctx.session.user.activeWorkspaceId,
+              },
+            },
+            appRole: {
+              connect: {
+                id: kodixCareAdminRoleId,
+              },
+            },
+          },
+        }),
+      ]);
+      const [appUpdated] = transactionResult;
+
       revalidateTag("getAllForLoggedUser");
       revalidatePath(`/apps${app.url}`);
 
-      return installedApp;
+      return appUpdated;
     }),
   uninstallApp: protectedProcedure
     .input(

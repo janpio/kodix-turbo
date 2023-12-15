@@ -1,5 +1,5 @@
-import GeneralSettings from "./general/page";
+import AppsPage from "./apps/page";
 
 export default function Settings() {
-  return <GeneralSettings />;
+  return <AppsPage />;
 }

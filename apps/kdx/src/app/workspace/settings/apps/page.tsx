@@ -8,7 +8,7 @@ import { KodixApp } from "~/app/_components/app/kodix-app";
 import MaxWidthWrapper from "~/app/_components/max-width-wrapper";
 import { api } from "~/trpc/server";
 
-export default async function Apps() {
+export default async function AppsPage() {
   const session = await auth();
   if (!session) return redirect("/api/auth/signin");
   const apps = await api.app.getInstalled.query();

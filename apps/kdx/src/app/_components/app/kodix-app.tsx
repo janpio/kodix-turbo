@@ -131,13 +131,13 @@ export function KodixApp({
       </CardHeader>
       <CardContent>
         <CardDescription className="mb-4">{appDescription}</CardDescription>
-        <div className="flex w-full flex-col">
+        <div className="flex space-x-2">
           {session && installed && (
             <Link
               href={`apps${appUrl}`}
               className={cn(
                 buttonVariants({ variant: "default" }),
-                !isActive && "pointer-events-none opacity-50",
+                !isActive && "pointer-events-none grow opacity-50",
               )}
             >
               {isActive ? "Open" : "Coming soon"}
@@ -163,6 +163,9 @@ export function KodixApp({
               Install
             </Link>
           )}
+          <Button variant={"outline"} className="flex-none">
+            <Trash2 className="text-destructive h-4 w-4" />
+          </Button>
         </div>
       </CardContent>
     </Card>
