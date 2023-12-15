@@ -16,7 +16,7 @@ export async function Header() {
         <MaxWidthWrapper className="max-w-screen-2xl">
           <div className="mx-auto flex max-w-screen-2xl items-center">
             <Link
-              href="/"
+              href={session ? "/workspace" : "/"}
               className="text-bold text-primary text-xl font-medium"
             >
               <span className="hidden bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text font-extrabold tracking-tight text-transparent md:block">
