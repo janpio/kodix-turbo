@@ -1,6 +1,6 @@
+import type { typeToFlattenedError } from "zod";
 import { TRPCClientError } from "@trpc/client";
 import { createSafeActionClient } from "next-safe-action";
-import type { typeToFlattenedError } from "zod";
 
 //? This is from https://next-safe-action.dev/docs/getting-started
 export const action = createSafeActionClient({

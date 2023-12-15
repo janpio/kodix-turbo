@@ -1,11 +1,11 @@
 import type { Adapter } from "@auth/core/adapters";
-import EmailProvider from "@auth/core/providers/email";
-// import EmailProvider from "next-auth/providers/email";
-import Google from "@auth/core/providers/google";
-import type { DefaultSession } from "@auth/core/types";
+import type { DefaultSession } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import cuid from "cuid";
 import NextAuth from "next-auth";
+import EmailProvider from "next-auth/providers/email";
+// import EmailProvider from "next-auth/providers/email";
+import Google from "next-auth/providers/google";
 
 import type { PrismaClient } from "@kdx/db";
 import { prisma } from "@kdx/db";

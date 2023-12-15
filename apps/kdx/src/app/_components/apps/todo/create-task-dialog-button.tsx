@@ -19,13 +19,13 @@ import {
   Textarea,
 } from "@kdx/ui";
 
+import type { Priority } from "~/app/_components/apps/todo/priority-popover";
 import { AssigneePopover } from "~/app/_components/apps/todo/assignee-popover";
 import {
   PriorityIcon,
   PriorityPopover,
   PriorityToTxt,
 } from "~/app/_components/apps/todo/priority-popover";
-import type { Priority } from "~/app/_components/apps/todo/priority-popover";
 import { StatusPopover } from "~/app/_components/apps/todo/status-popover";
 import {
   DatePickerIcon,

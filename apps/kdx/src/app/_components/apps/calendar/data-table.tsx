@@ -1,5 +1,6 @@
 "use client";
 
+import type { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
 import React, { useEffect, useState } from "react";
 import {
   flexRender,
@@ -8,7 +9,6 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import type { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
 import { addDays, format } from "date-fns";
 import {
   CalendarIcon,
@@ -21,8 +21,8 @@ import {
 import moment from "moment";
 
 import type { RouterOutputs } from "@kdx/api";
-import { authorizedEmails } from "@kdx/api/src/shared";
 import type { Session } from "@kdx/auth";
+import { authorizedEmails } from "@kdx/api/src/shared";
 import {
   Button,
   Calendar,

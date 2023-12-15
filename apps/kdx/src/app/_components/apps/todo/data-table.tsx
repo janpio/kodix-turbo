@@ -1,5 +1,6 @@
 "use client";
 
+import type { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
 import { useState } from "react";
 import {
   flexRender,
@@ -8,7 +9,6 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import type { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
 
 import {
   ContextMenu,

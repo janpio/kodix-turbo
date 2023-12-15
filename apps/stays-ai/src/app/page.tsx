@@ -1,8 +1,8 @@
 "use client";
 
+import type { Message } from "ai";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import type { Message } from "ai";
 import { useChat } from "ai/react";
 import {
   LuArrowDown,

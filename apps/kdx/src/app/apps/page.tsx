@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
-import { auth } from "@kdx/auth";
 import type { KodixApp as KodixAppType } from "@kdx/db";
+import { auth } from "@kdx/auth";
 import { H1, Lead } from "@kdx/ui";
 
 import { KodixApp } from "~/app/_components/app/kodix-app";

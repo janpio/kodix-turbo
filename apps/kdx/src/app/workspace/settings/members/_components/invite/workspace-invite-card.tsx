@@ -4,8 +4,8 @@ import { useState } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Loader2, MailCheck, MinusCircle, PlusCircle } from "lucide-react";
 
-import { inviteUserSchema } from "@kdx/api/src/shared";
 import type { Session } from "@kdx/auth";
+import { inviteUserSchema } from "@kdx/api/src/shared";
 import {
   Button,
   Card,

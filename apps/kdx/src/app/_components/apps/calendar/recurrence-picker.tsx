@@ -1,11 +1,11 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
+import type { Weekday } from "rrule";
 import { useCallback, useEffect, useState } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Check } from "lucide-react";
 import moment from "moment";
-import type { Weekday } from "rrule";
 import { Frequency, RRule } from "rrule";
 
 import {

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
-import { auth } from "@kdx/auth";
 import type { KodixApp as KodixAppType } from "@kdx/db";
+import { auth } from "@kdx/auth";
 
 import { api } from "~/trpc/server";
 import { CustomKodixIcon, IconKodixApp } from "../_components/app/kodix-app";

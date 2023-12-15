@@ -1,8 +1,8 @@
+import type { Frequency } from "rrule";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 import { CalendarIcon, Loader2 } from "lucide-react";
 import moment from "moment";
-import type { Frequency } from "rrule";
 import { RRule, Weekday } from "rrule";
 
 import {
@@ -37,9 +37,9 @@ import {
   TooltipTrigger,
 } from "@kdx/ui";
 
+import type { RouterInputs, RouterOutputs } from "~/trpc/shared";
 import { trpcErrorToastDefault } from "~/helpers/miscelaneous";
 import { api } from "~/trpc/react";
-import type { RouterInputs, RouterOutputs } from "~/trpc/shared";
 import { RecurrencePicker } from "./recurrence-picker";
 
 export function EditEventDialog({

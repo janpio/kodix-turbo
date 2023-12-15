@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 
 import "@kdx/ui/styles/globals.css";
 
+import { cache } from "react";
 import { Inter as FontSans } from "next/font/google";
-import { cookies } from "next/headers";
+import { headers } from "next/headers";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -32,6 +33,10 @@ export const metadata: Metadata = {
   // },
 };
 
+// Lazy load headers
+// eslint-disable-next-line @typescript-eslint/require-await
+const getHeaders = cache(async () => headers());
+
 export default function Layout(props: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -41,7 +46,7 @@ export default function Layout(props: { children: React.ReactNode }) {
           fontSans.variable,
         )}
       >
-        <TRPCReactProvider cookies={cookies().toString()}>
+        <TRPCReactProvider headersPromise={getHeaders()}>
           <NextThemeProvider
             attribute="class"
             defaultTheme="system"

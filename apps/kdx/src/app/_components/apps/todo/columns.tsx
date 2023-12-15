@@ -1,18 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import type { RowData } from "@tanstack/react-table";
+import { useEffect, useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
 
 import type { RouterOutputs } from "@kdx/api";
 import type { Status } from "@kdx/db";
 import { Button, Checkbox } from "@kdx/ui";
 
+import type { Priority } from "./priority-popover";
 import { DatePickerWithPresets } from "~/app/_components/date-picker-with-presets";
 import { trpcErrorToastDefault } from "~/helpers/miscelaneous";
 import { api } from "~/trpc/react";
 import { AssigneePopover } from "./assignee-popover";
-import type { Priority } from "./priority-popover";
 import {
   PriorityIcon,
   PriorityPopover,
