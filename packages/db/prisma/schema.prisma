@@ -66,7 +66,6 @@ model AppWorkspaceConfig {
   @@unique([AppId, workspaceId])
   @@index([AppId])
   @@index([workspaceId])
-  @@map("App_Workspace_Config")
 }
 
 model Workspace {
@@ -272,7 +271,7 @@ model User {
   sessions          Session[]
   workspaces        Workspace[]   @relation("UserWorkspace")
   Todo              Todo[]
-  activeWorkspaceId String        @map("activeWorkspaceId")
+  activeWorkspaceId String
   activeWorkspace   Workspace     @relation("UserActiveWorkspace", fields: [activeWorkspaceId], references: [id])
   EventDone         EventDone[]
   ownedWorkspaces   Workspace[]
