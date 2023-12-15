@@ -5,6 +5,7 @@ import "@kdx/ui/styles/globals.css";
 import { Inter as FontSans } from "next/font/google";
 import { cookies } from "next/headers";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { cn, Toaster } from "@kdx/ui";
 
@@ -46,6 +47,7 @@ export default function Layout(props: { children: React.ReactNode }) {
             defaultTheme="system"
             enableSystem
           >
+            <SpeedInsights />
             <Analytics />
             <Toaster richColors closeButton />
             <div className="flex min-h-screen flex-col">
