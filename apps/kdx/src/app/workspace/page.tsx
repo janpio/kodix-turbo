@@ -1,13 +1,11 @@
 import { redirect } from "next/navigation";
 
-import { getBaseUrl } from "@kdx/api/src/shared";
 import { auth } from "@kdx/auth";
 import type { KodixApp as KodixAppType } from "@kdx/db";
-import { AvatarWrapper } from "@kdx/ui";
 
 import { api } from "~/trpc/server";
-import { IconKodixApp } from "../_components/app/kodix-app";
-import { GradientHero } from "../_components/gradient-hero";
+import { CustomKodixIcon, IconKodixApp } from "../_components/app/kodix-app";
+import MaxWidthWrapper from "../_components/max-width-wrapper";
 
 export default async function Workspace() {
   const session = await auth();
@@ -15,35 +13,33 @@ export default async function Workspace() {
   const apps = await api.app.getInstalled.query();
 
   return (
-    <div className="h-144 flex min-h-screen flex-col items-center gap-12 px-4 py-16">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold">Workspace</h1>
-        <div className="flex items-center justify-center">
-          <AvatarWrapper
-            className="mr-2 h-8 w-8"
-            src={`${getBaseUrl()}/api/avatar/${
-              session.user.activeWorkspaceName
-            }`}
-            alt={session.user.activeWorkspaceName}
-            fallback={session.user.activeWorkspaceName}
-          />
+    <main className="flex-1 py-8">
+      <MaxWidthWrapper className="flex flex-col gap-12">
+        <div className="flex">
           <span className="bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-4xl font-bold">
             {session.user.activeWorkspaceName}
           </span>
         </div>
-      </div>
-      <div className="flex flex-row space-x-8">
-        {apps?.map((app) => (
-          <div key={app.id}>
+        <div className="flex flex-row items-center space-x-10">
+          <CustomKodixIcon
+            appName={"Marketplace"}
+            appUrl={"/marketplace"}
+            iconPath={"/appIcons/marketplace.png"}
+          />
+          <CustomKodixIcon
+            appName={"Settings"}
+            appUrl={"/workspace/settings"}
+            iconPath={"/appIcons/settings.png"}
+          />
+          {apps?.map((app) => (
             <IconKodixApp
+              key={app.id}
               appName={app.name as KodixAppType["name"]}
               appUrl={app.url as KodixAppType["url"]}
             />
-          </div>
-        ))}
-      </div>
-
-      <GradientHero />
-    </div>
+          ))}
+        </div>
+      </MaxWidthWrapper>
+    </main>
   );
 }

@@ -47,11 +47,11 @@ export default function Layout(props: { children: React.ReactNode }) {
             disableTransitionOnChange
           >
             <Toaster richColors closeButton />
-
-            <Header />
-            <main className="p-8">{props.children}</main>
-            <Footer />
-
+            <div className="flex min-h-screen flex-col">
+              <Header />
+              {props.children}
+              <Footer />
+            </div>
             {/* UI Design Helpers */}
             {process.env.NODE_ENV !== "production" && (
               <div className="fixed bottom-1 z-50 flex flex-row items-center space-x-1">

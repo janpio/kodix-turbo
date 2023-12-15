@@ -17,6 +17,10 @@ export default async function Layout({
 
   const navItems = [
     {
+      href: `/workspace/settings/apps`,
+      title: `Apps`,
+    },
+    {
       href: `/workspace/settings/general`,
       title: "General",
     },

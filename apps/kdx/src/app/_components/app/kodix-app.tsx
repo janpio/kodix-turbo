@@ -181,8 +181,32 @@ export function IconKodixApp({
     <Link href={`/apps/${props.appUrl}`} className="flex flex-col items-center">
       <Image
         src={`/appIcons${props.appUrl}.png`}
-        height={60}
-        width={60}
+        height={80}
+        width={80}
+        alt={`${props.appName} icon`}
+      />
+      {renderText && (
+        <p className="text-muted-foreground text-sm">{props.appName}</p>
+      )}
+    </Link>
+  );
+}
+
+export function CustomKodixIcon({
+  renderText = true,
+  ...props
+}: {
+  appUrl: string;
+  appName: string;
+  renderText?: boolean;
+  iconPath: string;
+}) {
+  return (
+    <Link href={props.appUrl} className="flex flex-col items-center">
+      <Image
+        src={props.iconPath}
+        height={"80"}
+        width={"80"}
         alt={`${props.appName} icon`}
       />
       {renderText && (
