@@ -1,10 +1,10 @@
 "use client";
 
+import type { Weekday } from "rrule";
 import { useState } from "react";
 import { format } from "date-fns";
 import { CalendarIcon, Loader2, Plus } from "lucide-react";
 import moment from "moment";
-import type { Weekday } from "rrule";
 import { RRule } from "rrule";
 
 import type { RouterInputs } from "@kdx/api";
