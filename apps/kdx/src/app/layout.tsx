@@ -34,8 +34,7 @@ export const metadata: Metadata = {
 };
 
 // Lazy load headers
-// eslint-disable-next-line @typescript-eslint/require-await
-const getHeaders = cache(async () => headers());
+const getHeaders = cache(async () => Promise.resolve(headers()));
 
 export default function Layout(props: { children: React.ReactNode }) {
   return (
