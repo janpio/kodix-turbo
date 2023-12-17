@@ -1,5 +1,4 @@
 {
-  "[prisma]": { "editor.defaultFormatter": "Prisma.prisma" },
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
@@ -11,13 +10,14 @@
     { "pattern": "packages/*/" },
     { "pattern": "tooling/*/" }
   ],
-  "tailwindCSS.experimental.configFile": "./packages/config/tailwind/index.ts",
+  "tailwindCSS.experimental.configFile": "./tooling/tailwind/index.ts",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.preferences.autoImportFileExcludePatterns": [
     "next/router.d.ts",
     "next/dist/client/router.d.ts"
   ],
+  "[prisma]": { "editor.defaultFormatter": "Prisma.prisma" },
   /*
    * Note - add the following JSON to your User keybindings.json:
    * { "key": "f5", "command": "workbench.action.debug.selectandstart", "when": "config.workspaceKeybindings.selectAndStartDebugging.enabled && debuggersAvailable && debugState == 'inactive'" }
