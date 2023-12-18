@@ -1,6 +1,6 @@
 // import { camelCase } from "string-ts";
 
-import { Prisma } from ".prisma/client";
+import { Prisma } from "./index";
 
 export function _wsPrisma() {
   return Prisma.defineExtension((prisma) => {

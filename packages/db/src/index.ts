@@ -28,5 +28,4 @@ if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 export * from "@prisma/client";
 export * from "./extensions";
-export type { KodixApp } from "./seed/seed";
-export { kodixCareAdminRoleId } from "./seed/seed";
+export { kodixCareAdminRoleId, type KodixApp } from "./seed/seed";

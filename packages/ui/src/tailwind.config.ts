@@ -3,7 +3,7 @@ import { fontFamily } from "tailwindcss/defaultTheme";
 
 import baseConfig from "@kdx/tailwind-config";
 
-export default {
+export const uiConfig = {
   presets: [baseConfig],
   darkMode: ["class"],
   content: ["./components/**/*.{ts,tsx}"],

@@ -17,5 +17,3 @@ export type RouterInputs = inferRouterInputs<AppRouter>;
  **/
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
 export { sendEmail } from "./internal/email/email";
-
-export * from "./shared";
