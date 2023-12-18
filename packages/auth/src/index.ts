@@ -10,8 +10,8 @@ import Google from "next-auth/providers/google";
 import type { PrismaClient } from "@kdx/db";
 import { prisma } from "@kdx/db";
 
-import { env } from "./env.mjs";
-import { sendVerificationRequest } from "./src/email/send-verification-request";
+import { env } from "../env.js";
+import { sendVerificationRequest } from "./email/send-verification-request.js";
 
 export type { Session } from "next-auth";
 

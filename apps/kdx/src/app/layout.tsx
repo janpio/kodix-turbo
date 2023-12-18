@@ -15,6 +15,7 @@ import { Header } from "~/app/_components/header/header";
 import { NextThemeProvider } from "~/app/_components/providers";
 import { TailwindIndicator } from "~/app/_components/tailwind-indicator";
 import { ThemeSwitcher } from "~/app/_components/theme-switcher";
+import { env } from "~/env";
 import { TRPCReactProvider } from "~/trpc/react";
 
 const fontSans = FontSans({
@@ -23,6 +24,11 @@ const fontSans = FontSans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    env.VERCEL_ENV === "production"
+      ? "https://kodix.com.br"
+      : "http://localhost:3000",
+  ),
   title: "Kodix",
   description: "Software on demand",
   // openGraph: {

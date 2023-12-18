@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import { Configuration, OpenAIApi } from "openai-edge";
 
-import { env } from "~/env.mjs";
+import { env } from "~/env.js";
 import { CorsOptions } from "../_enableCors";
 
 //export const runtime = "edge";

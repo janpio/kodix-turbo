@@ -1,18 +1,12 @@
 {
   "name": "@kdx/shared",
-  "private": true,
   "version": "0.1.0",
-  "exports": {
-    ".": "./index.ts"
-  },
-  "typesVersions": {
-    "*": {
-      "*": [
-        "src/*"
-      ]
-    }
-  },
+  "private": true,
   "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
     "lint": "eslint .",
@@ -23,7 +17,7 @@
     "@kdx/eslint-config": "workspace:^0.2.0",
     "@kdx/prettier-config": "workspace:^0.1.0",
     "@kdx/tsconfig": "workspace:^0.1.0",
-    "eslint": "^8.54.0",
+    "eslint": "^8.56.0",
     "typescript": "^5.3.3"
   },
   "eslintConfig": {

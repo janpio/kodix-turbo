@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import sendEmail from "@kdx/api/src/internal/email/email";
+import { sendEmail } from "@kdx/api";
 
 export async function POST(request: Request) {
   const { pokemon, email } = (await request.json()) as {

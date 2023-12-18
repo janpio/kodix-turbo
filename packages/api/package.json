@@ -2,9 +2,11 @@
   "name": "@kdx/api",
   "version": "0.1.0",
   "private": true,
-  "main": "./index.ts",
-  "types": "./index.ts",
   "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
     "lint": "eslint .",
@@ -41,8 +43,8 @@
     "@types/nodemailer": "^6.4.14",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
-    "eslint": "^8.54.0",
-    "prettier": "^3.1.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.1.1",
     "trpc-tools": "0.12.1-canary.2dfb1delosg",
     "typescript": "^5.3.3"
   },

@@ -19,6 +19,7 @@
     "*.ts",
     "*.mjs",
     ".next/types/**/*.ts",
-    "custom.d.ts"
+    "custom.d.ts",
+    "next.config.js"
   ]
 }

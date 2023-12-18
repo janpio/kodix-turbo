@@ -6,7 +6,7 @@ import { getBaseKdxUrl, getSuccessesAndErrors } from "@kdx/shared";
 
 //import { getSuccessesAndErrors } from "@kdx/shared";
 
-import sendEmail from "../../../internal/email/email";
+import { sendEmail } from "../../../internal/email/email";
 import WorkspaceInvite from "../../../internal/email/templates/workspace-invite";
 import { inviteUserSchema } from "../../../shared";
 import { createTRPCRouter, protectedProcedure } from "../../../trpc";
