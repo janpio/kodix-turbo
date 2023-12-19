@@ -1,3 +1,5 @@
+import "server-only";
+
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 import type { AppRouter } from "./root";
@@ -16,4 +18,5 @@ export type RouterInputs = inferRouterInputs<AppRouter>;
  * @example type HelloOutput = RouterOutputs['example']['hello']
  **/
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
+
 export { sendEmail } from "./internal/email/email";
