@@ -32,7 +32,6 @@ export * from "./components/toaster";
 export * from "./components/toggle";
 export * from "./components/tooltip";
 export * from "./components/typography";
-export * from "./tailwind.config";
 //export * from "./components/toast"; //? Excluded on purpose! use sonner.
 //export * from "./components/use-toast";
 
