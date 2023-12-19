@@ -2,13 +2,14 @@ import { TRPCError } from "@trpc/server";
 import cuid from "cuid";
 import { z } from "zod";
 
-import { getBaseKdxUrl, getSuccessesAndErrors } from "@kdx/shared";
-
-//import { getSuccessesAndErrors } from "@kdx/shared";
+import {
+  getBaseUrl,
+  getSuccessesAndErrors,
+  inviteUserSchema,
+} from "@kdx/shared";
 
 import { sendEmail } from "../../../internal/email/email";
 import WorkspaceInvite from "../../../internal/email/templates/workspace-invite";
-import { inviteUserSchema } from "../../../shared";
 import { createTRPCRouter, protectedProcedure } from "../../../trpc";
 
 export const invitationRouter = createTRPCRouter({
@@ -88,8 +89,8 @@ export const invitationRouter = createTRPCRouter({
             react: WorkspaceInvite({
               invitedByEmail: ctx.session.user.email!,
               invitedByUsername: ctx.session.user.name!,
-              inviteLink: `${getBaseKdxUrl()}/workspace/invite/${invite.id}`,
-              workspaceImage: `${getBaseKdxUrl()}/api/avatar/${workspace.name}`,
+              inviteLink: `${getBaseUrl()}/workspace/invite/${invite.id}`,
+              workspaceImage: `${getBaseUrl()}/api/avatar/${workspace.name}`,
               workspaceName: workspace.name,
               // username: ??
             }),

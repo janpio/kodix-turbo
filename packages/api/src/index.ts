@@ -1,4 +1,4 @@
-import "server-only";
+import "server-only"; //? For client components, only types can be imported from this package
 
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
@@ -18,5 +18,3 @@ export type RouterInputs = inferRouterInputs<AppRouter>;
  * @example type HelloOutput = RouterOutputs['example']['hello']
  **/
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
-
-export { sendEmail } from "./internal/email/email";

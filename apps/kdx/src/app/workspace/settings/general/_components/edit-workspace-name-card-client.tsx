@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
-import { updateWorkspaceSchema } from "@kdx/api/shared";
+import { updateWorkspaceSchema } from "@kdx/shared";
 import {
   Button,
   Card,

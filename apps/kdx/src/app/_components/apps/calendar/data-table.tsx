@@ -22,7 +22,7 @@ import moment from "moment";
 
 import type { RouterOutputs } from "@kdx/api";
 import type { Session } from "@kdx/auth";
-import { authorizedEmails } from "@kdx/api/shared";
+import { authorizedEmails } from "@kdx/shared";
 import {
   Button,
   Calendar,

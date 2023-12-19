@@ -1,23 +1,9 @@
-//? Note: anything exported in this file must be something that is safe to be shared between the client and the server
-
 import { z } from "zod";
 
 /**
- * @description Base URL for the current environment
+ * @description Schema for validating workspace updates
+ * @usedBy kdx/api kdx/kdx
  */
-export const getBaseUrl = () => {
-  if (typeof window !== "undefined") return "";
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  return `http://localhost:${process.env.PORT ?? 3000}`;
-};
-
-export const authorizedEmails = [
-  "gdbianchii@gmail.com",
-  "gabriel@stays.net",
-  "wcbianchi@gmail.com",
-  "mahadeva@despertar.com.br",
-];
-
 export const updateWorkspaceSchema = z.object({
   workspaceId: z.string().cuid(),
   workspaceName: z
@@ -29,6 +15,10 @@ export const updateWorkspaceSchema = z.object({
     .optional(),
 });
 
+/**
+ * @description Schema for validating user invitation
+ * @usedBy kdx/api kdx/kdx
+ */
 export const inviteUserSchema = z.object({
   workspaceId: z.string().cuid(),
   to: z

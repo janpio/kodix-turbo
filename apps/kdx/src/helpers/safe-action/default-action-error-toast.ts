@@ -7,7 +7,7 @@ interface ActionResult<Data> {
 }
 /**
  * @param result The awaited result of a safe-action
- * @returns boolean if there was an error or not.
+ * @returns boolean indicatin if there was an error or not.
  * @example //You can do it like this to show a toast on error
  * if (defaultActionToastError(result)) return;
  */

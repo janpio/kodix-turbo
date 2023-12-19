@@ -10,7 +10,7 @@ import {
 import SuperJSON from "superjson";
 
 import type { AppRouter } from "@kdx/api";
-import { getBaseUrl } from "@kdx/api/shared";
+import { getBaseUrl } from "@kdx/shared";
 
 export const api = createTRPCReact<AppRouter>();
 

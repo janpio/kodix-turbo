@@ -3,7 +3,8 @@ import moment from "moment";
 import { Frequency, RRule, rrulestr } from "rrule";
 import { z } from "zod";
 
-import { authorizedEmails } from "../shared";
+import { authorizedEmails } from "@kdx/shared";
+
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const eventRouter = createTRPCRouter({

@@ -1,7 +1,7 @@
 import React from "react";
 import { redirect } from "next/navigation";
 
-import { Separator, H1 } from "@kdx/ui";
+import { H1, Separator } from "@kdx/ui";
 
 import { IconKodixApp } from "~/app/_components/app/kodix-app";
 import MaxWidthWrapper from "~/app/_components/max-width-wrapper";

@@ -3,8 +3,8 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { kodixCareAdminRoleId, prisma } from "@kdx/db";
+import { updateWorkspaceSchema } from "@kdx/shared";
 
-import { updateWorkspaceSchema } from "../../shared";
 import {
   createTRPCRouter,
   protectedProcedure,
