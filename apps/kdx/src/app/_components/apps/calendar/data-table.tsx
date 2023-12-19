@@ -44,8 +44,8 @@ import {
   TableRow,
 } from "@kdx/ui";
 
+import { DataTablePagination } from "~/app/_components/pagination";
 import { api } from "~/trpc/react";
-import { DataTablePagination } from "../../pagination";
 import { CancelationDialog } from "./cancel-event-dialog";
 import { EditEventDialog } from "./edit-event-dialog";
 

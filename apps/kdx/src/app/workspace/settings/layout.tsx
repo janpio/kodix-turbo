@@ -4,7 +4,7 @@ import { ChevronRight } from "lucide-react";
 import { auth } from "@kdx/auth";
 
 import MaxWidthWrapper from "~/app/_components/max-width-wrapper";
-import { Navigation } from "../../_components/navigation";
+import { Navigation } from "~/app/_components/navigation";
 import { ShouldRender } from "./general/_components/client-should-render";
 
 export default async function Layout({

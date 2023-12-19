@@ -3,8 +3,8 @@ import Link from "next/link";
 import { auth } from "@kdx/auth";
 import { buttonVariants } from "@kdx/ui";
 
-import HeaderFooterRemover from "../header-footer-remover";
-import MaxWidthWrapper from "../max-width-wrapper";
+import HeaderFooterRemover from "~/app/_components/header-footer-remover";
+import MaxWidthWrapper from "~/app/_components/max-width-wrapper";
 import { UserProfileButton } from "./user-profile-button";
 
 export async function Header() {

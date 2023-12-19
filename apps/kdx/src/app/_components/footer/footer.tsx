@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-import HeaderFooterRemover from "../header-footer-remover";
-import MaxWidthWrapper from "../max-width-wrapper";
+import HeaderFooterRemover from "~/app/_components/header-footer-remover";
+import MaxWidthWrapper from "~/app/_components/max-width-wrapper";
 
 export function Footer() {
   return (

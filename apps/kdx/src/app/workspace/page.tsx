@@ -3,9 +3,9 @@ import { redirect } from "next/navigation";
 import type { KodixApp as KodixAppType } from "@kdx/db";
 import { auth } from "@kdx/auth";
 
+import { CustomKodixIcon, IconKodixApp } from "~/app/_components/app/kodix-app";
+import MaxWidthWrapper from "~/app/_components/max-width-wrapper";
 import { api } from "~/trpc/server";
-import { CustomKodixIcon, IconKodixApp } from "../_components/app/kodix-app";
-import MaxWidthWrapper from "../_components/max-width-wrapper";
 
 export default async function Workspace() {
   const session = await auth();
