@@ -7,56 +7,51 @@ export function safeTeamPrisma(teamId: string) {
       query: {
         $allModels: {
           async $allOperations({ query, args, model, operation }) {
-            switch (model) {
-              case "AppRole":
-                if (operation !== "create" && operation !== "createMany") {
-                  args.where = {
-                    ...args.where,
-                    UserAppRole: {
-                      some: {
-                        teamId: teamId,
-                      },
-                    },
-                  };
-                }
-                break;
-              case "App":
-                if (operation !== "create" && operation !== "createMany") {
-                  args.where = {
-                    ...args.where,
-                    activeTeams: {
-                      some: {
-                        id: teamId,
-                      },
-                    },
-                  };
-                }
-                break;
+            if (operation === "create" || operation === "createMany")
+              return query(args);
 
+            switch (model) {
               case "EventMaster":
               case "AppTeamConfig":
               case "UserAppRole":
               case "Invitation":
               case "Todo":
-                if (operation !== "create" && operation !== "createMany") {
-                  args.where = {
-                    ...args.where,
-                    teamId: teamId,
-                  };
-                }
+                args.where = {
+                  ...args.where,
+                  teamId: teamId,
+                };
+                break;
+
+              case "AppRole":
+                args.where = {
+                  ...args.where,
+                  UserAppRole: {
+                    some: {
+                      teamId: teamId,
+                    },
+                  },
+                };
+                break;
+              case "App":
+                args.where = {
+                  ...args.where,
+                  activeTeams: {
+                    some: {
+                      id: teamId,
+                    },
+                  },
+                };
                 break;
 
               case "EventException":
               case "EventCancellation":
               case "EventDone":
-                if (operation !== "create" && operation !== "createMany") {
-                  args.where = {
-                    ...args.where,
-                    EventMaster: {
-                      teamId: teamId,
-                    },
-                  };
-                }
+                args.where = {
+                  ...args.where,
+                  EventMaster: {
+                    teamId: teamId,
+                  },
+                };
                 break;
             }
 
