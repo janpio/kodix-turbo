@@ -12,7 +12,7 @@ export interface Member {
   image: string | null;
 }
 
-export async function EditWSMembersAndInvitesCard() {
+export async function EditTeamMembersAndInvitesCard() {
   const session = await auth();
   if (!session) return null;
 

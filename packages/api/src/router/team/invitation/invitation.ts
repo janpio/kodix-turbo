@@ -58,12 +58,12 @@ export const invitationRouter = createTRPCRouter({
         },
       });
 
-      const inWsEmail = input.to.find((email) =>
+      const inTeamEmail = input.to.find((email) =>
         team.users.find((x) => x.email === email),
       );
-      if (inWsEmail)
+      if (inTeamEmail)
         throw new TRPCError({
-          message: `User ${inWsEmail} is already a member of this team`,
+          message: `User ${inTeamEmail} is already a member of this team`,
           code: "CONFLICT",
         });
 

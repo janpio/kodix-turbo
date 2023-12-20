@@ -8,7 +8,7 @@ import { updateTeamSchema } from "@kdx/shared";
 import {
   createTRPCRouter,
   protectedProcedure,
-  userAndWsLimitedProcedure,
+  userAndTeamLimitedProcedure,
 } from "../../trpc";
 import { invitationRouter } from "./invitation/invitation";
 
@@ -42,7 +42,7 @@ export const teamRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       //! When changing team creation flow here, change it on @kdx/auth new user creation as well!
-      const ws = await ctx.prisma.team.create({
+      const team = await ctx.prisma.team.create({
         data: {
           ownerId: input.userId,
           name: input.teamName,
@@ -54,7 +54,7 @@ export const teamRouter = createTRPCRouter({
         },
       });
       revalidateTag("getAllForLoggedUser");
-      return ws;
+      return team;
     }),
   getOne: protectedProcedure
     .input(z.object({ teamId: z.string().cuid() }))
@@ -73,10 +73,10 @@ export const teamRouter = createTRPCRouter({
 
       return team;
     }),
-  update: userAndWsLimitedProcedure
+  update: userAndTeamLimitedProcedure
     .input(updateTeamSchema)
     .mutation(async ({ ctx, input }) => {
-      const ws = await ctx.prisma.team.update({
+      const team = await ctx.prisma.team.update({
         where: {
           id: input.teamId,
         },
@@ -85,7 +85,7 @@ export const teamRouter = createTRPCRouter({
         },
       });
       revalidateTag("getAllForLoggedUser");
-      return ws;
+      return team;
     }),
   getActiveTeam: protectedProcedure.query(async ({ ctx }) => {
     const team = await ctx.prisma.team.findUniqueOrThrow({
@@ -214,7 +214,7 @@ export const teamRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const isUserTryingToRemoveSelfFromWs =
+      const isUserTryingToRemoveSelfFromTeam =
         input.userId === ctx.session.user.id;
 
       const team = await ctx.prisma.team.findFirstOrThrow({
@@ -231,7 +231,7 @@ export const teamRouter = createTRPCRouter({
         },
       });
 
-      if (isUserTryingToRemoveSelfFromWs) {
+      if (isUserTryingToRemoveSelfFromTeam) {
         if (team?.ownerId === ctx.session.user.id) {
           throw new TRPCError({
             message:
