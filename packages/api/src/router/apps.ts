@@ -37,7 +37,7 @@ export const appsRouter = createTRPCRouter({
     const apps = await ctx.prisma.app.findMany({
       where: {
         activeTeams: {
-          some: {
+          every: {
             id: ctx.session.user.activeTeamId,
           },
         },
