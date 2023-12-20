@@ -117,7 +117,7 @@ export const {
   signOut,
 } = NextAuth({
   adapter: {
-    ...CustomPrismaAdapter(prisma),
+    ...CustomPrismaAdapter(prisma as PrismaClient), //? Cast it as PrismaClient to avoid TS errors...
   },
   providers: [
     Google({

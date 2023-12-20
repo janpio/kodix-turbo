@@ -1,6 +1,6 @@
 import { Prisma } from "./index";
 
-export function safeTeamPrisma(teamId: string) {
+export function safeTeamPrisma(teamId: string, userId: string) {
   return Prisma.defineExtension((prisma) => {
     return prisma.$extends({
       name: "safeTeamPrisma", //Optional: name appears in errorLogs
@@ -19,6 +19,17 @@ export function safeTeamPrisma(teamId: string) {
                 args.where = {
                   ...args.where,
                   teamId: teamId,
+                };
+                break;
+
+              case "Team":
+                args.where = {
+                  ...args.where,
+                  users: {
+                    some: {
+                      id: userId,
+                    },
+                  },
                 };
                 break;
 

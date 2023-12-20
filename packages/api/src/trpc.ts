@@ -41,7 +41,9 @@ export const createTRPCContext = async (opts: {
     session,
     prisma: !session
       ? prisma
-      : prisma.$extends(safeTeamPrisma(session.user.activeTeamId)),
+      : prisma.$extends(
+          safeTeamPrisma(session.user.activeTeamId, session.user.id),
+        ),
   };
 };
 
