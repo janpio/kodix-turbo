@@ -13,8 +13,20 @@ export function safeTeamPrisma(teamId: string) {
                   args.where = {
                     ...args.where,
                     UserAppRole: {
-                      every: {
+                      some: {
                         teamId: teamId,
+                      },
+                    },
+                  };
+                }
+                break;
+              case "App":
+                if (operation !== "create" && operation !== "createMany") {
+                  args.where = {
+                    ...args.where,
+                    activeTeams: {
+                      some: {
+                        id: teamId,
                       },
                     },
                   };
@@ -22,6 +34,10 @@ export function safeTeamPrisma(teamId: string) {
                 break;
 
               case "EventMaster":
+              case "AppTeamConfig":
+              case "UserAppRole":
+              case "Invitation":
+              case "Todo":
                 if (operation !== "create" && operation !== "createMany") {
                   args.where = {
                     ...args.where,
@@ -29,6 +45,7 @@ export function safeTeamPrisma(teamId: string) {
                   };
                 }
                 break;
+
               case "EventException":
               case "EventCancellation":
               case "EventDone":
