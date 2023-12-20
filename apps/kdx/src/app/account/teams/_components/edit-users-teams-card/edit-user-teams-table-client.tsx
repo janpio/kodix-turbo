@@ -127,14 +127,14 @@ function CustomRow({
               )}
             </Button>
           </form>
-          <LeaveWsDropdown session={session} />
+          <LeaveTeamDropdown session={session} />
         </div>
       </TableCell>
     </TableRow>
   );
 }
 
-function LeaveWsDropdown({ session }: { session: Session }) {
+function LeaveTeamDropdown({ session }: { session: Session }) {
   const utils = api.useUtils();
   const router = useRouter();
   const { mutate } = api.team.removeUser.useMutation({

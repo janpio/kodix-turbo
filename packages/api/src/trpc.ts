@@ -122,10 +122,10 @@ const ratelimit = new Ratelimit({
 /**
  * Reusable middleware that limits by id
  */
-export const rateLimitByUserIdAndWs = enforceUserIsAuthed.unstable_pipe(
+export const rateLimitByUserIdAndTeam = enforceUserIsAuthed.unstable_pipe(
   async ({ ctx, next }) => {
     const { success, reset } = await ratelimit.limit(
-      `userId:${ctx.session.user.id} wsId:${ctx.session.user.activeTeamId}`,
+      `userId:${ctx.session.user.id} teamId:${ctx.session.user.activeTeamId}`,
     );
     if (!success)
       throw new TRPCError({
@@ -148,6 +148,6 @@ export const rateLimitByUserIdAndWs = enforceUserIsAuthed.unstable_pipe(
  * current active teamId. This is using a shared cache, so it will rate
  * limit across all instances that use this same procedure.
  */
-export const userAndWsLimitedProcedure = t.procedure.use(
-  rateLimitByUserIdAndWs,
+export const userAndTeamLimitedProcedure = t.procedure.use(
+  rateLimitByUserIdAndTeam,
 );
