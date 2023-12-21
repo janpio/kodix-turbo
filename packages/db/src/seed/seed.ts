@@ -1,12 +1,17 @@
 import { prisma } from "..";
+import {
+  calendarAppId,
+  kdxPartnerId,
+  kodixCareAdminRoleId,
+  kodixCareAppId,
+  kodixCareCareGiverRoleId,
+  kodixCarePatientRoleId,
+  todoAppId,
+} from "./constants";
 
-const kdxPartnerId = "clh9tiqsj000835711pg3sskn";
-
-export const kodixCareAdminRoleId = "clq5yvcvu000008ia3yppfnou";
-
-const apps = [
+export const apps = [
   {
-    id: "clj2117860007skypdpzj0k1u", //As const so it can be used as a type
+    id: todoAppId, //As const so it can be used as a type
     name: "Todo" as const,
     description: "Todo app" as const,
     subscriptionCost: 0 as const,
@@ -14,7 +19,7 @@ const apps = [
     url: "/todo" as const, //! Used as appIcon import (e.g.: /appIcons/todo.png)
   },
   {
-    id: "clohjphbm000008ju6oywfy4i",
+    id: calendarAppId,
     name: "Calendar" as const,
     description: "Calendar app" as const,
     subscriptionCost: 0 as const,
@@ -22,7 +27,7 @@ const apps = [
     url: "/calendar" as const,
   },
   {
-    id: "clj2117860009skyp5e613fih",
+    id: kodixCareAppId,
     name: "Kodix Care" as const,
     description: "Kodix Care app" as const,
     subscriptionCost: 0 as const,
@@ -37,13 +42,13 @@ const apps = [
           maxUsers: 0,
         },
         {
-          id: "clq5yvhuz000108ia55qk06ts",
+          id: kodixCarePatientRoleId,
           name: "Patient",
           minUsers: 1,
           maxUsers: 1,
         },
         {
-          id: "clq5yvqdg000208ia3861eyow",
+          id: kodixCareCareGiverRoleId,
           name: "CareGiver",
           minUsers: 1,
           maxUsers: 0,
@@ -52,8 +57,6 @@ const apps = [
     },
   },
 ];
-
-export type KodixApp = Omit<(typeof apps)[number], "appRoles">;
 
 (async () => {
   console.log("Seeding...");
