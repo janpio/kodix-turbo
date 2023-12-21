@@ -1,16 +1,20 @@
+"use client";
+
 import * as React from "react";
-import { usePathname, useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Loader2, PlusCircle } from "lucide-react";
 
 import type { Session } from "@kdx/auth";
 import {
   Button,
+  cn,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
   Input,
   Label,
   toast,
@@ -19,28 +23,30 @@ import {
 import { defaultSafeActionToastError } from "~/helpers/safe-action/default-action-error-toast";
 import { createTeamAction } from "./actions";
 
-/**
- * To use this Dialog, make sure you wrap it in a DialogTrigger component.
- * To activate the AddTeamDialog component from within a Context Menu or Dropdown Menu, you must encase the Context Menu or Dropdown Menu component in the AddTeamDialog component.
- */
-export function AddTeamDialog({
-  children,
-  open,
-  onOpenChange,
+export function AddTeamDialogButton({
   session,
+  children,
+  className,
 }: {
-  children: React.ReactNode;
-  open: boolean;
-  onOpenChange: React.Dispatch<React.SetStateAction<boolean>>;
   session: Session;
+  children?: React.ReactNode;
+  className?: string;
 }) {
   const router = useRouter();
-  const pathname = usePathname();
   const [teamName, changeTeamName] = React.useState("");
   const [isPending, setIsPending] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      {children}
+    <Dialog open={open} onOpenChange={setOpen}>
+      {children ?? (
+        <DialogTrigger asChild>
+          <Button className={cn(className)}>
+            <PlusCircle className="mr-2 h-5 w-5" />
+            Create New Team
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create team</DialogTitle>
@@ -84,7 +90,7 @@ export function AddTeamDialog({
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={() => setOpen(false)}>
             Cancel
           </Button>
           <Button
@@ -97,12 +103,11 @@ export function AddTeamDialog({
               });
               setIsPending(false);
               if (defaultSafeActionToastError(result)) return;
-              onOpenChange(false);
+              setOpen(false);
               toast(`Team ${result.data?.name} created`, {
                 description: "Successfully created a new team.",
               });
-              if (pathname === "/team") return router.refresh();
-              router.push("/team");
+              return router.refresh();
             }}
           >
             {isPending && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
