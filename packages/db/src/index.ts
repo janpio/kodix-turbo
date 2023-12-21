@@ -31,5 +31,5 @@ export const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 export * from "@prisma/client";
-export * from "./extensions";
+export * from "./getSafeTeamPrisma";
 export * from "./seed/constants";

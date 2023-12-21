@@ -14,7 +14,8 @@ import { ZodError } from "zod";
 
 import type { Session } from "@kdx/auth";
 import { auth } from "@kdx/auth";
-import { prisma, safeTeamPrisma } from "@kdx/db";
+
+import { getPrisma } from "./prisma";
 
 /**
  * 1. CONTEXT
@@ -39,11 +40,7 @@ export const createTRPCContext = async (opts: {
 
   return {
     session,
-    prisma: !session
-      ? prisma
-      : prisma.$extends(
-          safeTeamPrisma(session.user.activeTeamId, session.user.id),
-        ),
+    prisma: await getPrisma(session),
   };
 };
 
