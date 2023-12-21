@@ -30,7 +30,7 @@ export function getSafeTeamPrisma({
             case "Team":
               args.where = {
                 ...args.where,
-                users: {
+                Users: {
                   some: {
                     id: userId,
                   },
