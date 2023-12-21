@@ -38,17 +38,6 @@ export function getSafeTeamPrisma({
               };
               break;
 
-            case "AppRole":
-              args.where = {
-                ...args.where,
-                UserAppRole: {
-                  some: {
-                    teamId: activeTeamId,
-                  },
-                },
-              };
-              break;
-
             case "EventException":
             case "EventCancellation":
             case "EventDone":
