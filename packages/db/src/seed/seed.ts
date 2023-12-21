@@ -1,11 +1,13 @@
 import { prisma } from "..";
 import {
+  calendarAdminRoleId,
   calendarAppId,
   kdxPartnerId,
   kodixCareAdminRoleId,
   kodixCareAppId,
   kodixCareCareGiverRoleId,
   kodixCarePatientRoleId,
+  todoAdminRoleId,
   todoAppId,
 } from "./constants";
 
@@ -17,6 +19,16 @@ export const apps = [
     subscriptionCost: 0 as const,
     devPartnerId: kdxPartnerId,
     url: "/todo" as const, //! Used as appIcon import (e.g.: /appIcons/todo.png)
+    AppRoles: {
+      create: [
+        {
+          id: todoAdminRoleId,
+          name: "Admin",
+          minUsers: 1,
+          maxUsers: 0,
+        },
+      ],
+    },
   },
   {
     id: calendarAppId,
@@ -25,6 +37,16 @@ export const apps = [
     subscriptionCost: 0 as const,
     devPartnerId: kdxPartnerId,
     url: "/calendar" as const,
+    AppRoles: {
+      create: [
+        {
+          id: calendarAdminRoleId,
+          name: "Admin",
+          minUsers: 1,
+          maxUsers: 0,
+        },
+      ],
+    },
   },
   {
     id: kodixCareAppId,

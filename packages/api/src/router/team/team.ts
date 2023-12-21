@@ -2,7 +2,14 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { kodixCareAdminRoleId, prisma } from "@kdx/db";
+import {
+  calendarAppId,
+  kodixCareAdminRoleId,
+  kodixCareAppId,
+  prisma,
+  todoAdminRoleId,
+  todoAppId,
+} from "@kdx/db";
 import { updateTeamSchema } from "@kdx/shared";
 
 import {
@@ -11,6 +18,12 @@ import {
   userAndTeamLimitedProcedure,
 } from "../../trpc";
 import { invitationRouter } from "./invitation/invitation";
+
+const appIdToAdminIdMap = {
+  [todoAppId]: todoAdminRoleId,
+  [calendarAppId]: todoAdminRoleId,
+  [kodixCareAppId]: kodixCareAdminRoleId,
+} as const;
 
 export const teamRouter = createTRPCRouter({
   getAllForLoggedUser: protectedProcedure.query(async ({ ctx }) => {
@@ -102,7 +115,11 @@ export const teamRouter = createTRPCRouter({
   installApp: protectedProcedure
     .input(
       z.object({
-        appId: z.string().cuid(),
+        appId: z.union([
+          z.literal(todoAppId),
+          z.literal(calendarAppId),
+          z.literal(kodixCareAppId),
+        ]),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -137,8 +154,8 @@ export const teamRouter = createTRPCRouter({
           code: "FORBIDDEN",
         });
 
-      const transactionResult = await ctx.prisma.$transaction([
-        ctx.prisma.app.update({
+      const appUpdated = await ctx.prisma.$transaction(async (tx) => {
+        const updatedApp = await tx.app.update({
           where: {
             id: input.appId,
           },
@@ -149,8 +166,8 @@ export const teamRouter = createTRPCRouter({
               },
             },
           },
-        }),
-        ctx.prisma.userAppRole.create({
+        });
+        await tx.userAppRole.create({
           data: {
             App: {
               connect: {
@@ -169,13 +186,14 @@ export const teamRouter = createTRPCRouter({
             },
             AppRole: {
               connect: {
-                id: kodixCareAdminRoleId,
+                id: appIdToAdminIdMap[input.appId],
               },
             },
           },
-        }),
-      ]);
-      const [appUpdated] = transactionResult;
+        });
+
+        return updatedApp;
+      });
 
       revalidateTag("getAllForLoggedUser");
       revalidatePath(`/apps${app.url}`);
