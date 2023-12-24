@@ -170,8 +170,8 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
       '@types/node':
-        specifier: ^18.18.13
-        version: 18.19.3
+        specifier: ^20.10.5
+        version: 20.10.5
       '@types/react':
         specifier: ^18.2.45
         version: 18.2.45
@@ -261,8 +261,8 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
       '@types/node':
-        specifier: ^18.18.13
-        version: 18.19.3
+        specifier: ^20.10.5
+        version: 20.10.5
       '@types/react':
         specifier: ^18.2.45
         version: 18.2.45
@@ -373,8 +373,8 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
       '@types/node':
-        specifier: ^18.18.13
-        version: 18.19.3
+        specifier: ^20.10.5
+        version: 20.10.5
       '@types/react':
         specifier: ^18.2.45
         version: 18.2.45
@@ -473,8 +473,8 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
       '@types/node':
-        specifier: ^18.18.13
-        version: 18.19.3
+        specifier: ^20.10.5
+        version: 20.10.5
       '@types/nodemailer':
         specifier: ^6.4.14
         version: 6.4.14
@@ -6329,12 +6329,6 @@ packages:
     resolution: {integrity: sha512-nG96G3Wp6acyAgJqGasjODb+acrI7KltPiRxzHPXnP3NgI28bpQDRv53olbqGXbfcgF5aiiHmO3xpwEpS5Ld9g==}
     dev: false
 
-  /@types/node@18.19.3:
-    resolution: {integrity: sha512-k5fggr14DwAytoA/t8rPrIz++lXK7/DqckthCmoZOKNsEbJkId4Z//BqgApXBUGrGddrigYa1oqheo/7YmW4rg==}
-    dependencies:
-      undici-types: 5.26.5
-    dev: true
-
   /@types/node@20.10.5:
     resolution: {integrity: sha512-nNPsNE65wjMxEKI93yOP+NPGGBJz/PoN3kZsVLee0XMiJolxSekEVD8wRwBUBqkwc7UWop0edW50yrCQW4CyRw==}
     dependencies:
@@ -6344,7 +6338,7 @@ packages:
   /@types/nodemailer@6.4.14:
     resolution: {integrity: sha512-fUWthHO9k9DSdPCSPRqcu6TWhYyxTBg382vlNIttSe9M7XfsT06y0f24KHXtbnijPGGRIcVvdKHTNikOI6qiHA==}
     dependencies:
-      '@types/node': 18.19.3
+      '@types/node': 20.10.5
     dev: true
 
   /@types/prop-types@15.7.11:
