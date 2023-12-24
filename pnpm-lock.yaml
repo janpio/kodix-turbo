@@ -173,10 +173,10 @@ importers:
         specifier: ^18.18.13
         version: 18.19.3
       '@types/react':
-        specifier: ^18.2.37
+        specifier: ^18.2.45
         version: 18.2.45
       '@types/react-dom':
-        specifier: ^18.2.15
+        specifier: ^18.2.18
         version: 18.2.18
       '@types/tinycolor2':
         specifier: ^1.4.6
@@ -264,10 +264,10 @@ importers:
         specifier: ^18.18.13
         version: 18.19.3
       '@types/react':
-        specifier: ^18.2.37
+        specifier: ^18.2.45
         version: 18.2.45
       '@types/react-dom':
-        specifier: ^18.2.15
+        specifier: ^18.2.18
         version: 18.2.18
       autoprefixer:
         specifier: ^10.4.16
@@ -376,10 +376,10 @@ importers:
         specifier: ^18.18.13
         version: 18.19.3
       '@types/react':
-        specifier: ^18.2.37
+        specifier: ^18.2.45
         version: 18.2.45
       '@types/react-dom':
-        specifier: ^18.2.15
+        specifier: ^18.2.18
         version: 18.2.18
       autoprefixer:
         specifier: ^10.4.16
@@ -479,10 +479,10 @@ importers:
         specifier: ^6.4.14
         version: 6.4.14
       '@types/react':
-        specifier: ^18.2.37
+        specifier: ^18.2.45
         version: 18.2.45
       '@types/react-dom':
-        specifier: ^18.2.15
+        specifier: ^18.2.18
         version: 18.2.18
       eslint:
         specifier: ^8.56.0
@@ -714,10 +714,10 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
       '@types/react':
-        specifier: ^18.2.37
+        specifier: ^18.2.45
         version: 18.2.45
       '@types/react-dom':
-        specifier: ^18.2.15
+        specifier: ^18.2.18
         version: 18.2.18
       autoprefixer:
         specifier: ^10.4.16
