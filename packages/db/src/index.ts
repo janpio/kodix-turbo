@@ -29,3 +29,4 @@ if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 export * from "@prisma/client";
 export * from "./extensions";
 export * from "./seed/constants";
+export * from "./seed/appConfigSchemas";

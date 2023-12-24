@@ -54,17 +54,17 @@ model UserAppRole {
 }
 
 model AppTeamConfig {
-  id         String @id @default(cuid())
-  Parameters String @db.MediumText // Para qualquer configuração 
+  id     String @id @default(cuid())
+  config String @db.MediumText // Para qualquer configuração 
 
-  AppId String
-  App   App    @relation("AppConfig", fields: [AppId], references: [id])
+  appId String
+  App   App    @relation("AppConfig", fields: [appId], references: [id])
 
   teamId String
   Team   Team   @relation("TeamConfig", fields: [teamId], references: [id])
 
-  @@unique([AppId, teamId])
-  @@index([AppId])
+  @@unique([appId, teamId])
+  @@index([appId])
   @@index([teamId])
 }
 
@@ -262,20 +262,22 @@ model Session {
 }
 
 model User {
-  id            String        @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String?
-  email         String?       @unique
+  email         String?   @unique
   emailVerified DateTime?
   image         String?
   Accounts      Account[]
   Sessions      Session[]
-  Teams         Team[]        @relation("UserTeam")
+  Teams         Team[]    @relation("UserTeam")
   Todos         Todo[]
-  activeTeamId  String
-  ActiveTeam    Team          @relation("UserActiveTeam", fields: [activeTeamId], references: [id])
-  EventDones    EventDone[]
-  OwnedTeams    Team[]
-  UserAppRoles  UserAppRole[]
+
+  activeTeamId String
+  ActiveTeam   Team   @relation("UserActiveTeam", fields: [activeTeamId], references: [id])
+
+  EventDones   EventDone[]
+  OwnedTeams   Team[]
+  UserAppRoles UserAppRole[]
 
   @@index([activeTeamId])
 }

@@ -1,4 +1,7 @@
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+
+import { kodixCareAppId, kodixCareConfigSchema } from "@kdx/db";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
@@ -52,4 +55,28 @@ export const appsRouter = createTRPCRouter({
 
     return apps;
   }),
+  saveConfig: protectedProcedure
+    .input(
+      z.object({
+        appId: z.literal(kodixCareAppId),
+        config: kodixCareConfigSchema,
+      }), //TODO: make dynamic based on app
+    )
+    .mutation(async ({ ctx, input }) => {
+      const appTeamConfig = await ctx.prisma.appTeamConfig.findFirstOrThrow({
+        where: {
+          teamId: ctx.session.user.activeTeamId,
+          appId: input.appId,
+        },
+      });
+
+      return await ctx.prisma.appTeamConfig.update({
+        where: {
+          id: appTeamConfig.id,
+        },
+        data: {
+          config: JSON.stringify(input.config),
+        },
+      });
+    }),
 });

@@ -3,11 +3,10 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import {
+  appIdToAdminIdMap,
   calendarAppId,
-  kodixCareAdminRoleId,
   kodixCareAppId,
   prisma,
-  todoAdminRoleId,
   todoAppId,
 } from "@kdx/db";
 import { updateTeamSchema } from "@kdx/shared";
@@ -18,12 +17,6 @@ import {
   userAndTeamLimitedProcedure,
 } from "../../trpc";
 import { invitationRouter } from "./invitation/invitation";
-
-const appIdToAdminIdMap = {
-  [todoAppId]: todoAdminRoleId,
-  [calendarAppId]: todoAdminRoleId,
-  [kodixCareAppId]: kodixCareAdminRoleId,
-} as const;
 
 export const teamRouter = createTRPCRouter({
   getAllForLoggedUser: protectedProcedure.query(async ({ ctx }) => {
@@ -123,9 +116,6 @@ export const teamRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      //ao instalar o Kodix Care,
-      //Colocar o usuario como admin
-
       const app = await ctx.prisma.app.findUnique({
         where: {
           id: input.appId,
