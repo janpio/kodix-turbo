@@ -91,6 +91,14 @@ function CustomPrismaAdapter(p: PrismaClient): Adapter {
       return { ...user, activeTeamName: user.ActiveTeam.name };
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async getUserByAccount(provider_providerAccountId): Promise<any> {
+      const account = await p.account.findUnique({
+        where: { provider_providerAccountId },
+        select: { User: true },
+      });
+      return account?.User ?? null;
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async getSessionAndUser(sessionToken): Promise<any> {
       const userAndSession = await p.session.findUnique({
         where: { sessionToken },
