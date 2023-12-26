@@ -34,7 +34,7 @@ import {
 import { api } from "~/trpc/react";
 
 interface KodixAppProps {
-  id: string;
+  id: KodixAppType["id"];
   appName: KodixAppType["name"];
   appDescription: string;
   appUrl: KodixAppType["url"];

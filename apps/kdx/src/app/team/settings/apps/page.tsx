@@ -25,7 +25,7 @@ export default async function AppsPage() {
         {apps?.map((app) => (
           <div key={app.id}>
             <KodixApp
-              id={app.id}
+              id={app.id as KodixAppType["id"]}
               appName={app.name as KodixAppType["name"]}
               appDescription={app.description}
               appUrl={app.url as KodixAppType["url"]}
