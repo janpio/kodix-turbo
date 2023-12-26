@@ -1,4 +1,4 @@
-import { apps } from "./seed";
+import type { apps } from "./seed";
 
 //* Partners
 export const kdxPartnerId = "clh9tiqsj000835711pg3sskn";
