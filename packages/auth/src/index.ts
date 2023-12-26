@@ -92,6 +92,7 @@ function CustomPrismaAdapter(p: PrismaClient): Adapter {
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async getUserByAccount(provider_providerAccountId): Promise<any> {
+      //? Had to add his manually because we changed the schema to uppercase User
       const account = await p.account.findUnique({
         where: { provider_providerAccountId },
         select: { User: true },
