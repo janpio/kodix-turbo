@@ -261,7 +261,7 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
       '@types/node':
-        specifier: ^20.10.5
+        specifier: ^20.10
         version: 20.10.5
       '@types/react':
         specifier: ^18.2.45
@@ -373,7 +373,7 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
       '@types/node':
-        specifier: ^20.10.5
+        specifier: ^20.10
         version: 20.10.5
       '@types/react':
         specifier: ^18.2.45
@@ -473,7 +473,7 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
       '@types/node':
-        specifier: ^20.10.5
+        specifier: ^20.10
         version: 20.10.5
       '@types/nodemailer':
         specifier: ^6.4.14
