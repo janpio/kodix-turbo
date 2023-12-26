@@ -41,7 +41,8 @@
       "cache": false
     },
     "db:seed": {
-      "inputs": ["seed/seed.ts"]
+      "inputs": ["seed/seed.ts"],
+      "cache": false
     },
     "clean": {
       "cache": false
