@@ -31,6 +31,7 @@ const config = {
       { checksVoidReturn: { attributes: false } },
     ],
     "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
+    "one-var": ["error", "never"], //Added by me
   },
   ignorePatterns: [
     "**/.eslintrc.cjs",
