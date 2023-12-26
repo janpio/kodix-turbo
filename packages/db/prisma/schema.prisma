@@ -84,8 +84,8 @@ model Team {
   EventMasters EventMaster[]
   Invitations  Invitation[]
 
-  teamConfigs  AppTeamConfig[] @relation("TeamConfig")
-  UserAppRoles UserAppRole[]
+  AppTeamConfigs AppTeamConfig[] @relation("TeamConfig")
+  UserAppRoles   UserAppRole[]
 
   @@index([ownerId])
 }
@@ -113,10 +113,10 @@ model App {
   DevPartner       DevPartner      @relation(fields: [devPartnerId], references: [id])
   devPartnerId     String
   url              String          @unique
-  appTeamConfigs   AppTeamConfig[] @relation("AppConfig")
+  AppTeamConfigs   AppTeamConfig[] @relation("AppConfig")
 
-  appRoles    AppRole[]
-  UserAppRole UserAppRole[]
+  AppRoles     AppRole[]
+  UserAppRoles UserAppRole[]
 
   @@index([devPartnerId])
 }
