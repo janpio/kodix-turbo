@@ -1,4 +1,3 @@
-import { prisma } from "..";
 import {
   calendarAdminRoleId,
   calendarAppId,
@@ -9,7 +8,9 @@ import {
   kodixCarePatientRoleId,
   todoAdminRoleId,
   todoAppId,
-} from "./constants";
+} from "@kdx/shared";
+
+import { prisma } from "..";
 
 export const apps = [
   {

@@ -19,6 +19,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@kdx/shared": "workspace:^0.1.0",
     "@planetscale/database": "^1.11.0",
     "@prisma/adapter-planetscale": "^5.7.1",
     "@prisma/client": "^5.7.1",

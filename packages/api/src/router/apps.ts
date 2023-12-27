@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { kodixCareAppId, kodixCareConfigSchema } from "@kdx/db";
+import { kodixCareAppId, kodixCareConfigSchema } from "@kdx/shared";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 

@@ -35,3 +35,7 @@ export const inviteUserSchema = z.object({
       else return [value];
     }),
 });
+
+export const kodixCareConfigSchema = z.object({
+  patientName: z.string().or(z.null()),
+});

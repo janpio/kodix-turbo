@@ -1,5 +1,3 @@
-import type { apps } from "./seed";
-
 //* Partners
 export const kdxPartnerId = "clh9tiqsj000835711pg3sskn";
 
@@ -24,6 +22,3 @@ export const appIdToAdminIdMap = {
   [calendarAppId]: todoAdminRoleId,
   [kodixCareAppId]: kodixCareAdminRoleId,
 } as const;
-
-//* TYPES
-export type KodixApp = Omit<(typeof apps)[number], "appRoles">;
