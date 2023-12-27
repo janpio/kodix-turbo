@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { Loader2, MoreHorizontal, Trash2 } from "lucide-react";
 
 import type { Session } from "@kdx/auth";
-import type { KodixApp as KodixAppType } from "@kdx/db";
+import type { KodixApp } from "@kdx/db";
 import {
   Button,
   buttonVariants,
