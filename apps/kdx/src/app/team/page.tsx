@@ -32,11 +32,7 @@ export default async function Team() {
             iconPath={"/appIcons/settings.png"}
           />
           {apps?.map((app) => (
-            <IconKodixApp
-              key={app.id}
-              appName={app.name as KodixAppType["name"]}
-              appUrl={app.url as KodixAppType["url"]}
-            />
+            <IconKodixApp key={app.id} appId={app.id as KodixAppType["id"]} />
           ))}
         </div>
       </MaxWidthWrapper>

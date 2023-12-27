@@ -25,9 +25,6 @@ export default async function Apps() {
           <div key={app.id}>
             <KodixApp
               id={app.id as KodixAppType["id"]}
-              appName={app.name as KodixAppType["name"]}
-              appDescription={app.description}
-              appUrl={app.url as KodixAppType["url"]}
               installed={app.installed}
               session={session}
             />

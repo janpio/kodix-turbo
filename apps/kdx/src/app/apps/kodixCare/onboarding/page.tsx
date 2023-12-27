@@ -6,7 +6,6 @@ import OnboardingCard from "./_components/onboarding-card";
 
 export default async function Onboarding() {
   const onboardingCompleted = await api.kodixCare.onboardingCompleted.query();
-
   if (onboardingCompleted) return redirect("/apps/kodixCare");
 
   return (

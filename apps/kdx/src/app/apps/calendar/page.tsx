@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import moment from "moment";
 
 import { auth } from "@kdx/auth";
+import { calendarAppId, kodixCareAppId } from "@kdx/shared";
 import { buttonVariants, cn, H1, Separator } from "@kdx/ui";
 
 import { IconKodixApp } from "~/app/_components/app/kodix-app";
@@ -17,7 +18,7 @@ export default async function Calendar() {
   if (!session) return redirect("/");
 
   const installedApps = await api.app.getInstalled.query();
-  if (!installedApps.some((x) => x.name === "Calendar"))
+  if (!installedApps.some((x) => x.id === calendarAppId))
     return (
       <div className="flex flex-col items-center justify-center space-y-4">
         <h1 className="text-red-500">You need to install this app first</h1>
@@ -40,11 +41,7 @@ export default async function Calendar() {
   return (
     <MaxWidthWrapper>
       <div className="flex space-x-4">
-        <IconKodixApp
-          appName="Calendar"
-          appUrl="/calendar"
-          renderText={false}
-        />
+        <IconKodixApp appId={kodixCareAppId} renderText={false} />
         <H1>Calendar</H1>
       </div>
       <Separator className="my-4" />

@@ -1,5 +1,6 @@
 "use client";
 
+import { todoAppId } from "@kdx/shared";
 import { H1, Separator } from "@kdx/ui";
 
 import { IconKodixApp } from "~/app/_components/app/kodix-app";
@@ -15,7 +16,7 @@ export default function Todo() {
   return (
     <MaxWidthWrapper>
       <div className="flex space-x-4">
-        <IconKodixApp appName="Todo" appUrl="/todo" renderText={false} />
+        <IconKodixApp appId={todoAppId} renderText={false} />
         <H1>Todo</H1>
       </div>
       <Separator className="my-4" />

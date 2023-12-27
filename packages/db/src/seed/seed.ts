@@ -15,11 +15,8 @@ import { prisma } from "..";
 export const apps = [
   {
     id: todoAppId, //As const so it can be used as a type
-    name: "Todo" as const,
-    description: "Todo app" as const,
     subscriptionCost: 0 as const,
     devPartnerId: kdxPartnerId,
-    url: "/todo" as const, //! Used as appIcon import (e.g.: /appIcons/todo.png)
     AppRoles: {
       create: [
         {
@@ -33,11 +30,8 @@ export const apps = [
   },
   {
     id: calendarAppId,
-    name: "Calendar" as const,
-    description: "Calendar app" as const,
     subscriptionCost: 0 as const,
     devPartnerId: kdxPartnerId,
-    url: "/calendar" as const,
     AppRoles: {
       create: [
         {
@@ -51,11 +45,8 @@ export const apps = [
   },
   {
     id: kodixCareAppId,
-    name: "Kodix Care" as const,
-    description: "Kodix Care app" as const,
     subscriptionCost: 0 as const,
     devPartnerId: kdxPartnerId,
-    url: "/kodixCare" as const,
     AppRoles: {
       create: [
         {

@@ -103,15 +103,12 @@ model Invitation {
 
 model App {
   id               String          @id @default(cuid())
-  name             String
-  description      String
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
   subscriptionCost Decimal
   ActiveTeams      Team[]          @relation("AppTeam")
   DevPartner       DevPartner      @relation(fields: [devPartnerId], references: [id])
   devPartnerId     String
-  url              String          @unique
   AppTeamConfigs   AppTeamConfig[] @relation("AppConfig")
 
   AppRoles     AppRole[]

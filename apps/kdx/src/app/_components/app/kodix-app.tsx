@@ -32,25 +32,21 @@ import {
   toast,
 } from "@kdx/ui";
 
+import {
+  getAppDescription,
+  getAppIconUrl,
+  getAppName,
+  getAppUrl,
+} from "~/helpers/miscelaneous";
 import { api } from "~/trpc/react";
 
 interface KodixAppProps {
   id: KodixAppType["id"];
-  appName: KodixAppType["name"];
-  appDescription: string;
-  appUrl: KodixAppType["url"];
   installed: boolean;
   session: Session | null;
 }
 
-export function KodixApp({
-  id,
-  appName,
-  appDescription,
-  appUrl,
-  installed,
-  session,
-}: KodixAppProps) {
+export function KodixApp({ id, installed, session }: KodixAppProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -75,11 +71,16 @@ export function KodixApp({
   const isActive = true;
   const appShouldGoToOnboarding = id === kodixCareAppId;
 
+  const appurl = getAppUrl(id);
+  const appIconUrl = getAppIconUrl(id);
+  const appName = getAppName(id);
+  const appDescription = getAppDescription(id);
+
   return (
     <Card className="w-[250px]">
       <CardHeader className="flex flex-row items-center space-y-0 pb-2">
         <Image
-          src={`/appIcons${appUrl}.png`}
+          src={appIconUrl}
           height={30}
           width={30}
           alt={`${appName} icon`}
@@ -136,7 +137,7 @@ export function KodixApp({
         <div className="flex space-x-2">
           {session && installed && (
             <Link
-              href={`apps${appUrl}`}
+              href={appurl}
               className={cn(
                 buttonVariants({ variant: "default" }),
                 !isActive && "pointer-events-none grow opacity-50",
@@ -149,7 +150,7 @@ export function KodixApp({
             <Button
               onClick={() => {
                 if (appShouldGoToOnboarding) {
-                  router.push(`/apps${appUrl}/onboarding`);
+                  router.push(`${appurl}/onboarding`);
                   return;
                 }
 
@@ -185,21 +186,16 @@ export function IconKodixApp({
   renderText = true,
   ...props
 }: {
-  appUrl: KodixAppProps["appUrl"];
-  appName: KodixAppProps["appName"];
+  appId: KodixAppType["id"];
   renderText?: boolean;
 }) {
+  const appUrl = getAppUrl(props.appId);
+  const appName = getAppName(props.appId);
+
   return (
-    <Link href={`/apps/${props.appUrl}`} className="flex flex-col items-center">
-      <Image
-        src={`/appIcons${props.appUrl}.png`}
-        height={80}
-        width={80}
-        alt={`${props.appName} icon`}
-      />
-      {renderText && (
-        <p className="text-muted-foreground text-sm">{props.appName}</p>
-      )}
+    <Link href={`${appUrl}`} className="flex flex-col items-center">
+      <Image src={`${appUrl}`} height={80} width={80} alt={`${appName} icon`} />
+      {renderText && <p className="text-muted-foreground text-sm">{appName}</p>}
     </Link>
   );
 }
