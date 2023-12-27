@@ -6,10 +6,9 @@ import {
   appIdToAdminIdMap,
   calendarAppId,
   kodixCareAppId,
-  prisma,
   todoAppId,
-} from "@kdx/db";
-import { updateTeamSchema } from "@kdx/shared";
+  updateTeamSchema,
+} from "@kdx/shared";
 
 import {
   createTRPCRouter,
@@ -294,7 +293,7 @@ export const teamRouter = createTRPCRouter({
       });
     }),
   getAllUsers: protectedProcedure.query(async ({ ctx }) => {
-    return await prisma.user.findMany({
+    return await ctx.prisma.user.findMany({
       where: {
         Teams: {
           some: {

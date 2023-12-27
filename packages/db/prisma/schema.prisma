@@ -55,10 +55,9 @@ model UserAppRole {
 
 model AppTeamConfig {
   id     String @id @default(cuid())
-  config String @db.MediumText // Para qualquer configuração 
-
-  appId String
-  App   App    @relation("AppConfig", fields: [appId], references: [id])
+  config Json
+  appId  String
+  App    App    @relation("AppConfig", fields: [appId], references: [id])
 
   teamId String
   Team   Team   @relation("TeamConfig", fields: [teamId], references: [id])

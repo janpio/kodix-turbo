@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import type { Prisma } from "@kdx/db";
 import { kodixCareAppId, kodixCareConfigSchema } from "@kdx/shared";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
@@ -64,7 +65,7 @@ export const appsRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const updateConfig = {
-        config: JSON.stringify(input.config),
+        config: input.config as Prisma.JsonObject,
       };
       return await ctx.prisma.appTeamConfig.upsert({
         where: {
