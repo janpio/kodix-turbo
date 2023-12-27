@@ -36,6 +36,16 @@ export const inviteUserSchema = z.object({
     }),
 });
 
+/**
+ * @description Schema for validating user invitation
+ * @usedBy kdx/api kdx/kdx
+ */
 export const kodixCareConfigSchema = z.object({
-  patientName: z.string().or(z.null()),
+  patientName: z
+    .string()
+    .min(2)
+    .max(50)
+    .regex(/^[^\d]+$/, {
+      message: "Numbers are not allowed in the patient name",
+    }),
 });

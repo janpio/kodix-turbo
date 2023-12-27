@@ -63,19 +63,21 @@ export const appsRouter = createTRPCRouter({
       }), //TODO: make dynamic based on app
     )
     .mutation(async ({ ctx, input }) => {
-      const appTeamConfig = await ctx.prisma.appTeamConfig.findFirstOrThrow({
+      const updateConfig = {
+        config: JSON.stringify(input.config),
+      };
+      return await ctx.prisma.appTeamConfig.upsert({
         where: {
+          appId_teamId: {
+            appId: input.appId,
+            teamId: ctx.session.user.activeTeamId,
+          },
+        },
+        update: updateConfig,
+        create: {
+          ...updateConfig,
           teamId: ctx.session.user.activeTeamId,
           appId: input.appId,
-        },
-      });
-
-      return await ctx.prisma.appTeamConfig.update({
-        where: {
-          id: appTeamConfig.id,
-        },
-        data: {
-          config: JSON.stringify(input.config),
         },
       });
     }),

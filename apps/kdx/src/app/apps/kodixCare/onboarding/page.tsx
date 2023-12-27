@@ -1,12 +1,14 @@
 "use client";
 
-import React from "react";
+import type { z } from "zod";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { LuArrowRight } from "react-icons/lu";
-import { z } from "zod";
 
-import { kodixCareAppId } from "@kdx/shared";
+import { kodixCareAppId, kodixCareConfigSchema } from "@kdx/shared";
 import {
   Button,
   Card,
@@ -29,25 +31,30 @@ import MaxWidthWrapper from "~/app/_components/max-width-wrapper";
 import { trpcErrorToastDefault } from "~/helpers/miscelaneous";
 import { api } from "~/trpc/react";
 
-const formSchema = z.object({
-  patientName: z.string().min(2).max(50),
-});
-
 export default function Onboarding() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof kodixCareConfigSchema>>({
+    resolver: zodResolver(kodixCareConfigSchema),
     defaultValues: {
       patientName: "",
     },
   });
+  const router = useRouter();
 
   const { mutate: saveConfig } = api.app.saveConfig.useMutation({
+    onSuccess: () => {
+      router.push(`/apps/kodixCare`);
+    },
     onError: (e) => {
       trpcErrorToastDefault(e);
     },
+    onSettled: () => {
+      setIsSubmitting(false);
+    },
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof kodixCareConfigSchema>) {
+    setIsSubmitting(true);
     saveConfig({
       appId: kodixCareAppId,
       config: { patientName: values.patientName },
@@ -90,7 +97,11 @@ export default function Onboarding() {
               </CardContent>
               <CardFooter className="flex justify-end">
                 <Button type="submit">
-                  Go to Kodix Care <LuArrowRight className="ml-2 h-4 w-4" />
+                  Go to Kodix Care
+                  {!isSubmitting && <LuArrowRight className="ml-2 h-4 w-4" />}
+                  {isSubmitting && (
+                    <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                  )}
                 </Button>
               </CardFooter>
             </Card>
