@@ -8,6 +8,7 @@ import { Loader2, MoreHorizontal, Trash2 } from "lucide-react";
 
 import type { Session } from "@kdx/auth";
 import type { KodixApp as KodixAppType } from "@kdx/db";
+import { kodixCareAppId } from "@kdx/shared";
 import {
   Button,
   buttonVariants,
@@ -71,7 +72,8 @@ export function KodixApp({
     },
   });
 
-  const isActive = true; //["KodixCare"].includes(appName);
+  const isActive = true;
+  const appShouldGoToOnboarding = id === kodixCareAppId;
 
   return (
     <Card className="w-[250px]">
@@ -145,7 +147,14 @@ export function KodixApp({
           )}
           {session && !installed && (
             <Button
-              onClick={() => void mutate({ appId: id })}
+              onClick={() => {
+                if (appShouldGoToOnboarding) {
+                  router.push(`/apps${appUrl}/onboarding`);
+                  return;
+                }
+
+                void mutate({ appId: id });
+              }}
               variant={"secondary"}
               className={cn(
                 "disabled",
