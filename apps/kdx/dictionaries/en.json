@@ -1,9 +1,4 @@
 {
-  "server-component": {
-    "welcome": "Welcome"
-  },
-  "counter": {
-    "increment": "Increment",
-    "decrement": "Decrement"
-  }
+  "welcome_to_kodix": "Welcome to Kodix",
+  "welcome_to_kodix_description": "Solutions for your business. Kodix is a multi-purpose platform that provides a wide range of business solutions"
 }

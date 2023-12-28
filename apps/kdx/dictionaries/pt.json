@@ -1,9 +1,4 @@
 {
-  "server-component": {
-    "welcome": "Welcome"
-  },
-  "counter": {
-    "increment": "Increment",
-    "decrement": "Decrement"
-  }
+  "welcome_to_kodix": "Bem vindo ao Kodix",
+  "welcome_to_kodix_description": "O Kodix é um framework para desenvolvimento de aplicações web, mobile e desktop."
 }

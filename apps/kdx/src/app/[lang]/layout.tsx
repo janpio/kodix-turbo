@@ -10,6 +10,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { cn, Toaster } from "@kdx/ui";
 
+import type { Locale } from "../../../i18n.config";
 import { Footer } from "~/app/[lang]/_components/footer/footer";
 import { Header } from "~/app/[lang]/_components/header/header";
 import { NextThemeProvider } from "~/app/[lang]/_components/providers";
@@ -17,6 +18,7 @@ import { TailwindIndicator } from "~/app/[lang]/_components/tailwind-indicator";
 import { ThemeSwitcher } from "~/app/[lang]/_components/theme-switcher";
 import { env } from "~/env";
 import { TRPCReactProvider } from "~/trpc/react";
+import { i18n } from "../../../i18n.config";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -39,12 +41,19 @@ export const metadata: Metadata = {
   // },
 };
 
+export function generateStaticParams() {
+  return i18n.locales.map((locale) => ({ lang: locale }));
+}
+
 // Lazy load headers
 const getHeaders = cache(async () => Promise.resolve(headers()));
 
-export default function Layout(props: { children: React.ReactNode }) {
+export default function Layout(props: {
+  children: React.ReactNode;
+  params: { lang: Locale };
+}) {
   return (
-    <html lang="en">
+    <html lang={props.params.lang}>
       <body
         className={cn(
           "bg-background min-h-screen font-sans antialiased",
