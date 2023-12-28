@@ -51,16 +51,13 @@ export const createTRPCContext = async (opts: {
  */
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
-  errorFormatter({ shape, error }) {
-    return {
-      ...shape,
-      data: {
-        ...shape.data,
-        zodError:
-          error.cause instanceof ZodError ? error.cause.flatten() : null,
-      },
-    };
-  },
+  errorFormatter: ({ shape, error }) => ({
+    ...shape,
+    data: {
+      ...shape.data,
+      zodError: error.cause instanceof ZodError ? error.cause.flatten() : null,
+    },
+  }),
 });
 
 /**
@@ -86,10 +83,14 @@ export const createTRPCRouter = t.router;
 export const publicProcedure = t.procedure;
 
 /**
- * Reusable middleware that enforces users are logged in before running the
- * procedure
+ * Protected (authenticated) procedure
+ *
+ * If you want a query or mutation to ONLY be accessible to logged in users, use this. It verifies
+ * the session is valid and guarantees `ctx.session.user` is not null.
+ *
+ * @see https://trpc.io/docs/procedures
  */
-const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
+export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   if (!ctx.session?.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
@@ -101,26 +102,20 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   });
 });
 
-/**
- * Protected (authed) procedure
- *
- * If you want a query or mutation to ONLY be accessible to logged in users, use
- * this. It verifies the session is valid and guarantees ctx.session.user is not
- * null
- *
- * @see https://trpc.io/docs/procedures
- */
-export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
-
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
   limiter: Ratelimit.slidingWindow(5, "1 h"), //5 Requests per 1 hour
   analytics: true,
 });
+
 /**
- * Reusable middleware that limits by id
+ * Protected (authed) procedure that limits by id and current active team
+ *
+ * This is the same as protectedProcedure, but it also rate limits per user and
+ * current active teamId. This is using a shared cache, so it will rate
+ * limit across all instances that use this same procedure.
  */
-export const rateLimitByUserIdAndTeam = enforceUserIsAuthed.unstable_pipe(
+export const userAndTeamLimitedProcedure = protectedProcedure.use(
   async ({ ctx, next }) => {
     const { success, reset } = await ratelimit.limit(
       `userId:${ctx.session.user.id} teamId:${ctx.session.user.activeTeamId}`,
@@ -137,15 +132,4 @@ export const rateLimitByUserIdAndTeam = enforceUserIsAuthed.unstable_pipe(
       ctx,
     });
   },
-);
-
-/**
- * Protected (authed) procedure that limits by id and current active team
- *
- * This is the same as protectedProcedure, but it also rate limits per user and
- * current active teamId. This is using a shared cache, so it will rate
- * limit across all instances that use this same procedure.
- */
-export const userAndTeamLimitedProcedure = t.procedure.use(
-  rateLimitByUserIdAndTeam,
 );
