@@ -70,7 +70,7 @@ export default function Layout(props: {
             <Analytics />
             <Toaster richColors closeButton />
             <div className="flex min-h-screen flex-col">
-              <Header />
+              <Header lang={props.params.lang} />
               {props.children}
               <Footer />
             </div>

@@ -1,4 +1,6 @@
 {
   "welcome_to_kodix": "Bem vindo ao Kodix",
-  "welcome_to_kodix_description": "O Kodix é um framework para desenvolvimento de aplicações web, mobile e desktop."
+  "welcome_to_kodix_description": "O Kodix é um framework para desenvolvimento de aplicações web, mobile e desktop.",
+  "sign_in": "Entrar",
+  "sign_up": "Registrar"
 }

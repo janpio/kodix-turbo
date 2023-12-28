@@ -1,4 +1,6 @@
+import type { Locale } from "i18n.config";
 import Link from "next/link";
+import { getDictionary } from "get-dictionary";
 
 import { auth } from "@kdx/auth";
 import { buttonVariants } from "@kdx/ui";
@@ -7,8 +9,9 @@ import HeaderFooterRemover from "~/app/[lang]/_components/header-footer-remover"
 import MaxWidthWrapper from "~/app/[lang]/_components/max-width-wrapper";
 import { UserProfileButton } from "./user-profile-button";
 
-export async function Header() {
+export async function Header({ lang }: { lang: Locale }) {
   const session = await auth();
+  const dict = await getDictionary(lang);
 
   return (
     <HeaderFooterRemover>
@@ -68,13 +71,13 @@ export async function Header() {
                     href="/signin"
                     className={buttonVariants({ variant: "ghost" })}
                   >
-                    Sign In
+                    {dict.sign_in}
                   </Link>
                   <Link
                     href="/signin"
                     className={buttonVariants({ variant: "default" })}
                   >
-                    Sign Up
+                    {dict.sign_up}
                   </Link>
                 </div>
               )}
