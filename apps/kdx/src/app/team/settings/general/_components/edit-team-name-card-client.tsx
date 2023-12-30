@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
-import { updateTeamSchema } from "@kdx/shared";
 import {
   Button,
   Card,
@@ -17,6 +16,7 @@ import {
   Label,
   toast,
 } from "@kdx/ui";
+import { updateTeamSchema } from "@kdx/validators";
 
 import { trpcErrorToastDefault } from "~/helpers/miscelaneous";
 import { api } from "~/trpc/react";

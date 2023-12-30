@@ -8,7 +8,7 @@ import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { LuArrowRight } from "react-icons/lu";
 
-import { kodixCareAppId, kodixCareConfigSchema } from "@kdx/shared";
+import { kodixCareAppId } from "@kdx/shared";
 import {
   Button,
   Card,
@@ -26,6 +26,7 @@ import {
   FormMessage,
   Input,
 } from "@kdx/ui";
+import { kodixCareConfigSchema } from "@kdx/validators";
 
 import { trpcErrorToastDefault } from "~/helpers/miscelaneous";
 import { api } from "~/trpc/react";

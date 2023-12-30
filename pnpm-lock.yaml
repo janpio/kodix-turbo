@@ -81,6 +81,9 @@ importers:
       '@kdx/ui':
         specifier: workspace:^0.1.0
         version: link:../../packages/ui
+      '@kdx/validators':
+        specifier: workspace:^0.1.0
+        version: link:../../packages/validators
       '@radix-ui/react-label':
         specifier: ^2.0.2
         version: 2.0.2(@types/react-dom@18.2.18)(@types/react@18.2.45)(react-dom@18.2.0)(react@18.2.0)
@@ -426,6 +429,9 @@ importers:
       '@kdx/shared':
         specifier: workspace:^0.1.0
         version: link:../shared
+      '@kdx/validators':
+        specifier: workspace:^0.1.0
+        version: link:../validators
       '@paralleldrive/cuid2':
         specifier: ^2.2.2
         version: 2.2.2
@@ -746,6 +752,31 @@ importers:
       tailwindcss:
         specifier: 3.4.0
         version: 3.4.0
+      typescript:
+        specifier: ^5.3.3
+        version: 5.3.3
+
+  packages/validators:
+    dependencies:
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
+    devDependencies:
+      '@kdx/eslint-config':
+        specifier: workspace:^0.2.0
+        version: link:../../tooling/eslint
+      '@kdx/prettier-config':
+        specifier: workspace:^0.1.0
+        version: link:../../tooling/prettier
+      '@kdx/tsconfig':
+        specifier: workspace:^0.1.0
+        version: link:../../tooling/typescript
+      eslint:
+        specifier: ^8.56.0
+        version: 8.56.0
+      prettier:
+        specifier: ^3.1.1
+        version: 3.1.1
       typescript:
         specifier: ^5.3.3
         version: 5.3.3

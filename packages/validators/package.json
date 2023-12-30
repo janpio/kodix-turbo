@@ -1,5 +1,5 @@
 {
-  "name": "@kdx/{{ name }}",
+  "name": "@kdx/validators",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -8,10 +8,12 @@
   },
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
-    "lint": "eslint .",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@kdx/eslint-config": "workspace:^0.2.0",
