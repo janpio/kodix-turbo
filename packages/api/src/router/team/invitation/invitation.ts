@@ -2,11 +2,8 @@ import { TRPCError } from "@trpc/server";
 import cuid from "cuid";
 import { z } from "zod";
 
-import {
-  getBaseUrl,
-  getSuccessesAndErrors,
-  inviteUserSchema,
-} from "@kdx/shared";
+import { getBaseUrl, getSuccessesAndErrors } from "@kdx/shared";
+import { inviteUserSchema } from "@kdx/validators";
 
 import { sendEmail } from "../../../internal/email/email";
 import TeamInvite from "../../../internal/email/templates/team-invite";

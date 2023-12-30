@@ -5,7 +5,6 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Loader2, MailCheck, MinusCircle, PlusCircle } from "lucide-react";
 
 import type { Session } from "@kdx/auth";
-import { inviteUserSchema } from "@kdx/shared";
 import {
   Button,
   Card,
@@ -26,6 +25,7 @@ import {
   Separator,
   toast,
 } from "@kdx/ui";
+import { inviteUserSchema } from "@kdx/validators";
 
 import { trpcErrorToastDefault } from "~/helpers/miscelaneous";
 import { api } from "~/trpc/react";

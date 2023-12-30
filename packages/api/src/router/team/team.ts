@@ -7,8 +7,8 @@ import {
   calendarAppId,
   kodixCareAppId,
   todoAppId,
-  updateTeamSchema,
 } from "@kdx/shared";
+import { updateTeamSchema } from "@kdx/validators";
 
 import {
   createTRPCRouter,

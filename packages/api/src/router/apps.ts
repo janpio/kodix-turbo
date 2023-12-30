@@ -2,7 +2,8 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import type { Prisma } from "@kdx/db";
-import { kodixCareAppId, kodixCareConfigSchema } from "@kdx/shared";
+import { kodixCareAppId } from "@kdx/shared";
+import { kodixCareConfigSchema } from "@kdx/validators";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
