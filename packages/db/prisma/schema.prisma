@@ -16,83 +16,103 @@ datasource db {
   relationMode = "prisma"
 }
 
-model AppRoles {
-  id              String  @id @default(cuid())
-  appId           String
-  roleName        String
-  roleDescription String?
-  minRoleUsers    Int     @default(0)
-  maxRoleUsers    Int     @default(0)
+model AppRole {
+  id String @id @default(cuid())
 
-  app App @relation(fields: [appId], references: [id])
+  appId String
+  App   App    @relation(fields: [appId], references: [id])
+
+  name        String
+  description String?
+  minUsers    Int     @default(0)
+  maxUsers    Int     @default(0)
+
+  UserAppRole UserAppRole[]
 
   @@index([appId])
-  @@map("App_Roles")
 }
 
-model AppWorkspaceConfig {
-  id         String @id @default(cuid())
-  Parameters String @db.MediumText // Para qualquer configuração 
+model UserAppRole {
+  id String @id @default(cuid())
 
-  AppId String
-  app   App    @relation("AppConfig", fields: [AppId], references: [id])
+  userId String
+  User   User   @relation(fields: [userId], references: [id])
 
-  workspaceId String
-  workspace   Workspace @relation("WorkspaceConfig", fields: [workspaceId], references: [id])
+  teamId String
+  Team   Team   @relation(fields: [teamId], references: [id])
 
-  @@unique([AppId, workspaceId])
-  @@index([AppId])
-  @@index([workspaceId])
-  @@map("App_Workspace_Config")
+  appId String
+  App   App    @relation(fields: [appId], references: [id])
+
+  appRoleId String
+  AppRole   AppRole @relation(fields: [appRoleId], references: [id])
+
+  @@index([userId])
+  @@index([teamId])
+  @@index([appId])
+  @@index([appRoleId])
 }
 
-model Workspace {
+model AppTeamConfig {
+  id     String @id @default(cuid())
+  config Json
+  appId  String
+  App    App    @relation("AppConfig", fields: [appId], references: [id])
+
+  teamId String
+  Team   Team   @relation("TeamConfig", fields: [teamId], references: [id])
+
+  @@unique([appId, teamId])
+  @@index([appId])
+  @@index([teamId])
+}
+
+model Team {
   id        String   @id @default(cuid())
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  users     User[]   @relation("UserWorkspace")
+  Users     User[]   @relation("UserTeam")
 
   ownerId String
-  owner   User   @relation(fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Owner   User   @relation(fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  activeUsers User[]        @relation("UserActiveWorkspace")
-  activeApps  App[]         @relation("AppWorkspace")
-  Todo        Todo[]
-  EventMaster EventMaster[]
-  Invitations Invitation[]
+  ActiveUsers  User[]        @relation("UserActiveTeam")
+  ActiveApps   App[]         @relation("AppTeam")
+  Todos        Todo[]
+  EventMasters EventMaster[]
+  Invitations  Invitation[]
 
-  workspaceConfigs AppWorkspaceConfig[] @relation("WorkspaceConfig")
+  AppTeamConfigs AppTeamConfig[] @relation("TeamConfig")
+  UserAppRoles   UserAppRole[]
 
   @@index([ownerId])
 }
 
 model Invitation {
-  id          String    @id @default(cuid())
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  workspaceId String
-  email       String
-  accepted    Boolean   @default(false) //Is this necessary? Since we just delete the invitation when the user accepts it
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id        String   @id @default(cuid())
+  Team      Team     @relation(fields: [teamId], references: [id])
+  teamId    String
+  email     String
+  accepted  Boolean  @default(false) //Is this necessary? Since we just delete the invitation when the user accepts it
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@index([workspaceId])
+  @@index([teamId])
 }
 
 model App {
-  id                  String               @id @default(cuid())
-  name                String
-  description         String
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  subscriptionCost    Decimal
-  activeWorkspaces    Workspace[]          @relation("AppWorkspace")
-  idpartnerDev        DevPartner           @relation(fields: [devPartnerId], references: [id])
-  devPartnerId        String
-  url                 String               @unique
-  appWorkspaceConfigs AppWorkspaceConfig[] @relation("AppConfig")
+  id               String          @id @default(cuid())
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  subscriptionCost Decimal
+  ActiveTeams      Team[]          @relation("AppTeam")
+  DevPartner       DevPartner      @relation(fields: [devPartnerId], references: [id])
+  devPartnerId     String
+  AppTeamConfigs   AppTeamConfig[] @relation("AppConfig")
 
-  appRoles AppRoles[]
+  AppRoles     AppRole[]
+  UserAppRoles UserAppRole[]
 
   @@index([devPartnerId])
 }
@@ -103,7 +123,7 @@ model DevPartner {
   partnerUrl String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  App        App[]
+  Apps       App[]
 }
 
 enum Status {
@@ -129,12 +149,12 @@ model Todo {
   reminder    Boolean?
 
   assignedToUserId String?
-  assignedToUser   User?   @relation(fields: [assignedToUserId], references: [id])
+  AssignedToUser   User?   @relation(fields: [assignedToUserId], references: [id])
 
-  workspaceId String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  teamId String
+  Team   Team   @relation(fields: [teamId], references: [id])
 
-  @@index([workspaceId])
+  @@index([teamId])
   @@index([assignedToUserId])
 }
 
@@ -149,12 +169,12 @@ model EventMaster {
 
   EventExceptions    EventException[]
   EventCancellations EventCancellation[]
-  EventDone          EventDone[]
+  EventDones         EventDone[]
 
-  Workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  workspaceId String
+  Team   Team   @relation(fields: [teamId], references: [id])
+  teamId String
 
-  @@index([workspaceId])
+  @@index([teamId])
 }
 
 model EventException {
@@ -188,7 +208,7 @@ model EventDone {
   done         Boolean
   details      String?
 
-  doneBy User   @relation(fields: [userId], references: [id])
+  DoneBy User   @relation(fields: [userId], references: [id])
   userId String
 
   EventMaster   EventMaster @relation(fields: [eventMasterId], references: [id])
@@ -221,7 +241,7 @@ model Account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -232,27 +252,30 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
 model User {
-  id                String      @id @default(cuid())
-  name              String?
-  email             String?     @unique
-  emailVerified     DateTime?
-  image             String?
-  accounts          Account[]
-  sessions          Session[]
-  workspaces        Workspace[] @relation("UserWorkspace")
-  Todo              Todo[]
-  activeWorkspaceId String      @map("activeWorkspaceId")
-  activeWorkspace   Workspace   @relation("UserActiveWorkspace", fields: [activeWorkspaceId], references: [id])
-  EventDone         EventDone[]
-  ownedWorkspaces   Workspace[]
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  Accounts      Account[]
+  Sessions      Session[]
+  Teams         Team[]    @relation("UserTeam")
+  Todos         Todo[]
 
-  @@index([activeWorkspaceId])
+  activeTeamId String
+  ActiveTeam   Team   @relation("UserActiveTeam", fields: [activeTeamId], references: [id])
+
+  EventDones   EventDone[]
+  OwnedTeams   Team[]
+  UserAppRoles UserAppRole[]
+
+  @@index([activeTeamId])
 }
 
 model VerificationToken {

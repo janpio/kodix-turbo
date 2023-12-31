@@ -1,12 +1,13 @@
 "use client";
 
+import type { Weekday } from "rrule";
 import { useState } from "react";
 import { format } from "date-fns";
 import { CalendarIcon, Loader2, Plus } from "lucide-react";
 import moment from "moment";
-import type { Weekday } from "rrule";
 import { RRule } from "rrule";
 
+import type { RouterInputs } from "@kdx/api";
 import {
   Button,
   Calendar,
@@ -28,7 +29,6 @@ import {
 
 import { trpcErrorToastDefault } from "~/helpers/miscelaneous";
 import { api } from "~/trpc/react";
-import type { RouterInputs } from "~/trpc/shared";
 import { RecurrencePicker } from "./recurrence-picker";
 
 export function CreateEventDialogButton() {

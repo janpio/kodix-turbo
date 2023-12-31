@@ -12,56 +12,35 @@ import { Redis } from "@upstash/redis";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import { auth } from "@kdx/auth";
 import type { Session } from "@kdx/auth";
+import { auth } from "@kdx/auth";
 import { prisma } from "@kdx/db";
 
 /**
  * 1. CONTEXT
  *
- * This section defines the "contexts" that are available in the backend API
+ * This section defines the "contexts" that are available in the backend API.
  *
- * These allow you to access things like the database, the session, etc, when
- * processing a request
+ * These allow you to access things when processing a request, like the database, the session, etc.
  *
- */
-interface CreateContextOptions {
-  session: Session | null;
-}
-
-/**
- * This helper generates the "internals" for a tRPC context. If you need to use
- * it, you can export it from here
+ * This helper generates the "internals" for a tRPC context. The API handler and RSC clients each
+ * wrap this and provides the required context.
  *
- * Examples of things you may need it for:
- * - testing, so we dont have to mock Next.js' req/res
- * - trpc's `createSSGHelpers` where we don't have req/res
- * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
- */
-const createInnerTRPCContext = (opts: CreateContextOptions) => {
-  return {
-    session: opts.session,
-    prisma,
-  };
-};
-
-/**
- * This is the actual context you'll use in your router. It will be used to
- * process every request that goes through your tRPC endpoint
- * @link https://trpc.io/docs/context
+ * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: {
-  req?: Request;
-  auth?: Session | null;
+  headers: Headers;
+  session: Session | null;
 }) => {
-  const session = opts.auth ?? (await auth());
-  const source = opts.req?.headers.get("x-trpc-source") ?? "unknown";
+  const session = opts.session ?? (await auth());
+  const source = opts.headers.get("x-trpc-source") ?? "unknown";
 
   console.log(">>> tRPC Request from", source, "by", session?.user);
 
-  return createInnerTRPCContext({
+  return {
     session,
-  });
+    prisma,
+  };
 };
 
 /**
@@ -72,16 +51,13 @@ export const createTRPCContext = async (opts: {
  */
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
-  errorFormatter({ shape, error }) {
-    return {
-      ...shape,
-      data: {
-        ...shape.data,
-        zodError:
-          error.cause instanceof ZodError ? error.cause.flatten() : null,
-      },
-    };
-  },
+  errorFormatter: ({ shape, error }) => ({
+    ...shape,
+    data: {
+      ...shape.data,
+      zodError: error.cause instanceof ZodError ? error.cause.flatten() : null,
+    },
+  }),
 });
 
 /**
@@ -107,10 +83,14 @@ export const createTRPCRouter = t.router;
 export const publicProcedure = t.procedure;
 
 /**
- * Reusable middleware that enforces users are logged in before running the
- * procedure
+ * Protected (authenticated) procedure
+ *
+ * If you want a query or mutation to ONLY be accessible to logged in users, use this. It verifies
+ * the session is valid and guarantees `ctx.session.user` is not null.
+ *
+ * @see https://trpc.io/docs/procedures
  */
-const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
+export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   if (!ctx.session?.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
@@ -127,13 +107,18 @@ const ratelimit = new Ratelimit({
   limiter: Ratelimit.slidingWindow(5, "1 h"), //5 Requests per 1 hour
   analytics: true,
 });
+
 /**
- * Reusable middleware that limits by id
+ * Protected (authed) procedure that limits by id and current active team
+ *
+ * This is the same as protectedProcedure, but it also rate limits per user and
+ * current active teamId. This is using a shared cache, so it will rate
+ * limit across all instances that use this same procedure.
  */
-export const rateLimitByUserIdAndWs = enforceUserIsAuthed.unstable_pipe(
+export const userAndTeamLimitedProcedure = protectedProcedure.use(
   async ({ ctx, next }) => {
     const { success, reset } = await ratelimit.limit(
-      `userId:${ctx.session.user.id} wsId:${ctx.session.user.activeWorkspaceId}`,
+      `userId:${ctx.session.user.id} teamId:${ctx.session.user.activeTeamId}`,
     );
     if (!success)
       throw new TRPCError({
@@ -147,26 +132,4 @@ export const rateLimitByUserIdAndWs = enforceUserIsAuthed.unstable_pipe(
       ctx,
     });
   },
-);
-
-/**
- * Protected (authed) procedure
- *
- * If you want a query or mutation to ONLY be accessible to logged in users, use
- * this. It verifies the session is valid and guarantees ctx.session.user is not
- * null
- *
- * @see https://trpc.io/docs/procedures
- */
-export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
-
-/**
- * Protected (authed) procedure that limits by id and current active workspace
- *
- * This is the same as protectedProcedure, but it also rate limits per user and
- * current active workspaceId. This is using a shared cache, so it will rate
- * limit across all instances that use this same procedure.
- */
-export const userAndWsLimitedProcedure = t.procedure.use(
-  rateLimitByUserIdAndWs,
 );

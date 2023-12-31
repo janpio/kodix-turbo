@@ -5,11 +5,7 @@
     "paths": {
       "~/*": ["./src/*"]
     },
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
+    "plugins": [{ "name": "next" }],
     "strict": true
   },
   "exclude": [],
@@ -19,6 +15,7 @@
     "*.ts",
     "*.mjs",
     ".next/types/**/*.ts",
-    "custom.d.ts"
+    "custom.d.ts",
+    "next.config.js"
   ]
 }

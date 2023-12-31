@@ -22,7 +22,7 @@ const baseUrl = process.env.VERCEL_URL
   : "";
 
 export const VerificationRequestEmail = ({
-  magicLink = "https://kodix.com",
+  magicLink,
 }: KodixMagicLinkEmailProps) => (
   <Html>
     <Head />

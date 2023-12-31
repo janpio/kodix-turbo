@@ -2,7 +2,6 @@
   "name": "@kdx/eslint-config",
   "version": "0.2.0",
   "private": true,
-  "license": "MIT",
   "files": [
     "./base.js",
     "./nextjs.js",
@@ -10,16 +9,16 @@
   ],
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
-    "lint": "eslint .",
     "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@next/eslint-plugin-next": "^14.0.2",
+    "@next/eslint-plugin-next": "^14.0.4",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-config-turbo": "^1.10.16",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-turbo": "^1.11.1",
     "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-jsx-a11y": "^6.8.0",
     "eslint-plugin-react": "^7.33.2",
@@ -29,8 +28,9 @@
     "@kdx/prettier-config": "workspace:^0.1.0",
     "@kdx/tsconfig": "workspace:^0.1.0",
     "@types/eslint": "^8.44.7",
-    "eslint": "^8.54.0",
-    "typescript": "^5.3.2"
+    "eslint": "^8.56.0",
+    "prettier": "^3.1.1",
+    "typescript": "^5.3.3"
   },
   "eslintConfig": {
     "root": true,

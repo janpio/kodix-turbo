@@ -1,10 +1,12 @@
-import { auth } from "@kdx/auth";
 import type { KodixApp as KodixAppType } from "@kdx/db";
+import { auth } from "@kdx/auth";
 import { H1, Lead } from "@kdx/ui";
 
 import { KodixApp } from "~/app/_components/app/kodix-app";
 import MaxWidthWrapper from "~/app/_components/max-width-wrapper";
 import { api } from "~/trpc/server";
+
+export const dynamic = "force-dynamic"; //TODO: help me
 
 export default async function Apps() {
   const apps = await api.app.getAll.query();
@@ -22,10 +24,7 @@ export default async function Apps() {
         {apps?.map((app) => (
           <div key={app.id}>
             <KodixApp
-              id={app.id}
-              appName={app.name as KodixAppType["name"]}
-              appDescription={app.description}
-              appUrl={app.url as KodixAppType["url"]}
+              id={app.id as KodixAppType["id"]}
               installed={app.installed}
               session={session}
             />

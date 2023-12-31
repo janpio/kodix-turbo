@@ -8,6 +8,7 @@ import { Loader2, MoreHorizontal, Trash2 } from "lucide-react";
 
 import type { Session } from "@kdx/auth";
 import type { KodixApp as KodixAppType } from "@kdx/db";
+import { kodixCareAppId } from "@kdx/shared";
 import {
   Button,
   buttonVariants,
@@ -31,37 +32,33 @@ import {
   toast,
 } from "@kdx/ui";
 
+import {
+  getAppDescription,
+  getAppIconUrl,
+  getAppName,
+  getAppUrl,
+} from "~/helpers/miscelaneous";
 import { api } from "~/trpc/react";
 
 interface KodixAppProps {
-  id: string;
-  appName: KodixAppType["name"];
-  appDescription: string;
-  appUrl: KodixAppType["url"];
+  id: KodixAppType["id"];
   installed: boolean;
   session: Session | null;
 }
 
-export function KodixApp({
-  id,
-  appName,
-  appDescription,
-  appUrl,
-  installed,
-  session,
-}: KodixAppProps) {
+export function KodixApp({ id, installed, session }: KodixAppProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const utils = api.useUtils();
-  const { mutate } = api.workspace.installApp.useMutation({
+  const { mutate } = api.team.installApp.useMutation({
     onSuccess: () => {
       void utils.app.getAll.invalidate();
       router.refresh();
       toast(`App ${appName} installed`);
     },
   });
-  const { mutate: uninstall } = api.workspace.uninstallApp.useMutation({
+  const { mutate: uninstall } = api.team.uninstallApp.useMutation({
     onSuccess: () => {
       setOpen(false);
       void utils.app.getAll.invalidate();
@@ -71,13 +68,19 @@ export function KodixApp({
     },
   });
 
-  const isActive = true; //["KodixCare"].includes(appName);
+  const isActive = true;
+  const appShouldGoToOnboarding = id === kodixCareAppId;
+
+  const appurl = getAppUrl(id);
+  const appIconUrl = getAppIconUrl(id);
+  const appName = getAppName(id);
+  const appDescription = getAppDescription(id);
 
   return (
     <Card className="w-[250px]">
       <CardHeader className="flex flex-row items-center space-y-0 pb-2">
         <Image
-          src={`/appIcons${appUrl}.png`}
+          src={appIconUrl}
           height={30}
           width={30}
           alt={`${appName} icon`}
@@ -95,8 +98,8 @@ export function KodixApp({
               <DropdownMenuContent>
                 <DialogTrigger asChild>
                   <DropdownMenuItem>
-                    <Trash2 className="text-destructive mr-2 h-4 w-4" />
-                    <span>Uninstall from workspace</span>
+                    <Trash2 className="mr-2 h-4 w-4 text-destructive" />
+                    <span>Uninstall from team</span>
                   </DropdownMenuItem>
                 </DialogTrigger>
               </DropdownMenuContent>
@@ -107,7 +110,7 @@ export function KodixApp({
                 <DialogTitle>Confirm</DialogTitle>
                 <DialogDescription className="py-4">
                   Are you sure you would like to uninstall {appName} from
-                  {" " + session?.user.activeWorkspaceName}?
+                  {" " + session?.user.activeTeamName}?
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
@@ -131,13 +134,13 @@ export function KodixApp({
       </CardHeader>
       <CardContent>
         <CardDescription className="mb-4">{appDescription}</CardDescription>
-        <div className="flex w-full flex-col">
+        <div className="flex space-x-2">
           {session && installed && (
             <Link
-              href={`apps${appUrl}`}
+              href={appurl}
               className={cn(
                 buttonVariants({ variant: "default" }),
-                !isActive && "pointer-events-none opacity-50",
+                !isActive && "pointer-events-none grow opacity-50",
               )}
             >
               {isActive ? "Open" : "Coming soon"}
@@ -145,7 +148,14 @@ export function KodixApp({
           )}
           {session && !installed && (
             <Button
-              onClick={() => void mutate({ appId: id })}
+              onClick={() => {
+                if (appShouldGoToOnboarding) {
+                  router.push(`${appurl}/onboarding`);
+                  return;
+                }
+
+                void mutate({ appId: id });
+              }}
               variant={"secondary"}
               className={cn(
                 "disabled",
@@ -163,6 +173,9 @@ export function KodixApp({
               Install
             </Link>
           )}
+          {/* <Button variant={"outline"} className="flex-none">
+            <Trash2 className="text-destructive h-4 w-4" />
+          </Button> */}
         </div>
       </CardContent>
     </Card>
@@ -173,20 +186,40 @@ export function IconKodixApp({
   renderText = true,
   ...props
 }: {
-  appUrl: KodixAppProps["appUrl"];
-  appName: KodixAppProps["appName"];
-  renderText: boolean;
+  appId: KodixAppType["id"];
+  renderText?: boolean;
+}) {
+  const appUrl = getAppUrl(props.appId);
+  const appIconUrl = getAppIconUrl(props.appId);
+  const appName = getAppName(props.appId);
+
+  return (
+    <Link href={appUrl} className="flex flex-col items-center">
+      <Image src={appIconUrl} height={80} width={80} alt={`${appName} icon`} />
+      {renderText && <p className="text-sm text-muted-foreground">{appName}</p>}
+    </Link>
+  );
+}
+
+export function CustomKodixIcon({
+  renderText = true,
+  ...props
+}: {
+  appUrl: string;
+  appName: string;
+  renderText?: boolean;
+  iconPath: string;
 }) {
   return (
-    <Link href={`/apps/${props.appUrl}`} className="flex flex-col items-center">
+    <Link href={props.appUrl} className="flex flex-col items-center">
       <Image
-        src={`/appIcons${props.appUrl}.png`}
-        height={60}
-        width={60}
+        src={props.iconPath}
+        height={"80"}
+        width={"80"}
         alt={`${props.appName} icon`}
       />
       {renderText && (
-        <p className="text-muted-foreground text-sm">{props.appName}</p>
+        <p className="text-sm text-muted-foreground">{props.appName}</p>
       )}
     </Link>
   );

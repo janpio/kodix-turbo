@@ -1,26 +1,17 @@
-import React from "react";
+import { redirect } from "next/navigation";
 
 import MaxWidthWrapper from "~/app/_components/max-width-wrapper";
+import { api } from "~/trpc/server";
+import OnboardingCard from "./_components/onboarding-card";
 
-export default function Onboarding() {
+export default async function Onboarding() {
+  const onboardingCompleted = await api.kodixCare.onboardingCompleted.query();
+  if (onboardingCompleted) return redirect("/apps/kodixCare");
+
   return (
     <MaxWidthWrapper>
-      <div className="flex items-center justify-center">
-        <div className="w-1/2">
-          <h1 className="text-center text-3xl font-bold">
-            Добро пожаловать в Kodix Care!
-          </h1>
-          <div className="mt-4 text-center">
-            <p>
-              Ваша заявка отправлена на рассмотрение. В ближайшее время мы
-              свяжемся с вами.
-            </p>
-            <p className="mt-4">
-              Если у вас возникли вопросы, вы можете связаться с нами по
-              телефону: <a href="tel:+74951234567">+7 (495) 123-45-67</a>
-            </p>
-          </div>
-        </div>
+      <div className="flex h-[450px] items-center justify-center">
+        <OnboardingCard />
       </div>
     </MaxWidthWrapper>
   );

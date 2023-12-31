@@ -1,18 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import type { RowData } from "@tanstack/react-table";
+import { useEffect, useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
 
 import type { RouterOutputs } from "@kdx/api";
 import type { Status } from "@kdx/db";
 import { Button, Checkbox } from "@kdx/ui";
 
+import type { Priority } from "./priority-popover";
 import { DatePickerWithPresets } from "~/app/_components/date-picker-with-presets";
 import { trpcErrorToastDefault } from "~/helpers/miscelaneous";
 import { api } from "~/trpc/react";
 import { AssigneePopover } from "./assignee-popover";
-import type { Priority } from "./priority-popover";
 import {
   PriorityIcon,
   PriorityPopover,
@@ -22,12 +22,12 @@ import { StatusIcon, StatusPopover, StatusToText } from "./status-popover";
 
 export type TodoColumn = RouterOutputs["todo"]["getAll"][number];
 const columnHelper = createColumnHelper<TodoColumn>();
-type workspace = RouterOutputs["workspace"]["getActiveWorkspace"];
+type team = RouterOutputs["team"]["getActiveTeam"];
 
 declare module "@tanstack/react-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface TableMeta<TData extends RowData> {
-    workspace: workspace | undefined;
+    team: team | undefined;
   }
 }
 
@@ -196,7 +196,7 @@ export const columns = [
       );
     },
   }),
-  columnHelper.accessor("assignedToUser", {
+  columnHelper.accessor("AssignedToUser", {
     cell: function Cell(info) {
       const [assignedToUserId, setAssignedToUserId] = useState("");
 
@@ -238,7 +238,7 @@ export const columns = [
           <AssigneePopover
             assignedToUserId={assignedToUserId}
             setAssignedToUserId={handleAssignedToUserChange}
-            users={info.table.options.meta?.workspace?.users ?? []}
+            users={info.table.options.meta?.team?.Users ?? []}
           />
         </div>
       );

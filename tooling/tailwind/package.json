@@ -2,28 +2,27 @@
   "name": "@kdx/tailwind-config",
   "version": "0.1.0",
   "private": true,
-  "main": "index.ts",
-  "license": "MIT",
-  "files": [
-    "index.ts"
-  ],
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
-    "lint": "eslint .",
     "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "autoprefixer": "^10.4.16",
-    "tailwindcss": "3.3.5"
+    "tailwindcss": "3.4.0"
   },
   "devDependencies": {
     "@kdx/eslint-config": "workspace:^0.2.0",
     "@kdx/prettier-config": "workspace:^0.1.0",
     "@kdx/tsconfig": "workspace:^0.1.0",
-    "eslint": "^8.54.0",
-    "prettier": "^3.1.0",
-    "typescript": "^5.3.2"
+    "eslint": "^8.56.0",
+    "prettier": "^3.1.1",
+    "typescript": "^5.3.3"
   },
   "eslintConfig": {
     "root": true,

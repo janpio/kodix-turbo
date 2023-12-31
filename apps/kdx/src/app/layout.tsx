@@ -1,66 +1,83 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import { cache } from "react";
+import { headers } from "next/headers";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
 
-import "@kdx/ui/styles/globals.css";
-
-import { Inter as FontSans } from "next/font/google";
-import { cookies } from "next/headers";
-
-import { cn, Toaster } from "@kdx/ui";
+import { cn, ThemeProvider, ThemeToggle, Toaster } from "@kdx/ui";
 
 import { Footer } from "~/app/_components/footer/footer";
 import { Header } from "~/app/_components/header/header";
-import { NextThemeProvider } from "~/app/_components/providers";
 import { TailwindIndicator } from "~/app/_components/tailwind-indicator";
-import { ThemeSwitcher } from "~/app/_components/theme-switcher";
+import { env } from "~/env";
 import { TRPCReactProvider } from "~/trpc/react";
 
-const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
+import "~/app/globals.css";
+
+import { kdxProductionURL } from "@kdx/shared";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    env.VERCEL_ENV === "production"
+      ? kdxProductionURL
+      : "http://localhost:3000",
+  ),
   title: "Kodix",
   description: "Software on demand",
-  // openGraph: {
-  //   title: "Kodix",
-  //   description: "Software on demand",
-  //   url: "https://kodix.com.br",
-  //   siteName: "Kodix",
-  // },
+  openGraph: {
+    title: "Kodix",
+    description: "Software on demand",
+    url: kdxProductionURL,
+    siteName: "Kodix",
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@dbianchii",
+    creator: "@dbianchii",
+  },
 };
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: dark)", color: "black" },
+  ],
+};
+
+const getHeaders = cache(async () => Promise.resolve(headers()));
 
 export default function Layout(props: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body
         className={cn(
-          "bg-background min-h-screen font-sans antialiased",
-          fontSans.variable,
+          "min-h-screen bg-background font-sans text-foreground antialiased",
+          GeistSans.variable,
+          GeistMono.variable,
         )}
       >
-        <TRPCReactProvider cookies={cookies().toString()}>
-          <NextThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <TRPCReactProvider headersPromise={getHeaders()}>
+            <SpeedInsights />
+            <Analytics />
             <Toaster richColors closeButton />
+            <div className="flex min-h-screen flex-col">
+              <Header />
+              {props.children}
+              <Footer />
+            </div>
+          </TRPCReactProvider>
 
-            <Header />
-            <main className="p-8">{props.children}</main>
-            <Footer />
-
-            {/* UI Design Helpers */}
-            {process.env.NODE_ENV !== "production" && (
-              <div className="fixed bottom-1 z-50 flex flex-row items-center space-x-1">
-                <ThemeSwitcher />
-                <TailwindIndicator />
-              </div>
-            )}
-          </NextThemeProvider>
-        </TRPCReactProvider>
+          {/* UI Design Helpers */}
+          {process.env.NODE_ENV !== "production" && (
+            <div className="fixed bottom-1 z-50 flex flex-row items-center space-x-1">
+              <ThemeToggle />
+              <TailwindIndicator />
+            </div>
+          )}
+        </ThemeProvider>
       </body>
     </html>
   );

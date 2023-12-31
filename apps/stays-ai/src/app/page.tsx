@@ -1,8 +1,8 @@
 "use client";
 
+import type { Message } from "ai";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import type { Message } from "ai";
 import { useChat } from "ai/react";
 import {
   LuArrowDown,
@@ -15,6 +15,7 @@ import {
 } from "react-icons/lu";
 import ReactMarkdown from "react-markdown";
 
+import { kdxProductionURL } from "@kdx/shared";
 import {
   Avatar,
   Badge,
@@ -56,7 +57,7 @@ export default function Page() {
   const { messages, setInput, handleSubmit, setMessages } = useChat({
     api: `${
       process.env.NODE_ENV === "production"
-        ? "https://www.kodix.com.br"
+        ? kdxProductionURL
         : typeof window !== "undefined"
           ? window.location.origin.replace("3001", "3000")
           : ""

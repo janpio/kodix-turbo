@@ -2,14 +2,13 @@
   "name": "kodix-turbo",
   "private": true,
   "engines": {
-    "node": ">=18.18.2"
+    "node": ">=20.10"
   },
-  "packageManager": "pnpm@8.10.2",
+  "packageManager": "pnpm@8.12.1",
   "scripts": {
     "build": "turbo build",
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "turbo clean",
-    "postinstall": "pnpm lint:ws",
     "db:generate": "turbo db:generate",
     "db:push": "turbo db:push db:generate",
     "db:seed": "turbo db:seed",
@@ -20,19 +19,15 @@
     "lint": "turbo lint --continue -- --cache --cache-location node_modules/.cache/.eslintcache",
     "lint:fix": "turbo lint --continue -- --fix --cache --cache-location node_modules/.cache/.eslintcache",
     "lint:ws": "pnpm dlx sherif@latest",
+    "postinstall": "pnpm lint:ws",
     "typecheck": "turbo typecheck"
   },
   "devDependencies": {
     "@kdx/prettier-config": "workspace:^0.1.0",
-    "@turbo/gen": "^1.10.16",
-    "prettier": "^3.1.0",
-    "turbo": "^1.10.16",
-    "typescript": "^5.3.2"
-  },
-  "pnpm": {
-    "overrides": {
-      "@auth/core": "0.18.0"
-    }
+    "@turbo/gen": "^1.11.2",
+    "prettier": "^3.1.1",
+    "turbo": "^1.11.2",
+    "typescript": "^5.3.3"
   },
   "prettier": "@kdx/prettier-config"
 }

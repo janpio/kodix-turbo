@@ -1,6 +1,6 @@
+import type { CreateEmailOptions } from "resend/build/src/emails/interfaces";
 import { renderAsync } from "@react-email/components";
 import { Resend } from "resend";
-import type { CreateEmailOptions } from "resend/build/src/emails/interfaces";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -30,7 +30,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 //   },
 // });
 
-export default async function sendEmail(
+export async function sendEmail(
   mailOptions: CreateEmailOptions & { react: JSX.Element },
 ) {
   // const result = await transporter.sendMail({ ...options, html });

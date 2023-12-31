@@ -3,7 +3,8 @@ import moment from "moment";
 import { Frequency, RRule, rrulestr } from "rrule";
 import { z } from "zod";
 
-import { authorizedEmails } from "../shared";
+import { authorizedEmails } from "@kdx/shared";
+
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const eventRouter = createTRPCRouter({
@@ -17,7 +18,7 @@ export const eventRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const eventMasters = await ctx.prisma.eventMaster.findMany({
         where: {
-          workspaceId: ctx.session.user.activeWorkspaceId,
+          teamId: ctx.session.user.activeTeamId,
           AND: [
             {
               DateStart: {
@@ -38,7 +39,7 @@ export const eventRouter = createTRPCRouter({
       const eventExceptions = await ctx.prisma.eventException.findMany({
         where: {
           EventMaster: {
-            workspaceId: ctx.session.user.activeWorkspaceId,
+            teamId: ctx.session.user.activeTeamId,
           },
           OR: [
             {
@@ -69,7 +70,7 @@ export const eventRouter = createTRPCRouter({
       const eventCancelations = await ctx.prisma.eventCancellation.findMany({
         where: {
           EventMaster: {
-            workspaceId: ctx.session.user.activeWorkspaceId,
+            teamId: ctx.session.user.activeTeamId,
           },
           originalDate: {
             gte: input.dateStart,
@@ -208,7 +209,7 @@ export const eventRouter = createTRPCRouter({
             count: input.count,
             byweekday: input.weekdays,
           }).toString(),
-          workspaceId: ctx.session.user.activeWorkspaceId,
+          teamId: ctx.session.user.activeTeamId,
           DateStart: input.from,
           DateUntil: input.until,
         },
@@ -404,7 +405,7 @@ export const eventRouter = createTRPCRouter({
               id: input.eventExceptionId,
               newDate: input.selectedTimestamp,
               EventMaster: {
-                workspaceId: ctx.session.user.activeWorkspaceId,
+                teamId: ctx.session.user.activeTeamId,
               },
             },
             data: {
@@ -420,7 +421,7 @@ export const eventRouter = createTRPCRouter({
         const eventMaster = await ctx.prisma.eventMaster.findUniqueOrThrow({
           where: {
             id: input.eventMasterId,
-            workspaceId: ctx.session.user.activeWorkspaceId,
+            teamId: ctx.session.user.activeTeamId,
           },
           select: {
             id: true,
@@ -491,7 +492,7 @@ export const eventRouter = createTRPCRouter({
               await tx.eventException.deleteMany({
                 where: {
                   EventMaster: {
-                    workspaceId: ctx.session.user.activeWorkspaceId,
+                    teamId: ctx.session.user.activeTeamId,
                     id: input.eventMasterId,
                   },
                   newDate: {
@@ -504,7 +505,7 @@ export const eventRouter = createTRPCRouter({
             const oldMaster = await tx.eventMaster.findUniqueOrThrow({
               where: {
                 id: input.eventMasterId,
-                workspaceId: ctx.session.user.activeWorkspaceId,
+                teamId: ctx.session.user.activeTeamId,
               },
               select: {
                 rule: true,
@@ -533,7 +534,7 @@ export const eventRouter = createTRPCRouter({
               return await tx.eventMaster.update({
                 where: {
                   id: input.eventMasterId,
-                  workspaceId: ctx.session.user.activeWorkspaceId,
+                  teamId: ctx.session.user.activeTeamId,
                 },
                 data: {
                   EventExceptions: shouldDeleteFutureExceptions
@@ -570,7 +571,7 @@ export const eventRouter = createTRPCRouter({
             const updatedOldMaster = await tx.eventMaster.update({
               where: {
                 id: input.eventMasterId,
-                workspaceId: ctx.session.user.activeWorkspaceId,
+                teamId: ctx.session.user.activeTeamId,
               },
               data: {
                 DateUntil: previousOccurence,
@@ -596,7 +597,7 @@ export const eventRouter = createTRPCRouter({
 
             const newMaster = await tx.eventMaster.create({
               data: {
-                workspaceId: ctx.session.user.activeWorkspaceId,
+                teamId: ctx.session.user.activeTeamId,
                 DateStart: input.from ?? input.selectedTimestamp,
                 DateUntil: input.until ?? oldRule.options.until ?? undefined,
                 rule: new RRule({
@@ -625,7 +626,7 @@ export const eventRouter = createTRPCRouter({
                 where: {
                   EventMaster: {
                     id: oldMaster.id,
-                    workspaceId: ctx.session.user.activeWorkspaceId,
+                    teamId: ctx.session.user.activeTeamId,
                   },
                   newDate: {
                     gte: input.selectedTimestamp,
@@ -673,7 +674,7 @@ export const eventRouter = createTRPCRouter({
                   await tx.eventMaster.findUniqueOrThrow({
                     where: {
                       id: input.eventMasterId,
-                      workspaceId: ctx.session.user.activeWorkspaceId,
+                      teamId: ctx.session.user.activeTeamId,
                     },
                     select: {
                       rule: true,
@@ -705,7 +706,7 @@ export const eventRouter = createTRPCRouter({
             return await tx.eventMaster.update({
               where: {
                 id: input.eventMasterId,
-                workspaceId: ctx.session.user.activeWorkspaceId,
+                teamId: ctx.session.user.activeTeamId,
               },
               data: {
                 EventExceptions: {
@@ -759,7 +760,7 @@ export const eventRouter = createTRPCRouter({
 
     await ctx.prisma.$transaction([
       ctx.prisma.eventMaster.deleteMany({
-        where: { workspaceId: ctx.session.user.activeWorkspaceId },
+        where: { teamId: ctx.session.user.activeTeamId },
       }),
     ]);
   }),
