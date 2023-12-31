@@ -35,4 +35,5 @@ export * from "./components/typography";
 //export * from "./components/toast"; //? Excluded on purpose! use sonner.
 //export * from "./components/use-toast";
 
+export * from "./theme";
 export { Toaster, toast } from "sonner";

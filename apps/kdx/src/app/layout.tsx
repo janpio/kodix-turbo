@@ -1,27 +1,20 @@
-import type { Metadata } from "next";
-
-import "@kdx/ui/styles/globals.css";
-
+import type { Metadata, Viewport } from "next";
 import { cache } from "react";
-import { Inter as FontSans } from "next/font/google";
 import { headers } from "next/headers";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
 
-import { cn, Toaster } from "@kdx/ui";
+import { cn, ThemeProvider, ThemeToggle, Toaster } from "@kdx/ui";
 
 import { Footer } from "~/app/_components/footer/footer";
 import { Header } from "~/app/_components/header/header";
-import { NextThemeProvider } from "~/app/_components/providers";
 import { TailwindIndicator } from "~/app/_components/tailwind-indicator";
-import { ThemeSwitcher } from "~/app/_components/theme-switcher";
 import { env } from "~/env";
 import { TRPCReactProvider } from "~/trpc/react";
 
-const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
+import "~/app/globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -31,15 +24,26 @@ export const metadata: Metadata = {
   ),
   title: "Kodix",
   description: "Software on demand",
-  // openGraph: {
-  //   title: "Kodix",
-  //   description: "Software on demand",
-  //   url: "https://kodix.com.br",
-  //   siteName: "Kodix",
-  // },
+  openGraph: {
+    title: "Kodix",
+    description: "Software on demand",
+    url: "https://kodix.com.br",
+    siteName: "Kodix",
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@dbianchii",
+    creator: "@dbianchii",
+  },
 };
 
-// Lazy load headers
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: dark)", color: "black" },
+  ],
+};
+
 const getHeaders = cache(async () => Promise.resolve(headers()));
 
 export default function Layout(props: { children: React.ReactNode }) {
@@ -47,16 +51,13 @@ export default function Layout(props: { children: React.ReactNode }) {
     <html lang="en">
       <body
         className={cn(
-          "bg-background min-h-screen font-sans antialiased",
-          fontSans.variable,
+          "bg-background text-foreground min-h-screen font-sans antialiased",
+          GeistSans.variable,
+          GeistMono.variable,
         )}
       >
-        <TRPCReactProvider headersPromise={getHeaders()}>
-          <NextThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-          >
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <TRPCReactProvider headersPromise={getHeaders()}>
             <SpeedInsights />
             <Analytics />
             <Toaster richColors closeButton />
@@ -65,15 +66,16 @@ export default function Layout(props: { children: React.ReactNode }) {
               {props.children}
               <Footer />
             </div>
-            {/* UI Design Helpers */}
-            {process.env.NODE_ENV !== "production" && (
-              <div className="fixed bottom-1 z-50 flex flex-row items-center space-x-1">
-                <ThemeSwitcher />
-                <TailwindIndicator />
-              </div>
-            )}
-          </NextThemeProvider>
-        </TRPCReactProvider>
+          </TRPCReactProvider>
+
+          {/* UI Design Helpers */}
+          {process.env.NODE_ENV !== "production" && (
+            <div className="fixed bottom-1 z-50 flex flex-row items-center space-x-1">
+              <ThemeToggle />
+              <TailwindIndicator />
+            </div>
+          )}
+        </ThemeProvider>
       </body>
     </html>
   );
