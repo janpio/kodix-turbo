@@ -98,7 +98,7 @@ export function KodixApp({ id, installed, session }: KodixAppProps) {
               <DropdownMenuContent>
                 <DialogTrigger asChild>
                   <DropdownMenuItem>
-                    <Trash2 className="text-destructive mr-2 h-4 w-4" />
+                    <Trash2 className="mr-2 h-4 w-4 text-destructive" />
                     <span>Uninstall from team</span>
                   </DropdownMenuItem>
                 </DialogTrigger>
@@ -173,9 +173,9 @@ export function KodixApp({ id, installed, session }: KodixAppProps) {
               Install
             </Link>
           )}
-          <Button variant={"outline"} className="flex-none">
+          {/* <Button variant={"outline"} className="flex-none">
             <Trash2 className="text-destructive h-4 w-4" />
-          </Button>
+          </Button> */}
         </div>
       </CardContent>
     </Card>
@@ -195,7 +195,7 @@ export function IconKodixApp({
   return (
     <Link href={`${appUrl}`} className="flex flex-col items-center">
       <Image src={`${appUrl}`} height={80} width={80} alt={`${appName} icon`} />
-      {renderText && <p className="text-muted-foreground text-sm">{appName}</p>}
+      {renderText && <p className="text-sm text-muted-foreground">{appName}</p>}
     </Link>
   );
 }
@@ -218,7 +218,7 @@ export function CustomKodixIcon({
         alt={`${props.appName} icon`}
       />
       {renderText && (
-        <p className="text-muted-foreground text-sm">{props.appName}</p>
+        <p className="text-sm text-muted-foreground">{props.appName}</p>
       )}
     </Link>
   );
