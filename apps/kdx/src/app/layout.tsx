@@ -16,10 +16,12 @@ import { TRPCReactProvider } from "~/trpc/react";
 
 import "~/app/globals.css";
 
+import { kdxProductionURL } from "@kdx/shared";
+
 export const metadata: Metadata = {
   metadataBase: new URL(
     env.VERCEL_ENV === "production"
-      ? "https://kodix.com.br"
+      ? kdxProductionURL
       : "http://localhost:3000",
   ),
   title: "Kodix",
@@ -27,7 +29,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Kodix",
     description: "Software on demand",
-    url: "https://kodix.com.br",
+    url: kdxProductionURL,
     siteName: "Kodix",
   },
   twitter: {
@@ -51,7 +53,7 @@ export default function Layout(props: { children: React.ReactNode }) {
     <html lang="en">
       <body
         className={cn(
-          "bg-background text-foreground min-h-screen font-sans antialiased",
+          "min-h-screen bg-background font-sans text-foreground antialiased",
           GeistSans.variable,
           GeistMono.variable,
         )}

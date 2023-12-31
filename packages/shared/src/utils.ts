@@ -1,10 +1,12 @@
+import { kdxProductionURL } from "./constants";
+
 /**
  * @description Base URL for the KDX server. Make sure that when developing, your KDX app is on localhost:3000
  * @usedBy kdx/stays-ai kdx/kodix-care
  */
 export const getBaseKdxUrl = () => {
   if (typeof window !== "undefined") return "http://localhost:3000";
-  if (process.env.VERCEL_URL) return `https://www.kodix.com.br`;
+  if (process.env.VERCEL_URL) return kdxProductionURL;
   return `http://localhost:3000`;
 };
 
@@ -32,14 +34,3 @@ export const getSuccessesAndErrors = <T>(
 
   return { successes, errors };
 };
-
-/**
- * @description Used for the nuking of events. This will be removed one day
- * @usedBy kdx/api kdx/kdx
- */
-export const authorizedEmails = [
-  "gdbianchii@gmail.com",
-  "gabriel@stays.net",
-  "wcbianchi@gmail.com",
-  "mahadeva@despertar.com.br",
-];

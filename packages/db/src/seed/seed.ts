@@ -2,6 +2,7 @@ import {
   calendarAdminRoleId,
   calendarAppId,
   kdxPartnerId,
+  kdxProductionURL,
   kodixCareAdminRoleId,
   kodixCareAppId,
   kodixCareCareGiverRoleId,
@@ -83,7 +84,7 @@ export const apps = [
     create: {
       id: kdxPartnerId,
       name: "Kodix",
-      partnerUrl: "kodix.com.br",
+      partnerUrl: kdxProductionURL,
     },
   });
 
