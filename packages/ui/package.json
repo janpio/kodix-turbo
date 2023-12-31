@@ -1,19 +1,17 @@
 {
   "name": "@kdx/ui",
-  "version": "0.1.0",
   "private": true,
+  "version": "0.1.0",
   "type": "module",
   "exports": {
-    ".": "./src/index.tsx",
-    "./styles/globals.css": "./src/styles/globals.css",
-    "./tailwind.config": "./src/tailwind.config.ts"
+    ".": "./src/index.tsx"
   },
   "scripts": {
+    "add": "pnpm dlx shadcn-ui add",
     "clean": "rm -rf .turbo node_modules",
     "lint": "eslint .",
     "format": "prettier --check . --ignore-path ../../.gitignore",
-    "typecheck": "tsc --noEmit",
-    "ui:add": "pnpm dlx shadcn-ui@latest add"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.0.4",
