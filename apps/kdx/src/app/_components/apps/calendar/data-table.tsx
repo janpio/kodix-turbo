@@ -23,26 +23,26 @@ import moment from "moment";
 import type { RouterOutputs } from "@kdx/api";
 import type { Session } from "@kdx/auth";
 import { authorizedEmails } from "@kdx/shared";
+import { Button } from "@kdx/ui/button";
+import { Calendar } from "@kdx/ui/calendar";
 import {
-  Button,
-  Calendar,
-  cn,
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-  Input,
-  Label,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+} from "@kdx/ui/context-menu";
+import { Input } from "@kdx/ui/input";
+import { Label } from "@kdx/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@kdx/ui/popover";
+import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from "@kdx/ui";
+} from "@kdx/ui/table";
+import { cn } from "@kdx/ui/utils";
 
 import { DataTablePagination } from "~/app/_components/pagination";
 import { api } from "~/trpc/react";

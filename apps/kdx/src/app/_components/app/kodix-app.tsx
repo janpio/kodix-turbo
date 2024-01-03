@@ -9,15 +9,15 @@ import { Loader2, MoreHorizontal, Trash2 } from "lucide-react";
 import type { Session } from "@kdx/auth";
 import type { KodixApp as KodixAppType } from "@kdx/db";
 import { kodixCareAppId } from "@kdx/shared";
+import { Button, buttonVariants } from "@kdx/ui/button";
 import {
-  Button,
-  buttonVariants,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-  cn,
+} from "@kdx/ui/card";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -25,12 +25,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+} from "@kdx/ui/dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  toast,
-} from "@kdx/ui";
+} from "@kdx/ui/dropdown-menu";
+import { toast } from "@kdx/ui/toast";
+import { cn } from "@kdx/ui/utils";
 
 import {
   getAppDescription,

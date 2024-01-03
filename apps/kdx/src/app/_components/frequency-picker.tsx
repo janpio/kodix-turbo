@@ -4,31 +4,32 @@ import type { Frequency } from "rrule";
 import React, { useState } from "react";
 import { RRule } from "rrule";
 
+import { Button } from "@kdx/ui/button";
 import {
-  Button,
   Command,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
+} from "@kdx/ui/command";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  Input,
-  Label,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  RadioGroup,
-  RadioGroupItem,
+} from "@kdx/ui/dialog";
+import { Input } from "@kdx/ui/input";
+import { Label } from "@kdx/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@kdx/ui/popover";
+import { RadioGroup, RadioGroupItem } from "@kdx/ui/radio-group";
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@kdx/ui";
+} from "@kdx/ui/select";
 
 import { DatePicker } from "./date-picker";
 

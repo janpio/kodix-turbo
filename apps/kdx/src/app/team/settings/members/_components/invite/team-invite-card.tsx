@@ -5,14 +5,15 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Loader2, MailCheck, MinusCircle, PlusCircle } from "lucide-react";
 
 import type { Session } from "@kdx/auth";
+import { Button } from "@kdx/ui/button";
 import {
-  Button,
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
-  cn,
+} from "@kdx/ui/card";
+import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -20,11 +21,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  Input,
-  Label,
-  Separator,
-  toast,
-} from "@kdx/ui";
+} from "@kdx/ui/dialog";
+import { Input } from "@kdx/ui/input";
+import { Label } from "@kdx/ui/label";
+import { Separator } from "@kdx/ui/separator";
+import { toast } from "@kdx/ui/toast";
+import { cn } from "@kdx/ui/utils";
 import { inviteUserSchema } from "@kdx/validators";
 
 import { trpcErrorToastDefault } from "~/helpers/miscelaneous";
@@ -108,7 +110,7 @@ export default function TeamInviteCardClient({
           <Separator className="mb-6" />
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="email-0" className="text-muted-foreground mb-1">
+              <Label htmlFor="email-0" className="mb-1 text-muted-foreground">
                 Email Address
               </Label>
               <div ref={parent} className="space-y-2">
@@ -198,7 +200,7 @@ export default function TeamInviteCardClient({
 
                       <MailCheck
                         className={cn(
-                          "fade-in-0 text-green-600",
+                          "text-green-600 fade-in-0",
                           !successes.includes(email) && "hidden",
                         )}
                       />

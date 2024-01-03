@@ -3,15 +3,15 @@ import { MoreHorizontal } from "lucide-react";
 
 import type { RouterInputs, RouterOutputs } from "@kdx/api";
 import type { Session } from "@kdx/auth";
+import { AvatarWrapper } from "@kdx/ui/avatar-wrapper";
+import { Button } from "@kdx/ui/button";
+import { Checkbox } from "@kdx/ui/checkbox";
 import {
-  AvatarWrapper,
-  Button,
-  Checkbox,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@kdx/ui";
+} from "@kdx/ui/dropdown-menu";
 
 const columnHelper =
   createColumnHelper<RouterOutputs["team"]["getAllUsers"][number]>();

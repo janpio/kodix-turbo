@@ -3,7 +3,7 @@ import type { TRPCClientErrorLike } from "@trpc/client";
 import type { AppRouter } from "@kdx/api";
 import type { KodixApp } from "@kdx/db";
 import { calendarAppId, kodixCareAppId, todoAppId } from "@kdx/shared";
-import { toast } from "@kdx/ui";
+import { toast } from "@kdx/ui/toast";
 
 /**
  * @param error: TRPCClientError

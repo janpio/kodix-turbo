@@ -7,9 +7,9 @@ import { signOut } from "next-auth/react";
 import { MdOutlineSwapHorizontalCircle } from "react-icons/md";
 
 import type { Session } from "@kdx/auth";
+import { AvatarWrapper } from "@kdx/ui/avatar-wrapper";
+import { Button } from "@kdx/ui/button";
 import {
-  AvatarWrapper,
-  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -18,7 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@kdx/ui";
+} from "@kdx/ui/dropdown-menu";
 
 export function UserProfileButton({ session }: { session: Session }) {
   if (!session) return null;
@@ -39,7 +39,7 @@ export function UserProfileButton({ session }: { session: Session }) {
             <p className="text-sm font-medium leading-none">
               {session.user.name}
             </p>
-            <p className="text-muted-foreground text-xs leading-none">
+            <p className="text-xs leading-none text-muted-foreground">
               {session.user.email}
             </p>
           </div>

@@ -10,18 +10,16 @@ import {
 } from "lucide-react";
 
 import type { Status } from "@kdx/db";
+import { Button } from "@kdx/ui/button";
 import {
-  Button,
-  cn,
   Command,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@kdx/ui";
+} from "@kdx/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@kdx/ui/popover";
+import { cn } from "@kdx/ui/utils";
 
 /**
  * @description You can optionally input a button to overwrite the default button trigger.
@@ -121,7 +119,7 @@ export function StatusIcon({
   switch (status) {
     case "TODO":
       return (
-        <CheckCircle2 className={cn("text-foreground h-4 w-4", className)} />
+        <CheckCircle2 className={cn("h-4 w-4 text-foreground", className)} />
       );
     case "INPROGRESS":
       return <CircleDot className={cn("h-4 w-4 text-yellow-400", className)} />;

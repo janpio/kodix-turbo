@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { Blockquote, H1, H2, H3, P, UL } from "@kdx/ui";
+import { Blockquote, H1, H2, H3, P, UL } from "@kdx/ui/typography";
 
 export default function TypographyDemo() {
   return (

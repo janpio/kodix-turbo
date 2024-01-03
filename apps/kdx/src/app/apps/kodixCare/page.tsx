@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 import { auth } from "@kdx/auth";
 import { prisma } from "@kdx/db";
 import { kodixCareAppId } from "@kdx/shared";
-import { H1, Separator } from "@kdx/ui";
+import { Separator } from "@kdx/ui/separator";
+import { H1 } from "@kdx/ui/typography";
 
 import { IconKodixApp } from "~/app/_components/app/kodix-app";
 import MaxWidthWrapper from "~/app/_components/max-width-wrapper";

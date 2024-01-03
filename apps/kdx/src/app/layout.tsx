@@ -6,8 +6,6 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 
-import { cn, ThemeProvider, ThemeToggle, Toaster } from "@kdx/ui";
-
 import { Footer } from "~/app/_components/footer/footer";
 import { Header } from "~/app/_components/header/header";
 import { TailwindIndicator } from "~/app/_components/tailwind-indicator";
@@ -17,6 +15,9 @@ import { TRPCReactProvider } from "~/trpc/react";
 import "~/app/globals.css";
 
 import { kdxProductionURL } from "@kdx/shared";
+import { ThemeProvider, ThemeToggle } from "@kdx/ui/theme";
+import { Toaster } from "@kdx/ui/toast";
+import { cn } from "@kdx/ui/utils";
 
 export const metadata: Metadata = {
   metadataBase: new URL(

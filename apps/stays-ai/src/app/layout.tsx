@@ -7,7 +7,8 @@ import { Inter as FontSans } from "next/font/google";
 import { headers } from "next/headers";
 import Script from "next/script";
 
-import { cn, Toaster } from "@kdx/ui";
+import { Toaster } from "@kdx/ui/toast";
+import { cn } from "@kdx/ui/utils";
 
 import { TailwindIndicator } from "~/app/_components/dev-utils/tailwind-indicator";
 import { TRPCReactProvider } from "./providers";

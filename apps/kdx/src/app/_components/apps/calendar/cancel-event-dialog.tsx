@@ -10,10 +10,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  Label,
-  RadioGroup,
-  RadioGroupItem,
-} from "@kdx/ui";
+} from "@kdx/ui/alert-dialog";
+import { Label } from "@kdx/ui/label";
+import { RadioGroup, RadioGroupItem } from "@kdx/ui/radio-group";
 
 import { api } from "~/trpc/react";
 

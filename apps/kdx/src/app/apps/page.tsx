@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 
 import type { KodixApp as KodixAppType } from "@kdx/db";
 import { auth } from "@kdx/auth";
-import { H1, Lead } from "@kdx/ui";
+import { H1, Lead } from "@kdx/ui/typography";
 
 import { KodixApp } from "~/app/_components/app/kodix-app";
 import MaxWidthWrapper from "~/app/_components/max-width-wrapper";

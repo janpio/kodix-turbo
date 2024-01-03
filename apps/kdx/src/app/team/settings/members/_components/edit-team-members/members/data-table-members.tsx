@@ -15,8 +15,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  toast,
-} from "@kdx/ui";
+} from "@kdx/ui/table";
+import { toast } from "@kdx/ui/toast";
 
 import { trpcErrorToastDefault } from "~/helpers/miscelaneous";
 import { api } from "~/trpc/react";

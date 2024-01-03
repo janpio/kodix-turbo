@@ -4,9 +4,9 @@ import { Plus, X } from "lucide-react";
 import { HiUserCircle } from "react-icons/hi";
 
 import type { Status } from "@kdx/db";
+import { AvatarWrapper } from "@kdx/ui/avatar-wrapper";
+import { Button } from "@kdx/ui/button";
 import {
-  AvatarWrapper,
-  Button,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -14,10 +14,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  Input,
-  PopoverTrigger,
-  Textarea,
-} from "@kdx/ui";
+} from "@kdx/ui/dialog";
+import { Input } from "@kdx/ui/input";
+import { PopoverTrigger } from "@kdx/ui/popover";
+import { Textarea } from "@kdx/ui/textarea";
 
 import type { Priority } from "~/app/_components/apps/todo/priority-popover";
 import { AssigneePopover } from "~/app/_components/apps/todo/assignee-popover";
@@ -144,7 +144,7 @@ export function CreateTaskDialogButton() {
                       onClick={() => {
                         setDueDate(undefined);
                       }}
-                      className="hover:bg-primary/90 hover:text-background ml-2 rounded-full transition-colors"
+                      className="ml-2 rounded-full transition-colors hover:bg-primary/90 hover:text-background"
                     >
                       <X className="h-4 w-4 " />
                     </span>

@@ -4,7 +4,10 @@ import moment from "moment";
 
 import { auth } from "@kdx/auth";
 import { calendarAppId } from "@kdx/shared";
-import { buttonVariants, cn, H1, Separator } from "@kdx/ui";
+import { buttonVariants } from "@kdx/ui/button";
+import { Separator } from "@kdx/ui/separator";
+import { H1 } from "@kdx/ui/typography";
+import { cn } from "@kdx/ui/utils";
 
 import { IconKodixApp } from "~/app/_components/app/kodix-app";
 import { columns } from "~/app/_components/apps/calendar/columns";

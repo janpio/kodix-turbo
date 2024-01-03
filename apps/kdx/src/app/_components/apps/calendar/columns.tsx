@@ -5,13 +5,13 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { MoreHorizontal, PencilIcon, Trash2 } from "lucide-react";
 
 import type { RouterOutputs } from "@kdx/api";
+import { Button } from "@kdx/ui/button";
 import {
-  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@kdx/ui";
+} from "@kdx/ui/dropdown-menu";
 
 import { CancelationDialog } from "./cancel-event-dialog";
 import { EditEventDialog } from "./edit-event-dialog";

@@ -19,7 +19,7 @@ export default async function Teams() {
           Teams
         </h3>
         <div className="flex flex-row">
-          <p className="text-muted-foreground pr-8 text-sm">
+          <p className="pr-8 text-sm text-muted-foreground">
             Manage the Teams that you&apos;re a part of, or create a new one.
           </p>
           <AddTeamDialogButton session={session} className="ml-auto" />

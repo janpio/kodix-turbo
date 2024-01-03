@@ -4,7 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
-import { cn, navigationMenuTriggerStyle, useMediaQuery } from "@kdx/ui";
+import { navigationMenuTriggerStyle } from "@kdx/ui/navigationMenuTriggerStyle";
+import { cn, useMediaQuery } from "@kdx/ui/utils";
 
 export function Navigation({
   goBackItem,
@@ -30,7 +31,7 @@ export function Navigation({
         "flex w-full flex-col items-center space-y-2 self-start md:w-min",
       )}
     >
-      {!pathname!.endsWith(entryPoint) && !matches ? (
+      {!pathname.endsWith(entryPoint) && !matches ? (
         <NavigationItem href={goBackItem.href}>
           <ArrowLeft className="mr-2 h-4 w-4" /> {goBackItem.title}
         </NavigationItem>

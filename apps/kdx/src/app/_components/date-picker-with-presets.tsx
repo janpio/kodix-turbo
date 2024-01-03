@@ -4,19 +4,17 @@ import { useState } from "react";
 import { addDays, format } from "date-fns";
 import { CalendarIcon, ChevronDown, X } from "lucide-react";
 
+import { Button } from "@kdx/ui/button";
+import { Calendar } from "@kdx/ui/calendar";
 import {
-  Button,
-  Calendar,
-  cn,
   Command,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@kdx/ui";
+} from "@kdx/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@kdx/ui/popover";
+import { cn } from "@kdx/ui/utils";
 
 export function DatePickerWithPresets({
   date,
@@ -73,7 +71,7 @@ export function DatePickerWithPresets({
                 onClick={() => {
                   setDate(undefined);
                 }}
-                className="hover:bg-primary/90 hover:text-background ml-2 rounded-full transition-colors"
+                className="ml-2 rounded-full transition-colors hover:bg-primary/90 hover:text-background"
               >
                 <X className="h-4 w-4 " />
               </span>
@@ -136,13 +134,13 @@ export function DatePickerIcon({
 }) {
   if (date === undefined) {
     return (
-      <CalendarIcon className={cn("text-foreground/70 h-4 w-4", className)} />
+      <CalendarIcon className={cn("h-4 w-4 text-foreground/70", className)} />
     );
   } else if (new Date() > date) {
     return <CalendarIcon className={cn("h-4 w-4 text-red-500", className)} />;
   } else {
     return (
-      <CalendarIcon className={cn("text-foreground h-4 w-4", className)} />
+      <CalendarIcon className={cn("h-4 w-4 text-foreground", className)} />
     );
   }
 }

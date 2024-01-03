@@ -10,10 +10,10 @@ export default async function Home() {
     <main className="flex-1 py-8">
       <section className="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
         <div className="container flex max-w-[64rem] flex-col items-center gap-4 text-center">
-          <h1 className="text-primary scroll-m-20 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-6xl font-extrabold tracking-tight text-transparent lg:text-8xl">
+          <h1 className="scroll-m-20 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-6xl font-extrabold tracking-tight text-primary text-transparent lg:text-8xl">
             Welcome to Kodix
           </h1>
-          <p className="text-muted-foreground max-w-[42rem] leading-normal sm:text-xl sm:leading-8">
+          <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
             Solutions for your business. Kodix is a multi-purpose platform that
             provides a wide range of business solutions.
           </p>

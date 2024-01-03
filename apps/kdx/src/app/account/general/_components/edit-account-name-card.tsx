@@ -3,17 +3,17 @@ import { revalidatePath } from "next/cache";
 import { Loader2 } from "lucide-react";
 
 import { auth } from "@kdx/auth";
+import { Button } from "@kdx/ui/button";
 import {
-  Button,
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-  Input,
-  Label,
-} from "@kdx/ui";
+} from "@kdx/ui/card";
+import { Input } from "@kdx/ui/input";
+import { Label } from "@kdx/ui/label";
 
 import { api } from "~/trpc/server";
 

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 
 import type { KodixApp as KodixAppType } from "@kdx/db";
 import { auth } from "@kdx/auth";
-import { Lead } from "@kdx/ui";
+import { Lead } from "@kdx/ui/typography";
 
 import { KodixApp } from "~/app/_components/app/kodix-app";
 import MaxWidthWrapper from "~/app/_components/max-width-wrapper";
@@ -15,7 +15,7 @@ export default async function AppsPage() {
 
   return (
     <MaxWidthWrapper>
-      <h1 className="text-foreground text-2xl font-bold">
+      <h1 className="text-2xl font-bold text-foreground">
         Your installed apps
       </h1>
       <Lead className="mt-2">These are your installed apps</Lead>

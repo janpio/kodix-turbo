@@ -16,30 +16,27 @@ import {
 import ReactMarkdown from "react-markdown";
 
 import { kdxProductionURL } from "@kdx/shared";
+import { Avatar } from "@kdx/ui/avatar";
+import { Badge, badgeVariants } from "@kdx/ui/badge";
+import { Button } from "@kdx/ui/button";
 import {
-  Avatar,
-  Badge,
-  badgeVariants,
-  Button,
-  cn,
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
+} from "@kdx/ui/context-menu";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
-  Input,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  ScrollArea,
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  toast,
-} from "@kdx/ui";
+} from "@kdx/ui/dialog";
+import { Input } from "@kdx/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@kdx/ui/popover";
+import { ScrollArea } from "@kdx/ui/scroll-area";
+import { Tabs, TabsList, TabsTrigger } from "@kdx/ui/tabs";
+import { toast } from "@kdx/ui/toast";
+import { cn } from "@kdx/ui/utils";
 
 import { StaysIcon, StaysLogo } from "~/app/_components/svgs";
 
@@ -142,7 +139,7 @@ export default function Page() {
           />
         </>
       ) : null}
-      <div className="bg-background fixed bottom-0 left-0 z-50 w-full rounded-md border shadow-md sm:relative sm:w-[700px] sm:p-8">
+      <div className="fixed bottom-0 left-0 z-50 w-full rounded-md border bg-background shadow-md sm:relative sm:w-[700px] sm:p-8">
         <div className="hidden sm:block">
           <Link target="_blank" href="https://www.stays.net">
             <StaysLogo className="h-10 w-40" />
@@ -311,7 +308,7 @@ function ScrollDownButton({ onClick }: React.ComponentProps<typeof Button>) {
   return (
     <Button
       className={cn(
-        "bg-foreground/80 absolute bottom-0 right-0 z-50 m-4 rounded-full",
+        "absolute bottom-0 right-0 z-50 m-4 rounded-full bg-foreground/80",
       )}
       onClick={onClick}
     >
@@ -413,7 +410,7 @@ function TagItem({
           className={cn("m-0 ml-2 h-2 rounded-full p-0")}
           variant={"link"}
         >
-          <LuX className="text-foreground/40 h-3 w-3" />
+          <LuX className="h-3 w-3 text-foreground/40" />
         </Button>
       </div>
       <PopoverContent side="top">

@@ -6,15 +6,10 @@ import { Loader2 } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
 
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Input,
-  Label,
-} from "@kdx/ui";
+import { Button } from "@kdx/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@kdx/ui/card";
+import { Input } from "@kdx/ui/input";
+import { Label } from "@kdx/ui/label";
 
 export function _SignIn({ callbackUrl = "/" }: { callbackUrl?: string }) {
   const [email, setEmail] = useState("");
@@ -37,7 +32,7 @@ export function _SignIn({ callbackUrl = "/" }: { callbackUrl?: string }) {
                 <>
                   <Label
                     htmlFor="email"
-                    className="text-foreground mb-2 block text-sm font-medium"
+                    className="mb-2 block text-sm font-medium text-foreground"
                   >
                     Your email
                   </Label>
@@ -69,7 +64,7 @@ export function _SignIn({ callbackUrl = "/" }: { callbackUrl?: string }) {
                   <span className="w-full border-t" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background text-muted-foreground px-2">
+                  <span className="bg-background px-2 text-muted-foreground">
                     Or continue with
                   </span>
                 </div>

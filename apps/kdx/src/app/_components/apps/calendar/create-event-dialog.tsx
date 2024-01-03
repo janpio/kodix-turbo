@@ -8,10 +8,9 @@ import moment from "moment";
 import { RRule } from "rrule";
 
 import type { RouterInputs } from "@kdx/api";
+import { Button } from "@kdx/ui/button";
+import { Calendar } from "@kdx/ui/calendar";
 import {
-  Button,
-  Calendar,
-  cn,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -19,13 +18,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  Input,
-  Label,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Textarea,
-} from "@kdx/ui";
+} from "@kdx/ui/dialog";
+import { Input } from "@kdx/ui/input";
+import { Label } from "@kdx/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@kdx/ui/popover";
+import { Textarea } from "@kdx/ui/textarea";
+import { cn } from "@kdx/ui/utils";
 
 import { trpcErrorToastDefault } from "~/helpers/miscelaneous";
 import { api } from "~/trpc/react";

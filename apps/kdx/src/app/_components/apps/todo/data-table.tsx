@@ -15,12 +15,9 @@ import {
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-  Input,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-} from "@kdx/ui";
+} from "@kdx/ui/context-menu";
+import { Input } from "@kdx/ui/input";
+import { Table, TableBody, TableCell, TableRow } from "@kdx/ui/table";
 
 import { DataTablePagination } from "~/app/_components/pagination";
 import { api } from "~/trpc/react";
