@@ -1,7 +1,8 @@
 "use client";
 
 import { todoAppId } from "@kdx/shared";
-import { H1, Separator } from "@kdx/ui";
+import { Separator } from "@kdx/ui/separator";
+import { H1 } from "@kdx/ui/typography";
 
 import { IconKodixApp } from "~/app/_components/app/kodix-app";
 import { columns } from "~/app/_components/apps/todo/columns";

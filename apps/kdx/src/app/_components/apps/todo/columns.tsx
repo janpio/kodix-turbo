@@ -6,7 +6,8 @@ import { createColumnHelper } from "@tanstack/react-table";
 
 import type { RouterOutputs } from "@kdx/api";
 import type { Status } from "@kdx/db";
-import { Button, Checkbox } from "@kdx/ui";
+import { Button } from "@kdx/ui/button";
+import { Checkbox } from "@kdx/ui/checkbox";
 
 import type { Priority } from "./priority-popover";
 import { DatePickerWithPresets } from "~/app/_components/date-picker-with-presets";

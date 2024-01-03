@@ -9,14 +9,16 @@ import { useForm } from "react-hook-form";
 import { LuArrowRight } from "react-icons/lu";
 
 import { kodixCareAppId } from "@kdx/shared";
+import { Button } from "@kdx/ui/button";
 import {
-  Button,
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
+} from "@kdx/ui/card";
+import {
   Form,
   FormControl,
   FormDescription,
@@ -24,8 +26,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  Input,
-} from "@kdx/ui";
+} from "@kdx/ui/form";
+import { Input } from "@kdx/ui/input";
 import { kodixCareConfigSchema } from "@kdx/validators";
 
 import { trpcErrorToastDefault } from "~/helpers/miscelaneous";

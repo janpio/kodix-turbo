@@ -4,6 +4,7 @@
 import type { Weekday } from "rrule";
 import { useCallback, useEffect, useState } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { Label } from "@radix-ui/react-label";
 import { Check } from "lucide-react";
 import moment from "moment";
 import { Frequency, RRule } from "rrule";
@@ -14,21 +15,19 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  Button,
-  cn,
+} from "@kdx/ui/alert-dialog";
+import { Button } from "@kdx/ui/button";
+import {
   Command,
   CommandGroup,
   CommandItem,
   CommandList,
-  Input,
-  Label,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  RadioGroup,
-  RadioGroupItem,
-  Toggle,
-} from "@kdx/ui";
+} from "@kdx/ui/command";
+import { Input } from "@kdx/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@kdx/ui/popover";
+import { RadioGroup, RadioGroupItem } from "@kdx/ui/radio-group";
+import { Toggle } from "@kdx/ui/toggle";
+import { cn } from "@kdx/ui/utils";
 
 import { DatePicker } from "~/app/_components/date-picker";
 import { FrequencyToTxt } from "~/app/_components/frequency-picker";

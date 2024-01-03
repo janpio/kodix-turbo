@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { auth } from "@kdx/auth";
-import { buttonVariants } from "@kdx/ui";
+import { buttonVariants } from "@kdx/ui/button";
 
 import HeaderFooterRemover from "~/app/_components/header-footer-remover";
 import MaxWidthWrapper from "~/app/_components/max-width-wrapper";
@@ -17,7 +17,7 @@ export async function Header() {
           <div className="mx-auto flex max-w-screen-2xl items-center">
             <Link
               href={session ? "/team" : "/"}
-              className="text-bold text-primary text-xl font-medium"
+              className="text-bold text-xl font-medium text-primary"
             >
               <span className="hidden bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text font-extrabold tracking-tight text-transparent md:block">
                 Kodix

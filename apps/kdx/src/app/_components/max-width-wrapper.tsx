@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { cn } from "@kdx/ui";
+import { cn } from "@kdx/ui/utils";
 
 const MaxWidthWrapper = ({
   className,

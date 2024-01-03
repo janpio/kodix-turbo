@@ -1,4 +1,4 @@
-import { toast } from "@kdx/ui";
+import { toast } from "@kdx/ui/toast";
 
 interface ActionResult<Data> {
   data?: Data | undefined;

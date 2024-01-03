@@ -4,18 +4,18 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
+import { Button } from "@kdx/ui/button";
 import {
-  Button,
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-  Input,
-  Label,
-  toast,
-} from "@kdx/ui";
+} from "@kdx/ui/card";
+import { Input } from "@kdx/ui/input";
+import { Label } from "@kdx/ui/label";
+import { toast } from "@kdx/ui/toast";
 import { updateTeamSchema } from "@kdx/validators";
 
 import { trpcErrorToastDefault } from "~/helpers/miscelaneous";

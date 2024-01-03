@@ -8,14 +8,14 @@ import {
   ChevronsRight,
 } from "lucide-react";
 
+import { Button } from "@kdx/ui/button";
 import {
-  Button,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@kdx/ui";
+} from "@kdx/ui/select";
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
@@ -26,7 +26,7 @@ export function DataTablePagination<TData>({
 }: DataTablePaginationProps<TData>) {
   return (
     <div className="flex items-center justify-between px-2">
-      <div className="text-muted-foreground flex-1 text-sm">
+      <div className="flex-1 text-sm text-muted-foreground">
         {table.getFilteredSelectedRowModel().rows.length} of{" "}
         {table.getFilteredRowModel().rows.length} row(s) selected.
       </div>

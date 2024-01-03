@@ -2,12 +2,12 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
+import { Label } from "@radix-ui/react-label";
 import { Loader2, PlusCircle } from "lucide-react";
 
 import type { Session } from "@kdx/auth";
+import { Button } from "@kdx/ui/button";
 import {
-  Button,
-  cn,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -15,10 +15,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  Input,
-  Label,
-  toast,
-} from "@kdx/ui";
+} from "@kdx/ui/dialog";
+import { Input } from "@kdx/ui/input";
+import { toast } from "@kdx/ui/toast";
+import { cn } from "@kdx/ui/utils";
 
 import { defaultSafeActionToastError } from "~/helpers/safe-action/default-action-error-toast";
 import { createTeamAction } from "./actions";

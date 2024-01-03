@@ -6,24 +6,24 @@ import { Check } from "lucide-react";
 import moment from "moment";
 import { RRule } from "rrule";
 
+import { Button } from "@kdx/ui/button";
 import {
-  Button,
-  cn,
   Command,
   CommandGroup,
   CommandItem,
   CommandList,
+} from "@kdx/ui/command";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  Input,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Toggle,
-} from "@kdx/ui";
+} from "@kdx/ui/dialog";
+import { Input } from "@kdx/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@kdx/ui/popover";
+import { Toggle } from "@kdx/ui/toggle";
+import { cn } from "@kdx/ui/utils";
 
 import { FrequencyToTxt } from "~/app/_components/frequency-picker";
 

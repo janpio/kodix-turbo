@@ -5,14 +5,10 @@ import * as React from "react";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 
-import {
-  Button,
-  Calendar,
-  cn,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@kdx/ui";
+import { Button } from "@kdx/ui/button";
+import { Calendar } from "@kdx/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@kdx/ui/popover";
+import { cn } from "@kdx/ui/utils";
 
 export function DateRangePicker({
   date,

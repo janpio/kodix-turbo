@@ -6,19 +6,16 @@ import { ChevronLeft, Loader2, MoreHorizontal } from "lucide-react";
 
 import type { RouterOutputs } from "@kdx/api";
 import type { Session } from "@kdx/auth";
+import { Button } from "@kdx/ui/button";
 import {
-  Button,
-  cn,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-  toast,
-} from "@kdx/ui";
+} from "@kdx/ui/dropdown-menu";
+import { Table, TableBody, TableCell, TableRow } from "@kdx/ui/table";
+import { toast } from "@kdx/ui/toast";
+import { cn } from "@kdx/ui/utils";
 
 import { switchTeamAction } from "~/app/_components/header/actions";
 import { trpcErrorToastDefault } from "~/helpers/miscelaneous";
@@ -92,7 +89,7 @@ function CustomRow({
           <div className="flex flex-row">
             <span className="font-bold">{team.name}</span>{" "}
             {team.id === session.user.activeTeamId && (
-              <p className="text-muted-foreground ml-1 font-bold italic">
+              <p className="ml-1 font-bold italic text-muted-foreground">
                 {" "}
                 - Current
               </p>

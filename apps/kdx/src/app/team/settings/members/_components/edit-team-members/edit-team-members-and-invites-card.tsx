@@ -1,5 +1,5 @@
 import { auth } from "@kdx/auth";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@kdx/ui";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@kdx/ui/tabs";
 
 import { api } from "~/trpc/server";
 import { InviteDataTable } from "./invites/data-table-invite";

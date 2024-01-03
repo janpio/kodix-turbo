@@ -2,17 +2,15 @@ import { useState } from "react";
 import { HiUserCircle } from "react-icons/hi";
 
 import type { User } from "@kdx/db";
+import { AvatarWrapper } from "@kdx/ui/avatar-wrapper";
 import {
-  AvatarWrapper,
   Command,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@kdx/ui";
+} from "@kdx/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@kdx/ui/popover";
 
 /**
  * @description You can optionally input a button to overwrite the default button trigger.
@@ -48,7 +46,7 @@ export function AssigneePopover({
           </div>
         ) : (
           <div>
-            <HiUserCircle className="text-foreground/70 h-6 w-6" />
+            <HiUserCircle className="h-6 w-6 text-foreground/70" />
           </div>
         )}
       </PopoverTrigger>

@@ -3,18 +3,16 @@
 import { useState } from "react";
 import { Signal, SignalHigh, SignalLow, SignalMedium } from "lucide-react";
 
+import { Button } from "@kdx/ui/button";
 import {
-  Button,
-  cn,
   Command,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@kdx/ui";
+} from "@kdx/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@kdx/ui/popover";
+import { cn } from "@kdx/ui/utils";
 
 /**
  * @description You can optionally input a button to overwrite the default button trigger.
