@@ -1,7 +1,7 @@
 import { networkInterfaces } from "os";
 import Image from "next/image";
 
-import { Dialog, DialogContent, DialogTrigger } from "@kdx/ui";
+import { Dialog, DialogContent, DialogTrigger } from "@kdx/ui/dialog";
 
 const url =
   networkInterfaces().Ethernet?.find((x) => x.family === "IPv4")?.address +
@@ -15,7 +15,7 @@ export function TailwindIndicator() {
     <Dialog>
       <DialogTrigger asChild>
         <div className="fixed bottom-1 right-1 z-50 flex flex-row items-center space-x-1">
-          <div className="bg-foreground text-background flex h-6 w-6 items-center justify-center rounded-full p-3 font-mono text-xs font-bold">
+          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-foreground p-3 font-mono text-xs font-bold text-background">
             <div className="block sm:hidden">xs</div>
             <div className="hidden sm:block md:hidden lg:hidden xl:hidden 2xl:hidden">
               sm

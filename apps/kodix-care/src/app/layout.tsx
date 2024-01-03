@@ -5,7 +5,7 @@ import "~/styles/globals.css";
 import { Inter as FontSans } from "next/font/google";
 import { cookies } from "next/headers";
 
-import { cn } from "@kdx/ui";
+import { cn } from "@kdx/ui/utils";
 
 import { AuthProvider, NextThemeProvider } from "~/app/_components/providers";
 import { TRPCReactProvider } from "~/trpc/react";
@@ -36,7 +36,7 @@ export default function Layout(props: { children: React.ReactNode }) {
     <html lang="en">
       <body
         className={cn(
-          "bg-background min-h-screen font-sans antialiased",
+          "min-h-screen bg-background font-sans antialiased",
           fontSans.variable,
         )}
       >

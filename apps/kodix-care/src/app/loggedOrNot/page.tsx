@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@kdx/ui";
+import { Button } from "@kdx/ui/button";
 
 import { signIn } from "~/app/_components/providers";
 

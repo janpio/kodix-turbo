@@ -36,7 +36,7 @@ export default async function Layout({
         <h1 className="text-4xl font-bold">Team Settings</h1>
         <div className="flex items-center">
           <ChevronRight />
-          <p className="text-muted-foreground text-2xl">
+          <p className="text-2xl text-muted-foreground">
             {session.user.activeTeamName}
           </p>
         </div>
