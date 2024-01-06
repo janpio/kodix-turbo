@@ -10,7 +10,7 @@ import { api } from "~/trpc/server";
 export default async function Team() {
   const session = await auth();
   if (!session) return redirect("/");
-  const apps = await api.app.getInstalled.query();
+  const apps = await api.app.getInstalled();
 
   return (
     <main className="flex-1 py-8">

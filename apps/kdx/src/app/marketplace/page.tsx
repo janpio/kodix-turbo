@@ -9,7 +9,7 @@ import { api } from "~/trpc/server";
 export const dynamic = "force-dynamic"; //TODO: help me
 
 export default async function Apps() {
-  const apps = await api.app.getAll.query();
+  const apps = await api.app.getAll();
   const session = await auth();
 
   return (

@@ -2,11 +2,8 @@
 
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  createTRPCReact,
-  loggerLink,
-  unstable_httpBatchStreamLink,
-} from "@trpc/react-query";
+import { loggerLink, unstable_httpBatchStreamLink } from "@trpc/client";
+import { createTRPCReact } from "@trpc/react-query";
 import SuperJSON from "superjson";
 
 import type { AppRouter } from "@kdx/api";
@@ -18,16 +15,7 @@ export function TRPCReactProvider(props: {
   children: React.ReactNode;
   headersPromise: Promise<Headers>;
 }) {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            staleTime: 5 * 1000,
-          },
-        },
-      }),
-  );
+  const [queryClient] = useState(() => new QueryClient());
 
   const [trpcClient] = useState(() =>
     api.createClient({
@@ -41,9 +29,9 @@ export function TRPCReactProvider(props: {
         unstable_httpBatchStreamLink({
           url: getBaseUrl() + "/api/trpc",
           async headers() {
-            const headers = new Map(await props.headersPromise);
+            const headers = new Headers(await props.headersPromise);
             headers.set("x-trpc-source", "nextjs-react");
-            return Object.fromEntries(headers);
+            return headers;
           },
         }),
       ],

@@ -20,7 +20,7 @@ export default async function Calendar() {
   const session = await auth();
   if (!session) return redirect("/");
 
-  const installedApps = await api.app.getInstalled.query();
+  const installedApps = await api.app.getInstalled();
   if (!installedApps.some((x) => x.id === calendarAppId))
     return (
       <div className="flex flex-col items-center justify-center space-y-4">
@@ -36,7 +36,7 @@ export default async function Calendar() {
 
   //date Start should be the beginninig of the day
   //date End should be the end of the day
-  const data = await api.event.getAll.query({
+  const data = await api.event.getAll({
     dateStart: moment().utc().startOf("day").toDate(),
     dateEnd: moment().utc().endOf("day").toDate(),
   });

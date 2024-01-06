@@ -26,7 +26,7 @@ export async function EditAccountNameCard({ name }: { name?: string | null }) {
       action={async (values) => {
         "use server";
 
-        await api.user.changeName.mutate({
+        await api.user.changeName({
           name: values.get("name") as string,
         });
         revalidatePath("/account/general");
