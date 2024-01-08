@@ -22,7 +22,6 @@ import {
   useForm,
 } from "@kdx/ui/form";
 import { Input } from "@kdx/ui/input";
-import { Label } from "@kdx/ui/label";
 import { toast } from "@kdx/ui/toast";
 import { updateTeamSchema } from "@kdx/validators";
 
@@ -57,7 +56,7 @@ export function EditTeamNameCardClient({
     <Card className="w-full text-left">
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(async (data) => {
+          onSubmit={form.handleSubmit((data) => {
             mutate(data);
           })}
         >
