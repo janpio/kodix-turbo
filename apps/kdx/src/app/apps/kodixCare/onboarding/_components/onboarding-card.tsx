@@ -3,9 +3,7 @@
 import type { z } from "zod";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { useForm } from "react-hook-form";
 import { LuArrowRight } from "react-icons/lu";
 
 import { kodixCareAppId } from "@kdx/shared";
@@ -26,6 +24,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  useForm,
 } from "@kdx/ui/form";
 import { Input } from "@kdx/ui/input";
 import { kodixCareConfigSchema } from "@kdx/validators";
@@ -34,8 +33,8 @@ import { trpcErrorToastDefault } from "~/helpers/miscelaneous";
 import { api } from "~/trpc/react";
 
 export default function OnboardingCard() {
-  const form = useForm<z.infer<typeof kodixCareConfigSchema>>({
-    resolver: zodResolver(kodixCareConfigSchema),
+  const form = useForm({
+    schema: kodixCareConfigSchema,
     defaultValues: {
       patientName: "",
     },
