@@ -40,20 +40,18 @@ function CustomPrismaAdapter(p: PrismaClient): Adapter {
     ...PrismaAdapter(p),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async createUser(data): Promise<any> {
-      const userId = cuid();
       const teamId = cuid();
 
       //! When changing team creation flow here, change it on api.team.create router as well!
       const user = await p.user.create({
         data: {
-          id: userId,
           ...data,
           ActiveTeam: {
             connectOrCreate: {
               create: {
                 id: teamId,
                 name: `Personal Team`,
-                ownerId: userId,
+                ownerId: data.id,
               },
               where: {
                 id: teamId,
