@@ -185,7 +185,11 @@ export function KodixApp({ id, installed, session }: KodixAppProps) {
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setOpen(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setOpen(false)}
+                  disabled={uninstalling}
+                >
                   Cancel
                 </Button>
                 <Button
