@@ -26,10 +26,10 @@ export default async function Calendar() {
       <div className="flex flex-col items-center justify-center space-y-4">
         <h1 className="text-red-500">You need to install this app first</h1>
         <Link
-          href="/marketplace"
+          href="/apps"
           className={cn(buttonVariants({ variant: "outline" }))}
         >
-          Marketplace
+          App Store
         </Link>
       </div>
     );

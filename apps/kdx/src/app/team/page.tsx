@@ -22,9 +22,9 @@ export default async function Team() {
         </div>
         <div className="flex flex-row items-center space-x-10">
           <CustomKodixIcon
-            appName={"Marketplace"}
-            appUrl={"/marketplace"}
-            iconPath={"/appIcons/marketplace.png"}
+            appName={"App Store"}
+            appUrl={"/apps"}
+            iconPath={"/appIcons/appstore.png"}
           />
           <CustomKodixIcon
             appName={"Settings"}
