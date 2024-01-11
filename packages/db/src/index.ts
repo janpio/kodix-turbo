@@ -1,6 +1,6 @@
 import { Client } from "@planetscale/database";
 import { PrismaPlanetScale } from "@prisma/adapter-planetscale";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client/edge";
 import { fetch as undiciFetch } from "undici";
 
 //* START PLANETSCALE ADAPTER SECTION
