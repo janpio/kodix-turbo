@@ -108,9 +108,6 @@ importers:
       '@trpc/client':
         specifier: next
         version: 11.0.0-next-alpha.153(@trpc/server@11.0.0-next-alpha.153)
-      '@trpc/next':
-        specifier: next
-        version: 11.0.0-next-alpha.153(@tanstack/react-query@5.17.8)(@trpc/client@11.0.0-next-alpha.153)(@trpc/react-query@11.0.0-next-alpha.153)(@trpc/server@11.0.0-next-alpha.153)(next@14.0.4)(react-dom@18.2.0)(react@18.2.0)
       '@trpc/react-query':
         specifier: next
         version: 11.0.0-next-alpha.153(@tanstack/react-query@5.17.8)(@trpc/client@11.0.0-next-alpha.153)(@trpc/server@11.0.0-next-alpha.153)(react-dom@18.2.0)(react@18.2.0)
@@ -241,9 +238,6 @@ importers:
       '@trpc/client':
         specifier: next
         version: 11.0.0-next-alpha.153(@trpc/server@11.0.0-next-alpha.153)
-      '@trpc/next':
-        specifier: next
-        version: 11.0.0-next-alpha.153(@tanstack/react-query@5.17.8)(@trpc/client@11.0.0-next-alpha.153)(@trpc/react-query@11.0.0-next-alpha.153)(@trpc/server@11.0.0-next-alpha.153)(next@14.0.4)(react-dom@18.2.0)(react@18.2.0)
       '@trpc/react-query':
         specifier: next
         version: 11.0.0-next-alpha.153(@tanstack/react-query@5.17.8)(@trpc/client@11.0.0-next-alpha.153)(@trpc/server@11.0.0-next-alpha.153)(react-dom@18.2.0)(react@18.2.0)
@@ -6198,26 +6192,6 @@ packages:
       '@trpc/server': 11.0.0-next-alpha.153+ad79cc8a2
     dependencies:
       '@trpc/server': 11.0.0-next-alpha.153
-    dev: false
-
-  /@trpc/next@11.0.0-next-alpha.153(@tanstack/react-query@5.17.8)(@trpc/client@11.0.0-next-alpha.153)(@trpc/react-query@11.0.0-next-alpha.153)(@trpc/server@11.0.0-next-alpha.153)(next@14.0.4)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-w8iAC6p7OWRrLXqTDwCca9LHFmefr7aZD0s0jG3atzeVF9lk6SjSRJHG/o34hHtWAEtXKgoAAqyLXkqXfnfaxg==}
-    peerDependencies:
-      '@tanstack/react-query': ^5.0.0
-      '@trpc/client': 11.0.0-next-alpha.153+ad79cc8a2
-      '@trpc/react-query': 11.0.0-next-alpha.153+ad79cc8a2
-      '@trpc/server': 11.0.0-next-alpha.153+ad79cc8a2
-      next: '*'
-      react: '>=16.8.0'
-      react-dom: '>=16.8.0'
-    dependencies:
-      '@tanstack/react-query': 5.17.8(react@18.2.0)
-      '@trpc/client': 11.0.0-next-alpha.153(@trpc/server@11.0.0-next-alpha.153)
-      '@trpc/react-query': 11.0.0-next-alpha.153(@tanstack/react-query@5.17.8)(@trpc/client@11.0.0-next-alpha.153)(@trpc/server@11.0.0-next-alpha.153)(react-dom@18.2.0)(react@18.2.0)
-      '@trpc/server': 11.0.0-next-alpha.153
-      next: 14.0.4(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /@trpc/react-query@11.0.0-next-alpha.153(@tanstack/react-query@5.17.8)(@trpc/client@11.0.0-next-alpha.153)(@trpc/server@11.0.0-next-alpha.153)(react-dom@18.2.0)(react@18.2.0):

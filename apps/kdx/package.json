@@ -31,7 +31,6 @@
     "@tanstack/react-query-next-experimental": "5.17.8",
     "@tanstack/react-table": "^8.11.3",
     "@trpc/client": "next",
-    "@trpc/next": "next",
     "@trpc/react-query": "next",
     "@trpc/server": "next",
     "@vercel/analytics": "^1.1.1",
