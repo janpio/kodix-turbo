@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import type { KodixApp as KodixAppType } from "@kdx/db";
+import type { KodixAppId } from "@kdx/shared";
 import { auth } from "@kdx/auth";
 import { Lead } from "@kdx/ui/typography";
 
@@ -25,7 +25,7 @@ export default async function AppsPage() {
         {apps?.map((app) => (
           <div key={app.id}>
             <KodixApp
-              id={app.id as KodixAppType["id"]}
+              id={app.id as KodixAppId}
               installed={true}
               session={session}
             />

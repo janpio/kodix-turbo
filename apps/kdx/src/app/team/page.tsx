@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import type { KodixApp as KodixAppType } from "@kdx/db";
+import type { KodixAppId } from "@kdx/shared";
 import { auth } from "@kdx/auth";
 
 import { CustomKodixIcon, IconKodixApp } from "~/app/_components/app/kodix-app";
@@ -32,7 +32,7 @@ export default async function Team() {
             iconPath={"/appIcons/settings.png"}
           />
           {apps?.map((app) => (
-            <IconKodixApp key={app.id} appId={app.id as KodixAppType["id"]} />
+            <IconKodixApp key={app.id} appId={app.id as KodixAppId} />
           ))}
         </div>
       </MaxWidthWrapper>

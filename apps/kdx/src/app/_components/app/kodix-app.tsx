@@ -7,8 +7,8 @@ import { useRouter } from "next/navigation";
 import { Loader2, MoreHorizontal, Trash2 } from "lucide-react";
 
 import type { Session } from "@kdx/auth";
-import type { KodixApp as KodixAppType } from "@kdx/db";
-import { kodixCareAppId } from "@kdx/shared";
+import type { KodixAppId } from "@kdx/shared";
+import { getAppDescription, getAppName, kodixCareAppId } from "@kdx/shared";
 import { Badge } from "@kdx/ui/badge";
 import { Button, buttonVariants } from "@kdx/ui/button";
 import {
@@ -37,16 +37,11 @@ import {
 import { toast } from "@kdx/ui/toast";
 import { cn } from "@kdx/ui/utils";
 
-import {
-  getAppDescription,
-  getAppIconUrl,
-  getAppName,
-  getAppUrl,
-} from "~/helpers/miscelaneous";
+import { getAppIconUrl, getAppUrl } from "~/helpers/miscelaneous";
 import { api } from "~/trpc/react";
 
 interface KodixAppProps {
-  id: KodixAppType["id"];
+  id: KodixAppId;
   installed: boolean;
   session: Session | null;
 }
@@ -218,7 +213,7 @@ export function IconKodixApp({
   renderText = true,
   ...props
 }: {
-  appId: KodixAppType["id"];
+  appId: KodixAppId;
   renderText?: boolean;
 }) {
   const appUrl = getAppUrl(props.appId);
