@@ -4,7 +4,6 @@
 import type { Weekday } from "rrule";
 import { useCallback, useEffect, useState } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { Label } from "@radix-ui/react-label";
 import { Check } from "lucide-react";
 import moment from "moment";
 import { Frequency, RRule } from "rrule";
@@ -24,6 +23,7 @@ import {
   CommandList,
 } from "@kdx/ui/command";
 import { Input } from "@kdx/ui/input";
+import { Label } from "@kdx/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@kdx/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@kdx/ui/radio-group";
 import { Toggle } from "@kdx/ui/toggle";

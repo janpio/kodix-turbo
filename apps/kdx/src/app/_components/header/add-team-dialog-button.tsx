@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Label } from "@radix-ui/react-label";
 import { Loader2, PlusCircle } from "lucide-react";
 
 import type { Session } from "@kdx/auth";
@@ -17,6 +16,7 @@ import {
   DialogTrigger,
 } from "@kdx/ui/dialog";
 import { Input } from "@kdx/ui/input";
+import { Label } from "@kdx/ui/label";
 import { toast } from "@kdx/ui/toast";
 import { cn } from "@kdx/ui/utils";
 
