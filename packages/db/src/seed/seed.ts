@@ -74,7 +74,7 @@ export const apps = [
 ];
 
 async function main() {
-  console.log("Seeding...");
+  console.log("🌱 Seeding...");
 
   await prisma.devPartner.upsert({
     where: {
@@ -88,20 +88,19 @@ async function main() {
     },
   });
 
-  for (const app of apps) {
+  for (const app of apps)
     await prisma.app.upsert({
       where: {
         id: app.id,
       },
-      update: app,
+      update: {},
       create: app,
     });
-  }
 }
 
 main()
   .then(() => {
-    console.log("Done!");
+    console.log("✅ Done!");
   })
   .catch((e) => {
     console.error(e);
