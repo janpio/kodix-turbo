@@ -1,4 +1,4 @@
-import type { KodixApp as KodixAppType } from "@kdx/db";
+import type { KodixAppId } from "@kdx/shared";
 import { auth } from "@kdx/auth";
 import { H1, Lead } from "@kdx/ui/typography";
 
@@ -24,7 +24,7 @@ export default async function Apps() {
         {apps?.map((app) => (
           <div key={app.id}>
             <KodixApp
-              id={app.id as KodixAppType["id"]}
+              id={app.id as KodixAppId}
               installed={app.installed}
               session={session}
             />
