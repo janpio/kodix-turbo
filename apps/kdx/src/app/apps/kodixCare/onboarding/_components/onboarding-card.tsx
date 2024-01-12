@@ -1,7 +1,6 @@
 "use client";
 
-import type { z } from "zod";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { LuArrowRight } from "react-icons/lu";
@@ -45,25 +44,23 @@ export default function OnboardingCard() {
     onSuccess: () => {
       router.push(`/apps/kodixCare`);
     },
-    onError: (e) => {
-      trpcErrorToastDefault(e);
-    },
-    onSettled: () => {
-      setIsSubmitting(false);
-    },
+    onError: (e) => trpcErrorToastDefault(e),
+    onSettled: () => setIsSubmitting(false),
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function onSubmit(values: z.infer<typeof kodixCareConfigSchema>) {
-    setIsSubmitting(true);
-    saveConfig({
-      appId: kodixCareAppId,
-      config: { patientName: values.patientName },
-    });
-  }
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit((values) => {
+          setIsSubmitting(true);
+          saveConfig({
+            appId: kodixCareAppId,
+            config: { patientName: values.patientName },
+          });
+        })}
+        className="space-y-8"
+      >
         <Card className="w-[450px]">
           <CardHeader>
             <CardTitle>Welcome to Kodix Care</CardTitle>
