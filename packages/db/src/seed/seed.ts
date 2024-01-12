@@ -73,7 +73,7 @@ export const apps = [
   },
 ];
 
-(async () => {
+async function main() {
   console.log("Seeding...");
 
   await prisma.devPartner.upsert({
@@ -97,10 +97,16 @@ export const apps = [
       create: app,
     });
   }
-})()
+}
+
+main()
   .then(() => {
     console.log("Done!");
   })
-  .catch((e: Error) => {
-    console.error(e.message);
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(() => {
+    void prisma.$disconnect();
   });
