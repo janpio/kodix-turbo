@@ -88,7 +88,17 @@ async function main() {
     },
   });
 
-  for (const app of apps)
+  for (const app of apps) {
+    const appExists = await prisma.app.findUnique({
+      where: {
+        id: app.id,
+      },
+    });
+
+    if (appExists) {
+      console.log(`App ${app.id} already exists, skipping...`);
+      continue;
+    }
     await prisma.app.upsert({
       where: {
         id: app.id,
@@ -96,11 +106,12 @@ async function main() {
       update: {},
       create: app,
     });
+  }
 }
 
 main()
   .then(() => {
-    console.log("✅ Done!");
+    console.log("🌳 Done!");
   })
   .catch((e) => {
     console.error(e);
